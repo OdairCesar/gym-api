@@ -1,0 +1,24 @@
+import express from 'express';
+import authRoutes from './routes/authRoutes';
+import trainingRoutes from './routes/trainingRoutes';
+
+const app = express();
+
+app.use(express.json());
+
+// debugging para acessos feitos ao servidor
+app.use(async (req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+
+    // Simulando delay alto para fins de demonstração
+    // await new Promise(resolve => setTimeout(resolve, 3000));
+
+    next();
+});
+
+app.use('/api', trainingRoutes);
+
+app.use('/api/auth', authRoutes);
+
+
+export default app;
