@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { nullable } from 'zod';
 
 export interface ITraining extends Document {
   user: string;

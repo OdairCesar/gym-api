@@ -13,6 +13,17 @@ export const registerSchema = userSchema.pick({
   endereco: true
 });
 
+export const editUserSchema = userSchema.pick({
+  nome: true,
+  email: true,
+  dataNascimento: true,
+  telefone: true,
+  cpf: true,
+  sexo: true,
+  profissao: true,
+  endereco: true
+});
+
 // Validação de login: continua só email e password
 export const loginSchema = userSchema.pick({
   email: true,
