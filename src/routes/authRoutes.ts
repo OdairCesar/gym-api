@@ -1,11 +1,11 @@
 // src/routes/authRoutes.ts
 import express from 'express';
-import { registerUser, loginUser } from '../controllers/authController';
+import { changePassword, loginUser } from '../controllers/authController';
+import { protect } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-router.post('/register', registerUser);
-
 router.post('/login', loginUser);
+router.post('/user/change-password', protect, changePassword);
 
 export default router;

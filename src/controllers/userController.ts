@@ -1,7 +1,58 @@
 import { NextFunction, Request, Response } from 'express';
 import User from '../models/User';
 import bcrypt from 'bcryptjs';
-import { editUserSchema } from '../validations/authValidations';
+import { editUserSchema, registerSchema } from '../validations/authValidations';
+import { generateToken } from '../utils/generateToken';
+
+export const createUser = async (req: Request, res: Response) => {
+    const result = registerSchema.safeParse(req.body);
+
+    if (!result.success) {
+        res.status(400).json({
+            status: 'error',
+            message: 'Erro de validação',
+            errors: result.error.errors.map(err => ({
+                field: err.path[0],
+                message: err.message
+            }))
+        });
+        return;
+    }
+
+    const { email, password } = result.data;
+
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+        res.status(400).json({
+            status: 'error',
+            message: 'Usuário já existe'
+        });
+        return;
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.create({ ...result.data, ...{ password: hashedPassword } });
+
+    if (!user) {
+        res.status(400).json({
+            status: 'error',
+            message: 'Falha ao criar usuário'
+        });
+        return;
+    }
+
+    res.status(201).json({
+        status: 'success',
+        message: 'Usuário criado com sucesso',
+        data: {
+            user: user,
+            token: generateToken(user.email.toString())
+        }
+    });
+}
 
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -182,67 +233,6 @@ export const updateOtherUser = async (req: Request, res: Response) => {
         res.status(500).json({
             status: 'error',
             message: 'Erro ao atualizar usuário'
-        });
-    }
-};
-
-export const changePassword = async (req: Request, res: Response) => {
-    try {
-        if (!req.user) {
-            res.status(404).json({
-                status: 'error',
-                message: 'Usuário não encontrado'
-            });
-            return;
-        }
-
-        const { currentPassword, newPassword, newPasswordConfirm } = req.body;
-
-        if (!currentPassword || !newPassword || !newPasswordConfirm) {
-            res.status(400).json({
-                status: 'error',
-                message: 'Todos os campos são obrigatórios'
-            });
-            return;
-        }
-
-        if (newPassword !== newPasswordConfirm) {
-            res.status(400).json({
-                status: 'error',
-                message: 'As novas senhas não coincidem'
-            });
-            return;
-        }
-
-        const isMatch = await bcrypt.compare(currentPassword, req.user.password);
-        if (!isMatch) {
-            res.status(400).json({
-                status: 'error',
-                message: 'Senha atual incorreta'
-            });
-            return;
-        }
-
-        const user = await User.findById(req.user.id);
-        if (!user) {
-            res.status(404).json({
-                status: 'error',
-                message: 'Usuário não encontrado'
-            });
-            return;
-        }
-
-        user.password = await bcrypt.hash(newPassword, 10);
-        await user.save();
-
-        res.status(200).json({
-            status: 'success',
-            message: 'Senha alterada com sucesso'
-        });
-    } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: 'Erro ao alterar senha'
         });
     }
 };
