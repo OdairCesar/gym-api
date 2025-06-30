@@ -34,7 +34,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 };
 
 
-export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
+export const getUsers = async (req: Request, res: Response) => {
     try {
         if (!req.user) {
             res.status(404).json({
@@ -52,17 +52,7 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
             return;
         }
 
-        const {
-            name,
-            email,
-            phone,
-            address,
-            profession,
-            cpf,
-            gender,
-            isAdmin,
-            isActive,
-        } = req.query;
+        const { name, email, phone, address, profession, cpf, gender, isAdmin, isActive } = req.query;
 
         const query: any = {};
 
@@ -86,10 +76,6 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
             message: 'Usuários encontrados',
             data: users,
         });
-
-        next();
-        return;
-
     } catch (error) {
         res.status(500).json({
             status: 'error',
@@ -98,7 +84,7 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
     }
 };
 
-export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+export const updateUser = async (req: Request, res: Response) => {
     try {
         if (!req.user) {
             res.status(404).json({
@@ -141,9 +127,6 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
             message: 'Usuário atualizado',
             data: updatedUser
         });
-
-        next();
-        return;
     } catch (error) {
         res.status(500).json({
             status: 'error',
@@ -152,7 +135,58 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
     }
 };
 
-export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
+export const updateOtherUser = async (req: Request, res: Response) => {
+    try {
+        if (!req.user || !req.user.isAdmin) {
+            res.status(403).json({
+                status: 'error',
+                message: 'Acesso não autorizado'
+            });
+            return;
+        }
+
+        const result = editUserSchema.safeParse(req.body);
+
+        if (!result.success) {
+            res.status(400).json({
+                status: 'error',
+                message: 'Erro de validação',
+                errors: result.error.errors.map(err => ({
+                    field: err.path[0],
+                    message: err.message
+                }))
+            });
+            return;
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            { ...result.data, password: req.user.password }, // Mantém a senha atual
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        if (!updatedUser) {
+            res.status(404).json({
+                status: 'error',
+                message: 'Usuário não encontrado'
+            });
+            return;
+        }
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Usuário atualizado',
+            data: updatedUser
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: 'Erro ao atualizar usuário'
+        });
+    }
+};
+
+export const changePassword = async (req: Request, res: Response) => {
     try {
         if (!req.user) {
             res.status(404).json({
@@ -205,10 +239,6 @@ export const changePassword = async (req: Request, res: Response, next: NextFunc
             status: 'success',
             message: 'Senha alterada com sucesso'
         });
-
-        next();
-        return;
-
     } catch (error) {
         res.status(500).json({
             status: 'error',

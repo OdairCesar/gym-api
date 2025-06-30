@@ -1,12 +1,13 @@
 import { Router } from 'express';
-import { getUser, getUsers, updateUser, changePassword } from '../controllers/userController';
+import { getUser, getUsers, updateUser, updateOtherUser, changePassword } from '../controllers/userController';
 import { protect } from '../middleware/authMiddleware';
 
 const router = Router();
 
-router.get('/users', protect, getUsers);
-router.put('/users', protect, updateUser); 
-router.get('/users/me', protect, getUser);
-router.post('/users/change-password', protect, changePassword);
+router.get('/user', protect, getUsers);
+router.put('/user:id', protect, updateOtherUser); 
+router.put('/user/me', protect, updateUser); 
+router.get('/user/me', protect, getUser);
+router.post('/user/change-password', protect, changePassword);
 
 export default router;
