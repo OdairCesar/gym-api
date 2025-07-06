@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "start": "node dist/server.js"
   },
   "keywords": [],
@@ -20,7 +22,7 @@
     "zod": "^3.25.67"
   },
   "devDependencies": {
-    "@rocketseat/eslint-config": "^1.2.0",
+    "@rocketseat/eslint-config": "^2.2.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",

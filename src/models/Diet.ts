@@ -27,9 +27,9 @@ const MealSchema: Schema = new Schema<IMeal>(
     horario: { type: String },
     alimentos: { type: [String], default: [] },
   },
-  { 
-    _id: false 
-  }
+  {
+    _id: false,
+  },
 )
 
 const DietSchema: Schema = new Schema<IDiet>(
@@ -41,11 +41,15 @@ const DietSchema: Schema = new Schema<IDiet>(
     carboidratos: { type: Number },
     gorduras: { type: Number },
     refeicoes: { type: [MealSchema], default: [] },
-    criador: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    criador: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 )
 
 export default mongoose.model<IDiet>('Diet', DietSchema)

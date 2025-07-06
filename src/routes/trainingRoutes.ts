@@ -1,17 +1,21 @@
-// src/routes/authRoutes.ts
-import express from 'express';
-import { protect } from '../middleware/authMiddleware';
-import { postTraining, putTraining, getTraining } from '../controllers/trainingController';
+import express from 'express'
 
-const router = express.Router();
+import { protect } from '../middleware/authMiddleware'
 
-router.get('/training', protect, getTraining);
+import {
+  postTraining,
+  putTraining,
+  getTraining,
+} from '../controllers/trainingController'
 
-router.get('/training/:id', protect, getTraining);
+const router = express.Router()
 
-router.post('/training', protect, postTraining);
+router.get('/training', protect, getTraining)
 
-router.put('/training', protect, putTraining);
+router.get('/training/:id', protect, getTraining)
 
+router.post('/training', protect, postTraining)
 
-export default router;
+router.put('/training', protect, putTraining)
+
+export default router

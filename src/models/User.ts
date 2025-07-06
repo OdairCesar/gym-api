@@ -1,21 +1,21 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose'
 
 export interface IUser extends Document {
-  nome: string;
-  email: string;
-  password: string;
-  dataNascimento?: Date;
-  telefone?: string;
-  cpf?: string;
-  sexo?: 'M' | 'F' | 'O';
-  profissao?: string;
-  endereco?: string;
-  diet_id?: mongoose.Types.ObjectId;
-  isAdmin: boolean;
-  isPersonal?: boolean;
-  isActive: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  nome: string
+  email: string
+  password: string
+  dataNascimento?: Date
+  telefone?: string
+  cpf?: string
+  sexo?: 'M' | 'F' | 'O'
+  profissao?: string
+  endereco?: string
+  diet_id?: mongoose.Types.ObjectId
+  isAdmin: boolean
+  isPersonal?: boolean
+  isActive: boolean
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 const UserSchema: Schema = new Schema(
@@ -32,11 +32,11 @@ const UserSchema: Schema = new Schema(
     diet_id: { type: mongoose.Types.ObjectId, ref: 'Diet' },
     isAdmin: { type: Boolean, default: false },
     isPersonal: { type: Boolean, default: false },
-    isActive: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true },
   },
   {
-    timestamps: true // Cria automaticamente createdAt e updatedAt
-  }
-);
+    timestamps: true,
+  },
+)
 
-export default mongoose.model<IUser>('User', UserSchema);
+export default mongoose.model<IUser>('User', UserSchema)

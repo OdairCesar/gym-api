@@ -1,5 +1,4 @@
-// src/validations/trainingSchema.ts
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const exercicioSchema = z.object({
   nome: z.string(),
@@ -8,8 +7,8 @@ export const exercicioSchema = z.object({
   carga: z.number().optional().nullable(),
   descanso: z.number().optional().nullable(),
   ordem: z.number(),
-  videoUrl: z.string().url().optional().nullable()
-});
+  videoUrl: z.string().url().optional().nullable(),
+})
 
 export const trainingSchema = z.object({
   _id: z.string().optional(),
@@ -18,8 +17,7 @@ export const trainingSchema = z.object({
   treinador: z.string(),
   exercicios: z.array(exercicioSchema),
   createdAt: z.date().optional(),
-  updatedAt: z.date().optional()
-});
+  updatedAt: z.date().optional(),
+})
 
-// Criar o tipo TypeScript automaticamente a partir do schema
-export type TrainingType = z.infer<typeof trainingSchema>;
+export type TrainingType = z.infer<typeof trainingSchema>
