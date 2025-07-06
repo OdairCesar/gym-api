@@ -12,7 +12,9 @@ export const userSchema = z.object({
   cpf: z.string().optional(),
   profissao: z.string().optional(),
   endereco: z.string().optional(),
+  diet_id: z.string().optional(),
   isAdmin: z.boolean().default(false),
+  isPersonal: z.boolean().default(false),
   isActive: z.boolean().default(true),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional()
