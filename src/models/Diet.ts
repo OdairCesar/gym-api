@@ -15,7 +15,7 @@ export interface IDiet extends Document {
   carboidratos?: number
   gorduras?: number
   refeicoes: IMeal[]
-  criador: mongoose.Types.ObjectId
+  criador?: mongoose.Types.ObjectId
   createdAt: Date
   updatedAt: Date
 }
@@ -41,11 +41,7 @@ const DietSchema: Schema = new Schema<IDiet>(
     carboidratos: { type: Number },
     gorduras: { type: Number },
     refeicoes: { type: [MealSchema], default: [] },
-    criador: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
+    criador: { type: mongoose.Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,
