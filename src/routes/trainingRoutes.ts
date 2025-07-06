@@ -14,8 +14,8 @@ router.get('/training', protect, getTraining)
 
 router.get('/training/:id', protect, getTraining)
 
-router.post('/training', protect, postTraining)
+router.put('/training/:id', protect, putTraining)
 
-router.put('/training', protect, putTraining)
+router.post('/training', protect, postTraining)
 
 export default router

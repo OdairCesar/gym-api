@@ -88,6 +88,39 @@ export const getUser = async (
   }
 }
 
+export const getUserById = async (req: Request, res: Response) => {
+  try {
+    if (!req.user || !req.user.isAdmin) {
+      res.status(403).json({
+        status: 'error',
+        message: 'Acesso não autorizado',
+      })
+      return
+    }
+
+    const user = await User.findById(req.params.id).select('-password')
+
+    if (!user) {
+      res.status(404).json({
+        status: 'error',
+        message: 'Usuário não encontrado',
+      })
+      return
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Usuário encontrado',
+      data: user,
+    })
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Erro ao buscar usuário',
+    })
+  }
+}
+
 export const getUsers = async (req: Request, res: Response) => {
   try {
     if (!req.user) {
@@ -201,7 +234,7 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 }
 
-export const updateOtherUser = async (req: Request, res: Response) => {
+export const updateUserById = async (req: Request, res: Response) => {
   try {
     if (!req.user || !req.user.isAdmin) {
       res.status(403).json({
