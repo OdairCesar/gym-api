@@ -148,6 +148,7 @@ export const getUsers = async (req: Request, res: Response) => {
       cpf,
       sexo,
       isAdmin,
+      isPersonal,
       isActive,
     } = req.query
 
@@ -164,6 +165,8 @@ export const getUsers = async (req: Request, res: Response) => {
 
     if (cpf) query = { ...query, cpf }
     if (sexo) query = { ...query, sexo }
+    if (isPersonal !== undefined)
+      query = { ...query, isPersonal: isPersonal === 'true' }
     if (isAdmin !== undefined) query = { ...query, isAdmin: isAdmin === 'true' }
     if (isActive !== undefined)
       query = { ...query, isActive: isActive === 'true' }

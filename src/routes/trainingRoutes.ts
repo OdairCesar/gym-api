@@ -6,16 +6,16 @@ import {
   postTraining,
   putTraining,
   getTraining,
+  getAllTrainings,
+  getTrainingById,
 } from '../controllers/trainingController'
 
 const router = express.Router()
 
-router.get('/training', protect, getTraining)
-
-router.get('/training/:id', protect, getTraining)
-
-router.put('/training/:id', protect, putTraining)
-
 router.post('/training', protect, postTraining)
+router.get('/training', protect, getAllTrainings)
+router.get('/training/me', protect, getTraining)
+router.get('/training/:id', protect, getTrainingById)
+router.put('/training/:id', protect, putTraining)
 
 export default router

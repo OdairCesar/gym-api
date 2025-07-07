@@ -65,14 +65,9 @@ export const getAllDiets = async (req: Request, res: Response) => {
 
     let find = {}
 
-    if (req.user.isAdmin) find = { criador: { $ne: null } }
     if (req.user.isPersonal) find = { criador: req.user._id }
 
-    const diets = await Diet.find(find)
-      .populate('criador', 'nome email')
-      .select('-__v')
-      .sort({ createdAt: -1 })
-      .exec()
+    const diets = await Diet.find(find).exec()
 
     res.status(200).json({
       status: 'success',
@@ -89,7 +84,7 @@ export const getAllDiets = async (req: Request, res: Response) => {
 
 export const getDiet = async (req: Request, res: Response) => {
   try {
-    if (!req.user || (!req.user.isAdmin && !req.user.isPersonal)) {
+    if (!req.user || req.user.isAdmin || req.user.isPersonal) {
       res.status(401).json({
         status: 'error',
         message:
@@ -98,10 +93,7 @@ export const getDiet = async (req: Request, res: Response) => {
       return
     }
 
-    const diet = await Diet.findById(req.user.diet_id)
-      .populate('criador', 'nome email')
-      .select('-__v')
-      .exec()
+    const diet = await Diet.findById(req.user.diet_id).exec()
 
     if (!diet) {
       res.status(404).json({
@@ -149,10 +141,7 @@ export const getDietById = async (req: Request, res: Response) => {
     if (req.params.id) find = { ...find, _id: req.params.id }
     if (req.user.isPersonal) find = { ...find, criador: req.user._id }
 
-    const diet = await Diet.findOne(find)
-      .populate('criador', 'nome email')
-      .select('-__v')
-      .exec()
+    const diet = await Diet.findOne(find).exec()
 
     if (!diet) {
       res.status(404).json({
@@ -190,10 +179,7 @@ export const updateDiet = async (req: Request, res: Response) => {
     if (req.params.id) find = { ...find, _id: req.params.id }
     if (req.user.isPersonal) find = { ...find, criador: req.user._id }
 
-    const diet = await Diet.findOne(find)
-      .populate('criador', 'nome email')
-      .select('-__v')
-      .exec()
+    const diet = await Diet.findOne(find).exec()
 
     if (!diet) {
       res.status(404).json({
@@ -216,9 +202,7 @@ export const updateDiet = async (req: Request, res: Response) => {
     const updated = await Diet.findByIdAndUpdate(req.params.id, parsed.data, {
       new: true,
       runValidators: true,
-    })
-      .populate('criador', 'nome email')
-      .exec()
+    }).exec()
 
     if (!updated) {
       res.status(404).json({

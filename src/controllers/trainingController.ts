@@ -2,37 +2,107 @@ import { Request, Response } from 'express'
 import Training from '../models/Training'
 import { trainingSchema } from '../validations/trainingSchema'
 
-export const getTraining = async (req: Request, res: Response) => {
-  if (!req.user) {
-    res.status(401).json({
-      status: 'error',
-      message: 'Usuário não autenticado',
-    })
-    return
-  }
-
+export const getAllTrainings = async (req: Request, res: Response) => {
   try {
-    if (req.params.id) {
-      const training = await Training.findById(req.params.id).exec()
-
-      if (!training) {
-        res.status(404).json({
-          status: 'error',
-          message: 'Dados de treinamento não encontrados',
-        })
-        return
-      }
-
-      res.status(200).json({
-        status: 'success',
-        message: 'Dados de treinamento recuperados com sucesso',
-        data: training,
+    if (!req.user || (!req.user.isAdmin && !req.user.isPersonal)) {
+      res.status(401).json({
+        status: 'error',
+        message:
+          'Usuário não autenticado ou sem permissão para acessar as dietas',
       })
+      return
+    }
 
+    let find = {}
+
+    if (req.user.isPersonal) find = { treinador: req.user._id }
+
+    console.log(find)
+
+    const training = await Training.find(find).sort({ createdAt: -1 }).exec()
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Dados de treinamento recuperados com sucesso',
+      data: training,
+    })
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Erro ao buscar dados de treinamento',
+    })
+  }
+}
+
+export const getTraining = async (req: Request, res: Response) => {
+  try {
+    if (!req.user || req.user.isAdmin || req.user.isPersonal) {
+      res.status(401).json({
+        status: 'error',
+        message:
+          'Usuário não autenticado ou sem permissão para acessar os dados de treinamento',
+      })
       return
     }
 
     const training = await Training.find({ user: req.user._id }).exec()
+
+    if (!training) {
+      res.status(404).json({
+        status: 'error',
+        message: 'Dados de treinamento não encontrados',
+      })
+      return
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Dados de treinamento recuperados com sucesso',
+      data: training,
+    })
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Erro ao buscar dados de treinamento',
+    })
+  }
+}
+
+export const getTrainingById = async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({
+        status: 'error',
+        message:
+          'Usuário não autenticado ou sem permissão para acessar os dados de treinamento',
+      })
+      return
+    }
+
+    const training = await Training.findById(req.params.id).exec()
+
+    if (!req.user.isAdmin && !req.user.isPersonal) {
+      if (
+        !training ||
+        !req.user._id ||
+        training.user.toString() !== req.user._id.toString()
+      ) {
+        res.status(403).json({
+          status: 'error',
+          message:
+            'Acesso negado. Você não tem permissão para acessar esses dados.',
+        })
+        return
+      }
+    }
+
+    if (!training) {
+      res.status(404).json({
+        status: 'error',
+        message: 'Dados de treinamento não encontrados',
+      })
+      return
+    }
 
     res.status(200).json({
       status: 'success',
@@ -108,20 +178,12 @@ export const postTraining = async (req: Request, res: Response) => {
 }
 
 export const putTraining = async (req: Request, res: Response) => {
-  if (!req.user) {
-    res.status(401).json({
-      status: 'error',
-      message: 'Usuário não autenticado',
-    })
-    return
-  }
-
   try {
-    if (!req.user.isAdmin) {
-      res.status(403).json({
+    if (!req.user || (!req.user.isAdmin && !req.user.isPersonal)) {
+      res.status(401).json({
         status: 'error',
         message:
-          'Acesso negado. Apenas administradores podem criar dados de treinamento.',
+          'Usuário não autenticado ou sem permissão para acessar os dados de treinamento',
       })
       return
     }

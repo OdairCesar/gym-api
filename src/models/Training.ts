@@ -21,7 +21,7 @@ const TrainingSchema: Schema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     nome: { type: String, required: true },
-    treinador: { type: String, required: true },
+    treinador: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     exercicios: [
       {
         nome: { type: String, required: true },
