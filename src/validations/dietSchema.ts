@@ -18,6 +18,7 @@ export const createDietSchema = z.object({
   carboidratos: z.number().optional(),
   gorduras: z.number().optional(),
   refeicoes: z.array(mealSchema).optional(),
+  criador: z.string().optional().nullable(),
 })
 
 export const updateDietSchema = createDietSchema.partial()
