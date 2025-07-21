@@ -4,7 +4,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc",
+    "build": "npm run clean && tsc",
+    "build:prod": "npm run clean && tsc --project tsconfig.prod.json && npm run secure",
+    "clean": "rimraf dist",
+    "secure": "npm run obfuscate && npm run compress",
+    "obfuscate": "javascript-obfuscator dist --output dist --compact true --control-flow-flattening true --dead-code-injection true --debug-protection true --disable-console-output true --string-array true --string-array-encoding base64",
+    "compress": "powershell -Command \"Get-ChildItem -Path dist -Filter *.js -Recurse | ForEach-Object { terser $_.FullName -c -m -o $_.FullName }\"",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "start": "node dist/server.js"
@@ -27,6 +32,9 @@
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.0.3",
+    "javascript-obfuscator": "^4.1.1",
+    "terser": "^5.36.0",
+    "rimraf": "^5.0.10",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   }

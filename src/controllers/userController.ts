@@ -108,6 +108,14 @@ export const getUserById = async (req: Request, res: Response) => {
       return
     }
 
+    if (!req.user.isAdmin && user.isAdmin) {
+      res.status(403).json({
+        status: 'error',
+        message: 'Acesso não autorizado',
+      })
+      return
+    }
+
     res.status(200).json({
       status: 'success',
       message: 'Usuário encontrado',
