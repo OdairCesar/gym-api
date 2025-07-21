@@ -139,14 +139,6 @@ export const getUsers = async (req: Request, res: Response) => {
       return
     }
 
-    if (!req.user?.isAdmin) {
-      res.status(403).json({
-        status: 'error',
-        message: 'Acesso não autorizado',
-      })
-      return
-    }
-
     const {
       name,
       email,
@@ -175,7 +167,11 @@ export const getUsers = async (req: Request, res: Response) => {
     if (sexo) query = { ...query, sexo }
     if (isPersonal !== undefined)
       query = { ...query, isPersonal: isPersonal === 'true' }
-    if (isAdmin !== undefined) query = { ...query, isAdmin: isAdmin === 'true' }
+
+    if (!req.user?.isAdmin) query = { isAdmin: false }
+    else if (isAdmin !== undefined)
+      query = { ...query, isAdmin: isAdmin === 'true' }
+
     if (isActive !== undefined)
       query = { ...query, isActive: isActive === 'true' }
 
