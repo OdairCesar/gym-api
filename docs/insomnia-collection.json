@@ -1,0 +1,1179 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-02-16T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_gym_api",
+      "_type": "workspace",
+      "name": "Gym API",
+      "description": "API para gerenciamento de academias, usuários, treinos, dietas e produtos",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3333",
+        "token": ""
+      },
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "folder_auth",
+      "_type": "request_group",
+      "name": "Auth",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_register",
+      "_type": "request",
+      "name": "Register",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/register",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"João Silva\",\n  \"email\": \"joao@example.com\",\n  \"password\": \"senha123\",\n  \"password_confirmation\": \"senha123\",\n  \"birthDate\": null,\n  \"phone\": null,\n  \"cpf\": null,\n  \"gender\": null,\n  \"profession\": null,\n  \"address\": null,\n  \"gymId\": null,\n  \"dietId\": null,\n  \"isAdmin\": false,\n  \"isPersonal\": false\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parentId": "folder_auth"
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "name": "Login",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"joao@example.com\",\n  \"password\": \"senha123\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parentId": "folder_auth"
+    },
+    {
+      "_id": "req_logout",
+      "_type": "request",
+      "name": "Logout",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/logout",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_auth"
+    },
+    {
+      "_id": "req_me",
+      "_type": "request",
+      "name": "Get Current User",
+      "method": "GET",
+      "url": "{{ _.base_url }}/auth/me",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_auth"
+    },
+    {
+      "_id": "folder_users",
+      "_type": "request_group",
+      "name": "Users",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_users_list",
+      "_type": "request",
+      "name": "List Users",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_users"
+    },
+    {
+      "_id": "req_users_show",
+      "_type": "request",
+      "name": "Show User",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_users"
+    },
+    {
+      "_id": "req_users_create",
+      "_type": "request",
+      "name": "Create User",
+      "method": "POST",
+      "url": "{{ _.base_url }}/users",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Maria Santos\",\n  \"email\": \"maria@example.com\",\n  \"password\": \"senha123\",\n  \"password_confirmation\": \"senha123\",\n  \"birthDate\": \"1990-05-15\",\n  \"phone\": \"11999887766\",\n  \"cpf\": \"12345678901\",\n  \"gender\": \"F\",\n  \"profession\": \"Personal Trainer\",\n  \"address\": \"Rua das Flores, 123\",\n  \"gymId\": 1,\n  \"dietId\": null,\n  \"isAdmin\": false,\n  \"isPersonal\": true\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_users"
+    },
+    {
+      "_id": "req_users_update",
+      "_type": "request",
+      "name": "Update User",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/users/1",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Maria Santos Atualizada\",\n  \"email\": \"maria.updated@example.com\",\n  \"phone\": \"11988776655\",\n  \"address\": \"Rua das Flores, 456\",\n  \"profession\": \"Nutricionista\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_users"
+    },
+    {
+      "_id": "req_users_delete",
+      "_type": "request",
+      "name": "Delete User",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/users/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_users"
+    },
+    {
+      "_id": "req_users_pending",
+      "_type": "request",
+      "name": "List Pending Users",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users/pending-users",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_users"
+    },
+    {
+      "_id": "req_users_approve",
+      "_type": "request",
+      "name": "Approve User",
+      "method": "POST",
+      "url": "{{ _.base_url }}/users/1/approve-user",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_users"
+    },
+    {
+      "_id": "req_users_reject",
+      "_type": "request",
+      "name": "Reject User",
+      "method": "POST",
+      "url": "{{ _.base_url }}/users/1/reject-user",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_users"
+    },
+    {
+      "_id": "folder_gyms",
+      "_type": "request_group",
+      "name": "Gyms",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_gyms_list",
+      "_type": "request",
+      "name": "List Gyms",
+      "method": "GET",
+      "url": "{{ _.base_url }}/gyms",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gyms"
+    },
+    {
+      "_id": "req_gyms_show",
+      "_type": "request",
+      "name": "Show Gym",
+      "method": "GET",
+      "url": "{{ _.base_url }}/gyms/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gyms"
+    },
+    {
+      "_id": "req_gyms_create",
+      "_type": "request",
+      "name": "Create Gym",
+      "method": "POST",
+      "url": "{{ _.base_url }}/gyms",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Academia Fitness\",\n  \"description\": \"Academia completa com equipamentos modernos\",\n  \"address\": \"Rua das Flores, 123\",\n  \"phone\": \"1133334444\",\n  \"email\": \"contato@academiafitness.com\",\n  \"cnpj\": \"12345678000190\",\n  \"published\": true\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gyms"
+    },
+    {
+      "_id": "req_gyms_update",
+      "_type": "request",
+      "name": "Update Gym",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/gyms/1",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Academia Fitness Pro\",\n  \"description\": \"Academia completa com equipamentos de última geração\",\n  \"address\": \"Rua das Flores, 123 - Sala 2\",\n  \"phone\": \"1133335555\",\n  \"published\": true\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gyms"
+    },
+    {
+      "_id": "req_gyms_delete",
+      "_type": "request",
+      "name": "Delete Gym",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/gyms/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gyms"
+    },
+    {
+      "_id": "req_gyms_stats",
+      "_type": "request",
+      "name": "Gym Stats",
+      "method": "GET",
+      "url": "{{ _.base_url }}/gyms/1/stats",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gyms"
+    },
+    {
+      "_id": "folder_diets",
+      "_type": "request_group",
+      "name": "Diets",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_diets_list",
+      "_type": "request",
+      "name": "List Diets",
+      "method": "GET",
+      "url": "{{ _.base_url }}/diets",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_diets"
+    },
+    {
+      "_id": "req_diets_show",
+      "_type": "request",
+      "name": "Show Diet",
+      "method": "GET",
+      "url": "{{ _.base_url }}/diets/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_diets"
+    },
+    {
+      "_id": "req_diets_create",
+      "_type": "request",
+      "name": "Create Diet",
+      "method": "POST",
+      "url": "{{ _.base_url }}/diets",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Dieta para Hipertrofia\",\n  \"description\": \"Dieta rica em proteínas para ganho de massa muscular\",\n  \"calories\": 3000,\n  \"proteins\": 200,\n  \"carbohydrates\": 350,\n  \"fats\": 80\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_diets"
+    },
+    {
+      "_id": "req_diets_update",
+      "_type": "request",
+      "name": "Update Diet",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/diets/1",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Dieta para Hipertrofia Avançada\",\n  \"description\": \"Dieta rica em proteínas para ganho de massa muscular - versão avançada\",\n  \"calories\": 3500,\n  \"proteins\": 250,\n  \"carbohydrates\": 400,\n  \"fats\": 90\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_diets"
+    },
+    {
+      "_id": "req_diets_delete",
+      "_type": "request",
+      "name": "Delete Diet",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/diets/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_diets"
+    },
+    {
+      "_id": "folder_meals",
+      "_type": "request_group",
+      "name": "Meals",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_meals_list",
+      "_type": "request",
+      "name": "List Meals",
+      "method": "GET",
+      "url": "{{ _.base_url }}/diets/1/meals",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_meals"
+    },
+    {
+      "_id": "req_meals_show",
+      "_type": "request",
+      "name": "Show Meal",
+      "method": "GET",
+      "url": "{{ _.base_url }}/diets/1/meals/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_meals"
+    },
+    {
+      "_id": "req_meals_create",
+      "_type": "request",
+      "name": "Create Meal",
+      "method": "POST",
+      "url": "{{ _.base_url }}/diets/1/meals",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Café da Manhã\",\n  \"hourly\": \"08:00\",\n  \"description\": \"Primeira refeição do dia\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_meals"
+    },
+    {
+      "_id": "req_meals_update",
+      "_type": "request",
+      "name": "Update Meal",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/diets/1/meals/1",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Café da Manhã Reforçado\",\n  \"hourly\": \"07:30\",\n  \"description\": \"Primeira refeição do dia - versão reforçada\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_meals"
+    },
+    {
+      "_id": "req_meals_delete",
+      "_type": "request",
+      "name": "Delete Meal",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/diets/1/meals/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_meals"
+    },
+    {
+      "_id": "folder_foods",
+      "_type": "request_group",
+      "name": "Foods",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_foods_list",
+      "_type": "request",
+      "name": "List Foods",
+      "method": "GET",
+      "url": "{{ _.base_url }}/meals/1/foods",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_foods"
+    },
+    {
+      "_id": "req_foods_show",
+      "_type": "request",
+      "name": "Show Food",
+      "method": "GET",
+      "url": "{{ _.base_url }}/meals/1/foods/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_foods"
+    },
+    {
+      "_id": "req_foods_create",
+      "_type": "request",
+      "name": "Create Food",
+      "method": "POST",
+      "url": "{{ _.base_url }}/meals/1/foods",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Ovo\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_foods"
+    },
+    {
+      "_id": "req_foods_update",
+      "_type": "request",
+      "name": "Update Food",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/meals/1/foods/1",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Ovos Mexidos\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_foods"
+    },
+    {
+      "_id": "req_foods_delete",
+      "_type": "request",
+      "name": "Delete Food",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/meals/1/foods/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_foods"
+    },
+    {
+      "_id": "folder_trainings",
+      "_type": "request_group",
+      "name": "Trainings",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_trainings_list",
+      "_type": "request",
+      "name": "List Trainings",
+      "method": "GET",
+      "url": "{{ _.base_url }}/trainings",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_trainings"
+    },
+    {
+      "_id": "req_trainings_show",
+      "_type": "request",
+      "name": "Show Training",
+      "method": "GET",
+      "url": "{{ _.base_url }}/trainings/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_trainings"
+    },
+    {
+      "_id": "req_trainings_create",
+      "_type": "request",
+      "name": "Create Training",
+      "method": "POST",
+      "url": "{{ _.base_url }}/trainings",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Treino A - Peito e Tríceps\",\n  \"description\": \"Treino focado em peitoral e tríceps\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_trainings"
+    },
+    {
+      "_id": "req_trainings_update",
+      "_type": "request",
+      "name": "Update Training",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/trainings/1",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Treino A - Peito, Tríceps e Ombro\",\n  \"description\": \"Treino focado em peitoral, tríceps e ombro\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_trainings"
+    },
+    {
+      "_id": "req_trainings_delete",
+      "_type": "request",
+      "name": "Delete Training",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/trainings/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_trainings"
+    },
+    {
+      "_id": "req_trainings_add_exercise",
+      "_type": "request",
+      "name": "Add Exercise to Training",
+      "method": "POST",
+      "url": "{{ _.base_url }}/trainings/1/exercises",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"exercise_id\": 1\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_trainings"
+    },
+    {
+      "_id": "req_trainings_remove_exercise",
+      "_type": "request",
+      "name": "Remove Exercise from Training",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/trainings/1/exercises/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_trainings"
+    },
+    {
+      "_id": "folder_exercises",
+      "_type": "request_group",
+      "name": "Exercises",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_exercises_list",
+      "_type": "request",
+      "name": "List Exercises",
+      "method": "GET",
+      "url": "{{ _.base_url }}/exercises",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_exercises"
+    },
+    {
+      "_id": "req_exercises_show",
+      "_type": "request",
+      "name": "Show Exercise",
+      "method": "GET",
+      "url": "{{ _.base_url }}/exercises/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_exercises"
+    },
+    {
+      "_id": "req_exercises_create",
+      "_type": "request",
+      "name": "Create Exercise",
+      "method": "POST",
+      "url": "{{ _.base_url }}/exercises",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Supino Reto\",\n  \"reps\": \"3x12\",\n  \"type\": \"musculacao\",\n  \"weight\": 60,\n  \"rest_seconds\": 90,\n  \"video_link\": null,\n  \"priority\": 1\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_exercises"
+    },
+    {
+      "_id": "req_exercises_update",
+      "_type": "request",
+      "name": "Update Exercise",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/exercises/1",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Supino Reto com Barra\",\n  \"reps\": \"4x10\",\n  \"type\": \"musculacao\",\n  \"weight\": 70,\n  \"rest_seconds\": 120,\n  \"video_link\": \"https://www.youtube.com/watch?v=exemplo\",\n  \"priority\": 1\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_exercises"
+    },
+    {
+      "_id": "req_exercises_delete",
+      "_type": "request",
+      "name": "Delete Exercise",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/exercises/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_exercises"
+    },
+    {
+      "_id": "folder_products",
+      "_type": "request_group",
+      "name": "Products",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_products_list",
+      "_type": "request",
+      "name": "List Products",
+      "method": "GET",
+      "url": "{{ _.base_url }}/products",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_products"
+    },
+    {
+      "_id": "req_products_show",
+      "_type": "request",
+      "name": "Show Product",
+      "method": "GET",
+      "url": "{{ _.base_url }}/products/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_products"
+    },
+    {
+      "_id": "req_products_create",
+      "_type": "request",
+      "name": "Create Product",
+      "method": "POST",
+      "url": "{{ _.base_url }}/products",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Whey Protein\",\n  \"description\": \"Whey Protein concentrado 1kg\",\n  \"price\": 89.90,\n  \"stock\": 50,\n  \"image_link\": null,\n  \"category\": \"Suplementos\",\n  \"code\": \"WHEY001\",\n  \"published\": true\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_products"
+    },
+    {
+      "_id": "req_products_update",
+      "_type": "request",
+      "name": "Update Product",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/products/1",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Whey Protein Premium\",\n  \"description\": \"Whey Protein isolado 1kg\",\n  \"price\": 129.90,\n  \"category\": \"Suplementos Premium\",\n  \"code\": \"WHEY002\",\n  \"published\": true\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_products"
+    },
+    {
+      "_id": "req_products_delete",
+      "_type": "request",
+      "name": "Delete Product",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/products/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_products"
+    },
+    {
+      "_id": "req_products_update_stock",
+      "_type": "request",
+      "name": "Update Product Stock",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/products/1/stock",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"stock\": 75\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_products"
+    },
+    {
+      "_id": "folder_gym_permissions",
+      "_type": "request_group",
+      "name": "Gym Permissions",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_gym_permissions_list",
+      "_type": "request",
+      "name": "List Gym Permissions",
+      "method": "GET",
+      "url": "{{ _.base_url }}/gym-permissions",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gym_permissions"
+    },
+    {
+      "_id": "req_gym_permissions_my",
+      "_type": "request",
+      "name": "My Gym Permissions",
+      "method": "GET",
+      "url": "{{ _.base_url }}/gym-permissions/my-permissions",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gym_permissions"
+    },
+    {
+      "_id": "req_gym_permissions_show",
+      "_type": "request",
+      "name": "Show Gym Permission",
+      "method": "GET",
+      "url": "{{ _.base_url }}/gym-permissions/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gym_permissions"
+    },
+    {
+      "_id": "req_gym_permissions_create",
+      "_type": "request",
+      "name": "Create Gym Permission",
+      "method": "POST",
+      "url": "{{ _.base_url }}/gym-permissions",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"gym_id\": 1,\n  \"action\": \"manage_products\",\n  \"resource\": \"products\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gym_permissions"
+    },
+    {
+      "_id": "req_gym_permissions_update",
+      "_type": "request",
+      "name": "Update Gym Permission",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/gym-permissions/1",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"action\": \"manage_all\",\n  \"resource\": \"*\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gym_permissions"
+    },
+    {
+      "_id": "req_gym_permissions_delete",
+      "_type": "request",
+      "name": "Delete Gym Permission",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/gym-permissions/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_gym_permissions"
+    },
+    {
+      "_id": "folder_user_permissions",
+      "_type": "request_group",
+      "name": "User Permissions",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_user_permissions_list",
+      "_type": "request",
+      "name": "List User Permissions",
+      "method": "GET",
+      "url": "{{ _.base_url }}/user-permissions",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_user_permissions"
+    },
+    {
+      "_id": "req_user_permissions_granted",
+      "_type": "request",
+      "name": "Permissions Granted To Me",
+      "method": "GET",
+      "url": "{{ _.base_url }}/user-permissions/granted-to-me",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_user_permissions"
+    },
+    {
+      "_id": "req_user_permissions_show",
+      "_type": "request",
+      "name": "Show User Permission",
+      "method": "GET",
+      "url": "{{ _.base_url }}/user-permissions/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_user_permissions"
+    },
+    {
+      "_id": "req_user_permissions_create",
+      "_type": "request",
+      "name": "Create User Permission",
+      "method": "POST",
+      "url": "{{ _.base_url }}/user-permissions",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"user_id\": 2,\n  \"granted_by_id\": 1,\n  \"action\": \"view_training\",\n  \"resource\": \"trainings\",\n  \"resource_id\": 1\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_user_permissions"
+    },
+    {
+      "_id": "req_user_permissions_update",
+      "_type": "request",
+      "name": "Update User Permission",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/user-permissions/1",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"action\": \"edit_training\",\n  \"resource\": \"trainings\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_user_permissions"
+    },
+    {
+      "_id": "req_user_permissions_delete",
+      "_type": "request",
+      "name": "Delete User Permission",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/user-permissions/1",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parentId": "folder_user_permissions"
+    },
+    {
+      "_id": "folder_health",
+      "_type": "request_group",
+      "name": "Health & Docs",
+      "parentId": "wrk_gym_api"
+    },
+    {
+      "_id": "req_health_check",
+      "_type": "request",
+      "name": "Health Check",
+      "method": "GET",
+      "url": "{{ _.base_url }}/",
+      "parentId": "folder_health"
+    },
+    {
+      "_id": "req_swagger_json",
+      "_type": "request",
+      "name": "Swagger JSON",
+      "method": "GET",
+      "url": "{{ _.base_url }}/swagger.json",
+      "parentId": "folder_health"
+    }
+  ]
+}
