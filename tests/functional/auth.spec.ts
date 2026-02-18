@@ -22,8 +22,7 @@ test.group('Auth - Register', (group) => {
         name: 'John Doe',
         email: 'john@example.com',
         gym_id: 1,
-        is_admin: false,
-        is_personal: false,
+        role: 'user',
       },
     })
 

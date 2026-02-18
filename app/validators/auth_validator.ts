@@ -37,8 +37,7 @@ export const registerValidator = vine.compile(
         const gym = await db.from('gyms').where('id', value).first()
         return !!gym
       }),
-    isAdmin: vine.boolean().optional(),
-    isPersonal: vine.boolean().optional(),
+    role: vine.enum(['admin', 'personal', 'user']).optional(),
   })
 )
 

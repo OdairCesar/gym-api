@@ -23,8 +23,8 @@ export default class extends BaseSchema {
       table.integer('grantee_id').unsigned().notNullable()
 
       // Tipos de permissão
-      table.boolean('can_edit_diet').notNullable().defaultTo(false)
-      table.boolean('can_edit_training').notNullable().defaultTo(false)
+      table.boolean('can_edit_diets').notNullable().defaultTo(false)
+      table.boolean('can_edit_trainings').notNullable().defaultTo(false)
 
       table.boolean('is_active').notNullable().defaultTo(true)
 

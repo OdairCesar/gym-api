@@ -77,8 +77,11 @@ router
 router
   .group(() => {
     router.get('/', [DietsController, 'index'])
+    // /shared antes de /:id para evitar conflito de rota
+    router.get('/shared', [DietsController, 'shared'])
     router.get('/:id', [DietsController, 'show'])
     router.post('/', [DietsController, 'create'])
+    router.post('/:id/clone', [DietsController, 'clone'])
     router.put('/:id', [DietsController, 'update'])
     router.patch('/:id', [DietsController, 'update'])
     router.delete('/:id', [DietsController, 'destroy'])
@@ -128,8 +131,11 @@ router
 router
   .group(() => {
     router.get('/', [TrainingsController, 'index'])
+    // /shared antes de /:id para evitar conflito de rota
+    router.get('/shared', [TrainingsController, 'shared'])
     router.get('/:id', [TrainingsController, 'show'])
     router.post('/', [TrainingsController, 'create'])
+    router.post('/:id/clone', [TrainingsController, 'clone'])
     router.put('/:id', [TrainingsController, 'update'])
     router.patch('/:id', [TrainingsController, 'update'])
     router.delete('/:id', [TrainingsController, 'destroy'])

@@ -45,10 +45,9 @@ export const createUserValidator = vine.compile(
         const diet = await db.from('diets').where('id', value).first()
         return !!diet
       })
-      .optional()      .nullable(),
-    isAdmin: vine.boolean().optional(),
-    isPersonal: vine.boolean().optional(),
-    isSuper: vine.boolean().optional(),
+      .optional()
+      .nullable(),
+    role: vine.enum(['super', 'admin', 'personal', 'user']).optional(),
     published: vine.boolean().optional(),
   })
 )
@@ -110,8 +109,7 @@ export const updateUserValidator = vine.compile(
       })
       .optional()
       .nullable(),
-    isAdmin: vine.boolean().optional(),
-    isPersonal: vine.boolean().optional(),
+    role: vine.enum(['admin', 'personal', 'user']).optional(),
     published: vine.boolean().optional(),
   })
 )

@@ -16,11 +16,11 @@ export default class UserPermission extends BaseModel {
   @column({ columnName: 'grantee_id' })
   declare grantee_id: number
 
-  @column({ columnName: 'can_edit_diet' })
-  declare can_edit_diet: boolean
+  @column({ columnName: 'can_edit_diets' })
+  declare can_edit_diets: boolean
 
-  @column({ columnName: 'can_edit_training' })
-  declare can_edit_training: boolean
+  @column({ columnName: 'can_edit_trainings' })
+  declare can_edit_trainings: boolean
 
   @column({ columnName: 'is_active' })
   declare is_active: boolean

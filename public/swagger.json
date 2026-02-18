@@ -73,17 +73,11 @@
             "nullable": true
           },
           "gym_id": {
-            "type": "integer",
-            "nullable": true
+            "type": "integer"
           },
-          "is_admin": {
-            "type": "boolean"
-          },
-          "is_personal": {
-            "type": "boolean"
-          },
-          "is_super": {
-            "type": "boolean"
+          "role": {
+            "type": "string",
+            "enum": ["super", "admin", "personal", "user"]
           },
           "approved": {
             "type": "boolean"
@@ -177,6 +171,9 @@
             "type": "integer",
             "nullable": true
           },
+          "is_reusable": {
+            "type": "boolean"
+          },
           "created_at": {
             "type": "string",
             "format": "date-time"
@@ -207,6 +204,9 @@
           },
           "gym_id": {
             "type": "integer"
+          },
+          "is_reusable": {
+            "type": "boolean"
           },
           "created_at": {
             "type": "string",

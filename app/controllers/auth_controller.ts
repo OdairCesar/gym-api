@@ -31,9 +31,7 @@ export default class AuthController {
       profession: data.profession,
       address: data.address,
       gym_id: data.gymId,
-      is_admin: data.isAdmin || false,
-      is_personal: data.isPersonal || false,
-      is_super: false, // Never set via register
+      role: (data.role as any) || 'user', // super não pode ser definido via registro
       approved: approved,
       published: true,
     })
@@ -50,9 +48,7 @@ export default class AuthController {
         name: user.name,
         email: user.email,
         gym_id: user.gym_id,
-        is_admin: user.is_admin,
-        is_personal: user.is_personal,
-        is_super: user.is_super,
+        role: user.role,
         approved: user.approved,
       },
       token: token.value!.release(),
@@ -92,9 +88,7 @@ export default class AuthController {
         name: user.name,
         email: user.email,
         gym_id: user.gym_id,
-        is_admin: user.is_admin,
-        is_personal: user.is_personal,
-        is_super: user.is_super,
+        role: user.role,
       },
       token: token.value!.release(),
     })
@@ -142,9 +136,7 @@ export default class AuthController {
         address: user.address,
         gym_id: user.gym_id,
         diet_id: user.diet_id,
-        is_admin: user.is_admin,
-        is_personal: user.is_personal,
-        is_super: user.is_super,
+        role: user.role,
         approved: user.approved,
         published: user.published,
         gym: user.gym

@@ -27,13 +27,13 @@ export default class UsersController {
     query = query.where('gym_id', currentUser.gym_id)
 
     // Filter by type if provided
-    const type = request.input('type') // 'admin', 'personal', 'client'
+    const type = request.input('type') // 'admin', 'personal', 'user'
     if (type === 'admin') {
-      query = query.where('is_admin', true)
+      query = query.where('role', 'admin')
     } else if (type === 'personal') {
-      query = query.where('is_personal', true)
+      query = query.where('role', 'personal')
     } else if (type === 'client') {
-      query = query.where('is_admin', false).where('is_personal', false)
+      query = query.where('role', 'user')
     }
 
     // Filter by published status
@@ -103,13 +103,16 @@ export default class UsersController {
     let approvedAt = null
 
     // Super users can create approved users
-    if (currentUser.is_super) {
+    if (currentUser.role === 'super') {
       approved = true
       approvedBy = currentUser.id
       approvedAt = DateTime.now()
     }
     // Approved admins or personals can create approved users in their gym
-    else if ((currentUser.is_admin || currentUser.is_personal) && currentUser.approved) {
+    else if (
+      (currentUser.role === 'admin' || currentUser.role === 'personal') &&
+      currentUser.approved
+    ) {
       approved = true
       approvedBy = currentUser.id
       approvedAt = DateTime.now()
@@ -129,9 +132,7 @@ export default class UsersController {
       address: data.address,
       gym_id: data.gymId,
       diet_id: data.dietId,
-      is_admin: data.isAdmin || false,
-      is_personal: data.isPersonal || false,
-      is_super: false, // Never allow creating super users via API
+      role: (data.role as any) || 'user',
       approved: approved,
       approved_by: approvedBy,
       approved_at: approvedAt,
@@ -172,10 +173,9 @@ export default class UsersController {
     // Never allow changing gym_id (multi-tenant - users are bound to their gym)
     delete data.gymId
 
-    // Prevent changing admin/personal status unless admin or super
-    if (!currentUser.is_admin && !currentUser.is_super) {
-      delete data.isAdmin
-      delete data.isPersonal
+    // Prevent changing role unless admin or super
+    if (currentUser.role !== 'admin' && currentUser.role !== 'super') {
+      delete data.role
     }
 
     // Update user
@@ -191,9 +191,7 @@ export default class UsersController {
       address: data.address,
       gym_id: data.gymId,
       diet_id: data.dietId,
-      is_admin: data.isAdmin,
-      is_personal: data.isPersonal,
-      // is_super is intentionally not updated - cannot be changed via API
+      role: data.role as any,
       published: data.published,
     })
 
@@ -237,9 +235,12 @@ export default class UsersController {
     logger.info(`Listing pending users: user ${currentUser.id}`)
 
     // Only approved admins/personals and supers can see pending users
-    if (currentUser.is_super) {
+    if (currentUser.role === 'super') {
       // Super can see all
-    } else if ((currentUser.is_admin || currentUser.is_personal) && currentUser.approved) {
+    } else if (
+      (currentUser.role === 'admin' || currentUser.role === 'personal') &&
+      currentUser.approved
+    ) {
       // Approved admins/personals can see from their gym
     } else {
       return response.forbidden({
@@ -250,7 +251,7 @@ export default class UsersController {
     // Supers can see all pending users, others only from their gym
     let query = User.query().where('approved', false).preload('gym')
 
-    if (!currentUser.is_super) {
+    if (currentUser.role !== 'super') {
       query = query.where('gym_id', currentUser.gym_id)
     }
 
@@ -271,9 +272,12 @@ export default class UsersController {
     logger.info(`Approving user: ${user.id} by user ${currentUser.id}`)
 
     // Only approved admins/personals of the same gym or supers can approve
-    if (currentUser.is_super) {
+    if (currentUser.role === 'super') {
       // Super can approve any user
-    } else if ((currentUser.is_admin || currentUser.is_personal) && currentUser.approved) {
+    } else if (
+      (currentUser.role === 'admin' || currentUser.role === 'personal') &&
+      currentUser.approved
+    ) {
       // Admin/personal can only approve from their gym
       if (user.gym_id !== currentUser.gym_id) {
         return response.forbidden({ message: 'You can only approve users from your gym' })
@@ -316,9 +320,12 @@ export default class UsersController {
     logger.info(`Rejecting user: ${user.id} by user ${currentUser.id}`)
 
     // Only approved admins/personals of the same gym or supers can reject
-    if (currentUser.is_super) {
+    if (currentUser.role === 'super') {
       // Super can reject any user
-    } else if ((currentUser.is_admin || currentUser.is_personal) && currentUser.approved) {
+    } else if (
+      (currentUser.role === 'admin' || currentUser.role === 'personal') &&
+      currentUser.approved
+    ) {
       // Admin/personal can only reject from their gym
       if (user.gym_id !== currentUser.gym_id) {
         return response.forbidden({ message: 'You can only reject users from your gym' })

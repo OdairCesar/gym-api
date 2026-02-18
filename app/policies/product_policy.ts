@@ -1,52 +1,30 @@
-import User from '#models/user'
+import User, { UserRole } from '#models/user'
 import Product from '#models/product'
 import { BasePolicy } from '@adonisjs/bouncer'
 import { AuthorizerResponse } from '@adonisjs/bouncer/types'
 
 export default class ProductPolicy extends BasePolicy {
-  /**
-   * Usuários podem ver produtos (filtrado por gym_id no controller)
-   */
   index(_user: User): AuthorizerResponse {
     return true
   }
 
-  /**
-   * Usuários podem ver produtos da sua academia
-   */
   show(user: User, product: Product): AuthorizerResponse {
-    // Só pode ver produtos da sua academia
+    if (user.role === UserRole.SUPER) return true
     return user.gym_id === product.gym_id
   }
 
-  /**
-   * Apenas admins e personals podem criar produtos (na sua academia)
-   */
   create(user: User): AuthorizerResponse {
-    return user.is_admin || user.is_personal
+    if (user.role === UserRole.SUPER) return true
+    return user.role === UserRole.ADMIN || user.role === UserRole.PERSONAL
   }
 
-  /**
-   * Apenas admins e personals podem atualizar produtos DA SUA ACADEMIA
-   */
   update(user: User, product: Product): AuthorizerResponse {
-    // Precisa ser da mesma academia
-    if (user.gym_id !== product.gym_id) {
-      return false
-    }
-
-    return user.is_admin || user.is_personal
+    if (user.role === UserRole.SUPER) return true
+    if (user.gym_id !== product.gym_id) return false
+    return user.role === UserRole.ADMIN || user.role === UserRole.PERSONAL
   }
 
-  /**
-   * Apenas admins e personals podem deletar produtos DA SUA ACADEMIA
-   */
   delete(user: User, product: Product): AuthorizerResponse {
-    // Precisa ser da mesma academia
-    if (user.gym_id !== product.gym_id) {
-      return false
-    }
-
-    return user.is_admin || user.is_personal
+    return this.update(user, product)
   }
 }

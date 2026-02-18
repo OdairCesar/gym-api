@@ -9,6 +9,14 @@ import Training from './training.js'
 import Diet from './diet.js'
 import Gym from './gym.js'
 
+export const UserRole = {
+  SUPER: 'super',
+  ADMIN: 'admin',
+  PERSONAL: 'personal',
+  USER: 'user',
+} as const
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
   passwordColumnName: 'password',
@@ -51,14 +59,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare diet_id: number | null
 
-  @column({ columnName: 'is_admin' })
-  declare is_admin: boolean
-
-  @column({ columnName: 'is_personal' })
-  declare is_personal: boolean
-
-  @column({ columnName: 'is_super' })
-  declare is_super: boolean
+  @column()
+  declare role: UserRole
 
   @column()
   declare approved: boolean
@@ -96,66 +98,12 @@ export default class User extends compose(BaseModel, AuthFinder) {
   static accessTokens = DbAccessTokensProvider.forModel(User)
 
   /**
-   * Helper methods para verificação de permissões
-   */
-
-  /**
-   * Verifica se o usuário é um usuário comum (sem privilégios especiais)
-   */
-  isCommonUser(): boolean {
-    return !this.is_admin && !this.is_personal && !this.is_super
-  }
-
-  /**
    * Verifica se o usuário pode fazer login (está aprovado)
+   * Super sempre pode; outros precisam estar aprovados.
    */
   canLogin(): boolean {
-    // Super users sempre podem fazer login
-    if (this.is_super) {
-      return true
-    }
-    // Outros usuários precisam estar aprovados
+    if (this.role === UserRole.SUPER) return true
     return this.approved
-  }
-
-  /**
-   * Verifica se pode editar um recurso baseado no creator_id
-   */
-  canEditResource(creatorId: number | null): boolean {
-    if (this.is_admin) {
-      return true
-    }
-
-    if (this.is_personal && creatorId === this.id) {
-      return true
-    }
-
-    return false
-  }
-
-  /**
-   * Verifica se pode editar outro usuário
-   */
-  canEditUser(targetUser: User): boolean {
-    if (this.is_admin) {
-      return true
-    }
-
-    if (this.is_personal) {
-      return !targetUser.is_admin && !targetUser.is_personal
-    }
-
-    return false
-  }
-
-  /**
-   * Retorna o tipo de usuário como string
-   */
-  getUserType(): 'super' | 'admin' | 'personal' | 'user' {
-    if (this.is_super) return 'super'
-    if (this.is_admin) return 'admin'
-    if (this.is_personal) return 'personal'
-    return 'user'
   }
 
   /**
@@ -170,62 +118,5 @@ export default class User extends compose(BaseModel, AuthFinder) {
    */
   belongsToGym(gymId: number): boolean {
     return this.gym_id === gymId
-  }
-
-  /**
-   * Verifica se pode editar um recurso considerando multi-tenant
-   * - Supers podem editar tudo
-   * - Admins podem editar tudo da sua academia
-   * - Personals podem editar recursos que criaram na sua academia
-   */
-  canEditResourceInGym(creatorId: number | null, resourceGymId: number): boolean {
-    // Super pode editar tudo
-    if (this.is_super) {
-      return true
-    }
-
-    // Precisa ser da mesma academia ou ter permissões especiais
-    if (resourceGymId !== this.gym_id) {
-      return false
-    }
-
-    if (this.is_admin) {
-      return true
-    }
-
-    if (this.is_personal && creatorId === this.id) {
-      return true
-    }
-
-    return false
-  }
-
-  /**
-   * Verifica se pode editar outro usuário considerando multi-tenant
-   * - Supers podem editar qualquer usuário
-   * - Só pode editar usuários da mesma academia
-   * - Admins podem editar qualquer um da sua academia
-   * - Personals podem editar apenas users comuns da sua academia
-   */
-  canEditUserInGym(targetUser: User): boolean {
-    // Super pode editar qualquer um
-    if (this.is_super) {
-      return true
-    }
-
-    // Precisa ser da mesma academia
-    if (!this.isInSameGym(targetUser)) {
-      return false
-    }
-
-    if (this.is_admin) {
-      return true
-    }
-
-    if (this.is_personal) {
-      return !targetUser.is_admin && !targetUser.is_personal
-    }
-
-    return false
   }
 }

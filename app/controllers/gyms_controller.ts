@@ -35,7 +35,7 @@ export default class GymsController {
     logger.info(`Creating new gym: by user ${currentUser.id}`)
 
     // Only super users can create gyms
-    if (!currentUser.is_super) {
+    if (currentUser.role !== 'super') {
       return response.forbidden({ message: 'Only super users can create gyms' })
     }
 
@@ -85,7 +85,10 @@ export default class GymsController {
     logger.info(`Updating gym: ${gym.id} by user ${currentUser.id}`)
 
     // Only admin of this specific gym can update
-    if (!currentUser.is_admin || gym.id !== currentUser.gym_id) {
+    if (
+      (currentUser.role !== 'admin' && currentUser.role !== 'super') ||
+      gym.id !== currentUser.gym_id
+    ) {
       return response.forbidden({ message: 'Only the gym admin can update gym details' })
     }
 
@@ -132,8 +135,8 @@ export default class GymsController {
     const currentUser = auth.getUserOrFail()
     logger.info(`Deleting gym: ${params.id} by user ${currentUser.id}`)
 
-    // Only admin can delete gym (in production, restrict to super admin)
-    if (!currentUser.is_admin) {
+    // Only admin can delete gym
+    if (currentUser.role !== 'admin' && currentUser.role !== 'super') {
       return response.forbidden({ message: 'Only admins can delete gyms' })
     }
 
@@ -170,7 +173,7 @@ export default class GymsController {
       .firstOrFail()
 
     // Only admin of this gym can see stats
-    if (!currentUser.is_admin || gym.id !== currentUser.gym_id) {
+    if (currentUser.role !== 'admin' || gym.id !== currentUser.gym_id) {
       return response.forbidden({ message: 'Only the gym admin can view statistics' })
     }
 
@@ -180,9 +183,9 @@ export default class GymsController {
         name: gym.name,
       },
       totalUsers: gym.users.length,
-      totalClients: gym.users.filter((u) => !u.is_admin && !u.is_personal).length,
-      totalPersonals: gym.users.filter((u) => u.is_personal).length,
-      totalAdmins: gym.users.filter((u) => u.is_admin).length,
+      totalClients: gym.users.filter((u) => u.role === 'user').length,
+      totalPersonals: gym.users.filter((u) => u.role === 'personal').length,
+      totalAdmins: gym.users.filter((u) => u.role === 'admin').length,
       totalDiets: gym.diets.length,
       totalTrainings: gym.trainings.length,
       totalProducts: gym.products.length,

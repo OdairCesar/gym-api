@@ -33,6 +33,9 @@ export default class Diet extends BaseModel {
   @column()
   declare creator_id: number | null
 
+  @column()
+  declare is_reusable: boolean
+
   @column.dateTime({ autoCreate: true, columnName: 'created_at' })
   declare created_at: DateTime
 

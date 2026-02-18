@@ -3,62 +3,73 @@ import { createExerciseValidator, updateExerciseValidator } from '#validators/ex
 import { HttpContext } from '@adonisjs/core/http'
 import logger from '@adonisjs/core/services/logger'
 
+/** Campos retornados quando o usuário é cliente */
+function serializeExerciseLimited(exercise: Exercise) {
+  return {
+    id: exercise.id,
+    name: exercise.name,
+    type: exercise.type,
+    _access: 'limited' as const,
+  }
+}
+
 export default class ExercisesController {
   /**
    * List all exercises
+   * Admins e personals recebem dados completos; clientes recebem payload limited.
    * GET /exercises
    */
   async index({ auth, request, response }: HttpContext) {
     const currentUser = auth.getUserOrFail()
     logger.info(`Listing exercises: user ${currentUser.id}`)
 
-    // Only admin and personal can manage exercises
-    if (!currentUser.is_admin && !currentUser.is_personal) {
-      return response.forbidden({ message: 'Only admins and personals can view exercises' })
-    }
-
-    // Pagination
     const page = request.input('page', 1)
     const limit = request.input('limit', 50)
-
-    // Search
     const search = request.input('search')
+    const type = request.input('type')
+
     let query = Exercise.query()
 
     if (search) {
       query = query.whereILike('name', `%${search}%`)
     }
-
-    // Filter by type
-    const type = request.input('type')
     if (type) {
       query = query.where('type', type)
     }
 
     const exercises = await query.orderBy('name', 'asc').paginate(page, limit)
+    const list = exercises.all()
+
+    const isFullUser = currentUser.role === 'admin' || currentUser.role === 'personal'
+    const serialized = list.map((ex) =>
+      isFullUser ? { ...ex.serialize(), _access: 'full' } : serializeExerciseLimited(ex)
+    )
 
     return response.ok({
-      data: exercises.serialize(),
+      data: {
+        data: serialized,
+        meta: exercises.getMeta(),
+      },
     })
   }
 
   /**
    * Get single exercise by ID
+   * Admins e personals recebem dados completos; clientes recebem payload limited.
    * GET /exercises/:id
    */
   async show({ auth, params, response }: HttpContext) {
     const currentUser = auth.getUserOrFail()
     logger.info(`Fetching exercise details: exercise ${params.id}, user ${currentUser.id}`)
 
-    // Only admin and personal can manage exercises
-    if (!currentUser.is_admin && !currentUser.is_personal) {
-      return response.forbidden({ message: 'Only admins and personals can view exercises' })
-    }
-
     const exercise = await Exercise.findOrFail(params.id)
 
+    const isFullUser = currentUser.role === 'admin' || currentUser.role === 'personal'
+
     return response.ok({
-      data: exercise.serialize(),
+      data: isFullUser
+        ? { ...exercise.serialize(), _access: 'full' }
+        : serializeExerciseLimited(exercise),
     })
   }
 
@@ -71,7 +82,7 @@ export default class ExercisesController {
     logger.info(`Creating new exercise: user ${currentUser.id}`)
 
     // Only admin and personal can create exercises
-    if (!currentUser.is_admin && !currentUser.is_personal) {
+    if (currentUser.role !== 'admin' && currentUser.role !== 'personal') {
       return response.forbidden({ message: 'Only admins and personals can create exercises' })
     }
 
@@ -105,7 +116,7 @@ export default class ExercisesController {
     const currentUser = auth.getUserOrFail()
 
     // Only admin can update exercises (shared resource)
-    if (!currentUser.is_admin) {
+    if (currentUser.role !== 'admin') {
       return response.forbidden({ message: 'Only admins can update exercises' })
     }
 
@@ -141,7 +152,7 @@ export default class ExercisesController {
     const currentUser = auth.getUserOrFail()
 
     // Only admin can delete exercises (shared resource)
-    if (!currentUser.is_admin) {
+    if (currentUser.role !== 'admin') {
       return response.forbidden({ message: 'Only admins can delete exercises' })
     }
 

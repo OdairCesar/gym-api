@@ -7,8 +7,8 @@ export const createUserPermissionValidator = vine.compile(
   vine.object({
     granteeType: vine.enum(['gym', 'personal']),
     granteeId: vine.number().positive(),
-    canEditDiet: vine.boolean().optional(),
-    canEditTraining: vine.boolean().optional(),
+    canEditDiets: vine.boolean().optional(),
+    canEditTrainings: vine.boolean().optional(),
   })
 )
 
@@ -17,8 +17,8 @@ export const createUserPermissionValidator = vine.compile(
  */
 export const updateUserPermissionValidator = vine.compile(
   vine.object({
-    canEditDiet: vine.boolean().optional(),
-    canEditTraining: vine.boolean().optional(),
+    canEditDiets: vine.boolean().optional(),
+    canEditTrainings: vine.boolean().optional(),
     isActive: vine.boolean().optional(),
   })
 )

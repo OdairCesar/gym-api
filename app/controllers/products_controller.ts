@@ -36,13 +36,15 @@ export default class ProductsController {
     }
 
     // Filter by published status (only for admins/personals)
-    if (published !== undefined && (currentUser.is_admin || currentUser.is_personal)) {
+    const isStaff =
+      currentUser.role === 'admin' ||
+      currentUser.role === 'personal' ||
+      currentUser.role === 'super'
+    if (published !== undefined && isStaff) {
       query = query.where('published', published === 'true' || published === true)
-    } else {
+    } else if (!isStaff) {
       // Regular clients only see published products
-      if (!currentUser.is_admin && !currentUser.is_personal) {
-        query = query.where('published', true)
-      }
+      query = query.where('published', true)
     }
 
     const products = await query.orderBy('name', 'asc').paginate(page, limit)
@@ -59,7 +61,11 @@ export default class ProductsController {
     logger.info(`Creating new product: user ${currentUser.id}`)
 
     // Only admin and personal can create products
-    if (!currentUser.is_admin && !currentUser.is_personal) {
+    if (
+      currentUser.role !== 'admin' &&
+      currentUser.role !== 'personal' &&
+      currentUser.role !== 'super'
+    ) {
       return response.forbidden({ message: 'Only admins and personals can create products' })
     }
 
@@ -107,7 +113,11 @@ export default class ProductsController {
       .firstOrFail()
 
     // Regular clients can only see published products
-    if (!currentUser.is_admin && !currentUser.is_personal && !product.published) {
+    const isStaffShow =
+      currentUser.role === 'admin' ||
+      currentUser.role === 'personal' ||
+      currentUser.role === 'super'
+    if (!isStaffShow && !product.published) {
       return response.notFound({ message: 'Product not found' })
     }
 
@@ -123,7 +133,11 @@ export default class ProductsController {
     logger.info(`Updating product: ${params.id} by user ${currentUser.id}`)
 
     // Only admin and personal can update products
-    if (!currentUser.is_admin && !currentUser.is_personal) {
+    if (
+      currentUser.role !== 'admin' &&
+      currentUser.role !== 'personal' &&
+      currentUser.role !== 'super'
+    ) {
       return response.forbidden({ message: 'Only admins and personals can update products' })
     }
 
@@ -170,7 +184,7 @@ export default class ProductsController {
     logger.info(`Deleting product: ${params.id} by user ${currentUser.id}`)
 
     // Only admin can delete products
-    if (!currentUser.is_admin) {
+    if (currentUser.role !== 'admin' && currentUser.role !== 'super') {
       return response.forbidden({ message: 'Only admins can delete products' })
     }
 
@@ -195,7 +209,11 @@ export default class ProductsController {
     logger.info(`Updating product stock: product ${params.id}, user ${currentUser.id}`)
 
     // Only admin and personal can update stock
-    if (!currentUser.is_admin && !currentUser.is_personal) {
+    if (
+      currentUser.role !== 'admin' &&
+      currentUser.role !== 'personal' &&
+      currentUser.role !== 'super'
+    ) {
       return response.forbidden({ message: 'Only admins and personals can update stock' })
     }
 

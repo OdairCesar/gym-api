@@ -18,7 +18,7 @@ test.group('Diets - Create', (group) => {
       email: 'personal@example.com',
       password: await hash.make('senha123'),
       gym_id: gym.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     const loginResponse = await client.post('/auth/login').json({
@@ -85,7 +85,7 @@ test.group('Diets - List', (group) => {
       email: 'personal@example.com',
       password: await hash.make('senha123'),
       gym_id: gym.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     // Criar dieta
@@ -106,7 +106,7 @@ test.group('Diets - List', (group) => {
     const response = await client.get('/diets').bearerToken(token)
 
     response.assertStatus(200)
-    assert.isAtLeast(response.body().data.length, 1)
+    assert.isAtLeast(response.body().data.data.length, 1)
   })
 
   test('client with diet should see their diet', async ({ client, assert }) => {
@@ -117,7 +117,7 @@ test.group('Diets - List', (group) => {
       email: 'personal@example.com',
       password: await hash.make('senha123'),
       gym_id: gym.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     const diet = await Diet.create({
@@ -145,8 +145,8 @@ test.group('Diets - List', (group) => {
     const response = await client.get('/diets').bearerToken(token)
 
     response.assertStatus(200)
-    assert.lengthOf(response.body().data, 1)
-    assert.equal(response.body().data[0].id, diet.id)
+    assert.lengthOf(response.body().data.data, 1)
+    assert.equal(response.body().data.data[0].id, diet.id)
   })
 })
 
@@ -161,7 +161,7 @@ test.group('Meals - CRUD', (group) => {
       email: 'personal@example.com',
       password: await hash.make('senha123'),
       gym_id: gym.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     const diet = await Diet.create({
@@ -202,7 +202,7 @@ test.group('Meals - CRUD', (group) => {
       email: 'personal@example.com',
       password: await hash.make('senha123'),
       gym_id: gym.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     const diet = await Diet.create({
@@ -246,7 +246,7 @@ test.group('Foods - CRUD', (group) => {
       email: 'personal@example.com',
       password: await hash.make('senha123'),
       gym_id: gym.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     const diet = await Diet.create({
@@ -289,7 +289,7 @@ test.group('Foods - CRUD', (group) => {
       email: 'personal@example.com',
       password: await hash.make('senha123'),
       gym_id: gym.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     const diet = await Diet.create({
@@ -333,7 +333,7 @@ test.group('Diets - Multi-tenant Isolation', (group) => {
       email: 'personal1@example.com',
       password: await hash.make('senha123'),
       gym_id: gym1.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     const personal2 = await User.create({
@@ -341,7 +341,7 @@ test.group('Diets - Multi-tenant Isolation', (group) => {
       email: 'personal2@example.com',
       password: await hash.make('senha123'),
       gym_id: gym2.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     // Criar dieta na gym2
@@ -362,8 +362,285 @@ test.group('Diets - Multi-tenant Isolation', (group) => {
     const response = await client.get('/diets').bearerToken(token)
 
     response.assertStatus(200)
-    // Personal1 não deve ver dietas da gym2
-    const dietFromGym2 = response.body().data.find((d: any) => d.gym_id === gym2.id)
+    // Personal1 não deve ver dietas não-reusable da gym2
+    const dietFromGym2 = response
+      .body()
+      .data.data.find((d: any) => d.gym_id === gym2.id && d._access === 'full')
     assert.isUndefined(dietFromGym2)
+  })
+})
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SPRINT: Acesso Ampliado — full vs limited payload
+// ─────────────────────────────────────────────────────────────────────────────
+
+test.group('Diets - Full vs Limited Access', (group) => {
+  group.each.setup(() => testUtils.db().truncate())
+
+  test('personal gets _access:full on own diet', async ({ client, assert }) => {
+    const gym = await Gym.create({ name: 'Test Gym', published: true })
+
+    const personal = await User.create({
+      name: 'Personal',
+      email: 'personal@example.com',
+      password: await hash.make('senha123'),
+      gym_id: gym.id,
+      role: 'personal',
+    })
+
+    const diet = await Diet.create({
+      name: 'Dieta Hipertrofia',
+      calories: 3000,
+      gym_id: gym.id,
+      creator_id: personal.id,
+    })
+
+    const loginResponse = await client.post('/auth/login').json({
+      email: 'personal@example.com',
+      password: 'senha123',
+    })
+    const token = loginResponse.body().token.token
+
+    const response = await client.get(`/diets/${diet.id}`).bearerToken(token)
+
+    response.assertStatus(200)
+    assert.equal(response.body().data._access, 'full')
+    assert.exists(response.body().data.proteins)
+  })
+
+  test('client gets _access:limited on cross-gym reusable diet', async ({ client, assert }) => {
+    const gym1 = await Gym.create({ name: 'Gym 1', published: true })
+    const gym2 = await Gym.create({ name: 'Gym 2', published: true })
+
+    const personal2 = await User.create({
+      name: 'Personal 2',
+      email: 'personal2@example.com',
+      password: await hash.make('senha123'),
+      gym_id: gym2.id,
+      role: 'personal',
+    })
+
+    const reusableDiet = await Diet.create({
+      name: 'Dieta Reusável',
+      calories: 2500,
+      gym_id: gym2.id,
+      creator_id: personal2.id,
+      is_reusable: true,
+    })
+
+    const clientUser = await User.create({
+      name: 'Client',
+      email: 'client@example.com',
+      password: await hash.make('senha123'),
+      gym_id: gym1.id,
+    })
+
+    const loginResponse = await client.post('/auth/login').json({
+      email: 'client@example.com',
+      password: 'senha123',
+    })
+    const token = loginResponse.body().token.token
+
+    const response = await client.get(`/diets/${reusableDiet.id}`).bearerToken(token)
+
+    response.assertStatus(200)
+    assert.equal(response.body().data._access, 'limited')
+    // Campos sensíveis não devem aparecer no payload limited
+    assert.notExists(response.body().data.proteins)
+    assert.notExists(response.body().data.description)
+    // Campos básicos devem aparecer
+    assert.exists(response.body().data.id)
+    assert.exists(response.body().data.name)
+    assert.exists(response.body().data.calories)
+  })
+})
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SPRINT: Endpoint /diets/shared
+// ─────────────────────────────────────────────────────────────────────────────
+
+test.group('Diets - Shared (Reusable)', (group) => {
+  group.each.setup(() => testUtils.db().truncate())
+
+  test('admin can list reusable diets from any gym', async ({ client, assert }) => {
+    const gym1 = await Gym.create({ name: 'Gym 1', published: true })
+    const gym2 = await Gym.create({ name: 'Gym 2', published: true })
+
+    const personal2 = await User.create({
+      name: 'Personal 2',
+      email: 'personal2@example.com',
+      password: await hash.make('senha123'),
+      gym_id: gym2.id,
+      role: 'personal',
+    })
+
+    const admin1 = await User.create({
+      name: 'Admin',
+      email: 'admin@example.com',
+      password: await hash.make('senha123'),
+      gym_id: gym1.id,
+      role: 'admin',
+    })
+
+    await Diet.create({
+      name: 'Dieta Reusável Cross',
+      calories: 2000,
+      gym_id: gym2.id,
+      creator_id: personal2.id,
+      is_reusable: true,
+    })
+    await Diet.create({
+      name: 'Dieta Privada',
+      calories: 2000,
+      gym_id: gym2.id,
+      creator_id: personal2.id,
+      is_reusable: false,
+    })
+
+    const loginResponse = await client.post('/auth/login').json({
+      email: 'admin@example.com',
+      password: 'senha123',
+    })
+    const token = loginResponse.body().token.token
+
+    const response = await client.get('/diets/shared').bearerToken(token)
+
+    response.assertStatus(200)
+    const diets: any[] = response.body().data.data
+    assert.isTrue(diets.every((d: any) => d.is_reusable === true))
+    const names = diets.map((d: any) => d.name)
+    assert.include(names, 'Dieta Reusável Cross')
+    assert.notInclude(names, 'Dieta Privada')
+  })
+
+  test('client can list shared diets with limited payload', async ({ client, assert }) => {
+    const gym = await Gym.create({ name: 'Test Gym', published: true })
+    const personal = await User.create({
+      name: 'Personal',
+      email: 'personal@example.com',
+      password: await hash.make('senha123'),
+      gym_id: gym.id,
+      role: 'personal',
+    })
+    const clientUser = await User.create({
+      name: 'Client',
+      email: 'client@example.com',
+      password: await hash.make('senha123'),
+      gym_id: gym.id,
+    })
+
+    await Diet.create({
+      name: 'Dieta Modelo',
+      calories: 2200,
+      gym_id: gym.id,
+      creator_id: personal.id,
+      is_reusable: true,
+    })
+
+    const loginResponse = await client.post('/auth/login').json({
+      email: 'client@example.com',
+      password: 'senha123',
+    })
+    const token = loginResponse.body().token.token
+
+    const response = await client.get('/diets/shared').bearerToken(token)
+
+    response.assertStatus(200)
+    const diets: any[] = response.body().data.data
+    assert.isAtLeast(diets.length, 1)
+    // Clientes recebem _access:limited
+    const fromOtherGym = diets.find((d: any) => d.name === 'Dieta Modelo')
+    assert.exists(fromOtherGym)
+  })
+})
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SPRINT: POST /diets/:id/clone
+// ─────────────────────────────────────────────────────────────────────────────
+
+test.group('Diets - Clone', (group) => {
+  group.each.setup(() => testUtils.db().truncate())
+
+  test('personal can clone a reusable diet into their gym', async ({ client, assert }) => {
+    const gym1 = await Gym.create({ name: 'Gym 1', published: true })
+    const gym2 = await Gym.create({ name: 'Gym 2', published: true })
+
+    const personal2 = await User.create({
+      name: 'Personal 2',
+      email: 'personal2@example.com',
+      password: await hash.make('senha123'),
+      gym_id: gym2.id,
+      role: 'personal',
+    })
+
+    const personal1 = await User.create({
+      name: 'Personal 1',
+      email: 'personal1@example.com',
+      password: await hash.make('senha123'),
+      gym_id: gym1.id,
+      role: 'personal',
+    })
+
+    const original = await Diet.create({
+      name: 'Dieta Base',
+      description: 'Dieta modelo',
+      calories: 2800,
+      proteins: 150,
+      carbohydrates: 300,
+      fats: 70,
+      gym_id: gym2.id,
+      creator_id: personal2.id,
+      is_reusable: true,
+    })
+
+    const loginResponse = await client.post('/auth/login').json({
+      email: 'personal1@example.com',
+      password: 'senha123',
+    })
+    const token = loginResponse.body().token.token
+
+    const response = await client.post(`/diets/${original.id}/clone`).bearerToken(token)
+
+    response.assertStatus(201)
+    assert.equal(response.body().data.gym_id, gym1.id)
+    assert.equal(response.body().data.creator_id, personal1.id)
+    assert.equal(response.body().data.is_reusable, false)
+    assert.include(response.body().data.name, 'Dieta Base')
+
+    // Deve existir no banco
+    const cloned = await Diet.findBy('creator_id', personal1.id)
+    assert.exists(cloned)
+  })
+
+  test('client cannot clone a diet', async ({ client }) => {
+    const gym = await Gym.create({ name: 'Test Gym', published: true })
+    const personal = await User.create({
+      name: 'Personal',
+      email: 'personal@example.com',
+      password: await hash.make('senha123'),
+      gym_id: gym.id,
+      role: 'personal',
+    })
+    const diet = await Diet.create({
+      name: 'Dieta Base',
+      gym_id: gym.id,
+      creator_id: personal.id,
+      is_reusable: true,
+    })
+    const clientUser = await User.create({
+      name: 'Client',
+      email: 'client@example.com',
+      password: await hash.make('senha123'),
+      gym_id: gym.id,
+    })
+
+    const loginResponse = await client.post('/auth/login').json({
+      email: 'client@example.com',
+      password: 'senha123',
+    })
+    const token = loginResponse.body().token.token
+
+    const response = await client.post(`/diets/${diet.id}/clone`).bearerToken(token)
+    response.assertStatus(403)
   })
 })

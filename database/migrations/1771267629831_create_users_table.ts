@@ -15,8 +15,10 @@ export default class extends BaseSchema {
       table.enum('gender', ['M', 'F', 'O']).nullable()
       table.string('profession').nullable()
       table.text('address').nullable()
-      table.boolean('is_admin').notNullable().defaultTo(false)
-      table.boolean('is_personal').notNullable().defaultTo(false)
+      table.enum('role', ['super', 'admin', 'personal', 'user']).notNullable().defaultTo('user')
+      table.boolean('approved').notNullable().defaultTo(false)
+      table.integer('approved_by').unsigned().nullable()
+      table.timestamp('approved_at').nullable()
       table.boolean('published').notNullable().defaultTo(true)
 
       table.timestamp('created_at').notNullable()

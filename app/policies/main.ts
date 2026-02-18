@@ -18,4 +18,6 @@ export const policies = {
   TrainingPolicy: () => import('#policies/training_policy'),
   ProductPolicy: () => import('#policies/product_policy'),
   GymPolicy: () => import('#policies/gym_policy'),
+  GymPermissionPolicy: () => import('#policies/gym_permission_policy'),
+  UserPermissionPolicy: () => import('#policies/user_permission_policy'),
 }

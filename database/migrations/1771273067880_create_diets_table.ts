@@ -12,6 +12,7 @@ export default class extends BaseSchema {
       table.decimal('proteins', 8, 2).nullable()
       table.decimal('carbohydrates', 8, 2).nullable()
       table.decimal('fats', 8, 2).nullable()
+      table.boolean('is_reusable').notNullable().defaultTo(false)
       table
         .integer('creator_id')
         .unsigned()

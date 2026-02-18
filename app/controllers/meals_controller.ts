@@ -2,7 +2,6 @@ import Meal from '#models/meal'
 import Diet from '#models/diet'
 import { createMealValidator, updateMealValidator } from '#validators/meal_validator'
 import { HttpContext } from '@adonisjs/core/http'
-import PermissionService from '#services/permission_service'
 import logger from '@adonisjs/core/services/logger'
 
 export default class MealsController {
@@ -10,22 +9,10 @@ export default class MealsController {
    * List all meals from a diet
    * GET /diets/:dietId/meals
    */
-  async index({ auth, params, response }: HttpContext) {
-    const currentUser = auth.getUserOrFail()
+  async index({ bouncer, params, response }: HttpContext) {
     const diet = await Diet.findOrFail(params.dietId)
-    logger.info(`Listing meals from diet: diet ${diet.id}, user ${currentUser.id}`)
 
-    // Check if user can view this diet
-    const canView =
-      (currentUser.is_admin && currentUser.gym_id === diet.gym_id) ||
-      (currentUser.is_personal &&
-        (diet.creator_id === currentUser.id ||
-          (await PermissionService.canEditDietById(currentUser.id, diet.id)))) ||
-      currentUser.diet_id === diet.id
-
-    if (!canView) {
-      return response.forbidden({ message: 'You do not have permission to view this diet' })
-    }
+    await bouncer.with('DietPolicy').authorize('update', diet)
 
     const meals = await Meal.query().where('diet_id', diet.id).preload('foods').orderBy('id', 'asc')
 
@@ -38,10 +25,8 @@ export default class MealsController {
    * Get single meal by ID
    * GET /diets/:dietId/meals/:id
    */
-  async show({ auth, params, response }: HttpContext) {
-    const currentUser = auth.getUserOrFail()
+  async show({ bouncer, params, response }: HttpContext) {
     const diet = await Diet.findOrFail(params.dietId)
-    logger.info(`Fetching meal details: meal ${params.id}, diet ${diet.id}, user ${currentUser.id}`)
 
     const meal = await Meal.query()
       .where('id', params.id)
@@ -49,17 +34,7 @@ export default class MealsController {
       .preload('foods')
       .firstOrFail()
 
-    // Check if user can view this diet
-    const canView =
-      (currentUser.is_admin && currentUser.gym_id === diet.gym_id) ||
-      (currentUser.is_personal &&
-        (diet.creator_id === currentUser.id ||
-          (await PermissionService.canEditDietById(currentUser.id, diet.id)))) ||
-      currentUser.diet_id === diet.id
-
-    if (!canView) {
-      return response.forbidden({ message: 'You do not have permission to view this meal' })
-    }
+    await bouncer.with('DietPolicy').authorize('update', diet)
 
     return response.ok({
       data: meal.serialize(),
@@ -70,26 +45,14 @@ export default class MealsController {
    * Create new meal in a diet
    * POST /diets/:dietId/meals
    */
-  async create({ auth, params, request, response }: HttpContext) {
-    const currentUser = auth.getUserOrFail()
+  async create({ bouncer, params, request, response }: HttpContext) {
     const diet = await Diet.findOrFail(params.dietId)
-    logger.info(`Creating new meal: diet ${diet.id}, user ${currentUser.id}`)
+    logger.info(`Creating new meal: diet ${diet.id}`)
 
-    // Check permission to edit diet
-    const canEdit =
-      (currentUser.is_admin && currentUser.gym_id === diet.gym_id) ||
-      (currentUser.is_personal &&
-        (diet.creator_id === currentUser.id ||
-          (await PermissionService.canEditDietById(currentUser.id, diet.id))))
+    await bouncer.with('DietPolicy').authorize('update', diet)
 
-    if (!canEdit) {
-      return response.forbidden({ message: 'You do not have permission to edit this diet' })
-    }
-
-    // Validate request data
     const data = await request.validateUsing(createMealValidator)
 
-    // Create meal
     const meal = await Meal.create({
       name: data.name,
       description: data.description,
@@ -111,26 +74,14 @@ export default class MealsController {
    * Update meal
    * PUT/PATCH /diets/:dietId/meals/:id
    */
-  async update({ auth, params, request, response }: HttpContext) {
-    const currentUser = auth.getUserOrFail()
+  async update({ bouncer, params, request, response }: HttpContext) {
     const diet = await Diet.findOrFail(params.dietId)
     const meal = await Meal.query().where('id', params.id).where('diet_id', diet.id).firstOrFail()
 
-    // Check permission to edit diet
-    const canEdit =
-      (currentUser.is_admin && currentUser.gym_id === diet.gym_id) ||
-      (currentUser.is_personal &&
-        (diet.creator_id === currentUser.id ||
-          (await PermissionService.canEditDietById(currentUser.id, diet.id))))
+    await bouncer.with('DietPolicy').authorize('update', diet)
 
-    if (!canEdit) {
-      return response.forbidden({ message: 'You do not have permission to edit this meal' })
-    }
-
-    // Validate request data
     const data = await request.validateUsing(updateMealValidator)
 
-    // Update meal
     meal.merge({
       name: data.name,
       description: data.description,
@@ -150,19 +101,11 @@ export default class MealsController {
    * Delete meal
    * DELETE /diets/:dietId/meals/:id
    */
-  async destroy({ auth, params, response }: HttpContext) {
-    const currentUser = auth.getUserOrFail()
+  async destroy({ bouncer, params, response }: HttpContext) {
     const diet = await Diet.findOrFail(params.dietId)
     const meal = await Meal.query().where('id', params.id).where('diet_id', diet.id).firstOrFail()
 
-    // Check permission to edit diet
-    const canDelete =
-      (currentUser.is_admin && currentUser.gym_id === diet.gym_id) ||
-      (currentUser.is_personal && diet.creator_id === currentUser.id)
-
-    if (!canDelete) {
-      return response.forbidden({ message: 'You do not have permission to delete this meal' })
-    }
+    await bouncer.with('DietPolicy').authorize('delete', diet)
 
     await meal.delete()
 

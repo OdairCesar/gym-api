@@ -65,8 +65,8 @@ export default class extends BaseSeeder {
         user_id: lucas.id,
         grantee_type: 'personal',
         grantee_id: anaPersonal.id,
-        can_edit_diet: true,
-        can_edit_training: true,
+        can_edit_diets: true,
+        can_edit_trainings: true,
         is_active: true,
       })
 
@@ -76,8 +76,8 @@ export default class extends BaseSeeder {
         user_id: joao.id,
         grantee_type: 'gym',
         grantee_id: strongGym.id,
-        can_edit_diet: false,
-        can_edit_training: true,
+        can_edit_diets: false,
+        can_edit_trainings: true,
         is_active: true,
       })
 
@@ -87,8 +87,8 @@ export default class extends BaseSeeder {
         user_id: maria.id,
         grantee_type: 'personal',
         grantee_id: marianaPersonal.id,
-        can_edit_diet: true,
-        can_edit_training: false,
+        can_edit_diets: true,
+        can_edit_trainings: false,
         is_active: true,
       })
 

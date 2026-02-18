@@ -94,9 +94,7 @@ Desenvolver uma API RESTful para gestão de múltiplas academias (multi-tenant) 
   address?: string
   gym_id: number (FK)
   diet_id?: number (FK)
-  isAdmin: boolean (default: false)
-  isPersonal: boolean (default: false)
-  is_super: boolean (default: false)
+  role: 'super' | 'admin' | 'personal' | 'user' (default: 'user')
   approved: boolean (default: false)
   approved_by?: number (FK - User)
   approved_at?: datetime
@@ -113,7 +111,7 @@ Desenvolver uma API RESTful para gestão de múltiplas academias (multi-tenant) 
 
 **Tipos de Usuário:**
 
-#### 0. Super User (is_super: true) ⭐ ESPECIAL
+#### 0. Super User (role: 'super') ⭐ ESPECIAL
 - ✅ Criação exclusiva via banco de dados (não via API)
 - ✅ Controle total de todas as academias
 - ✅ Criar novas academias
@@ -123,13 +121,13 @@ Desenvolver uma API RESTful para gestão de múltiplas academias (multi-tenant) 
 
 **⚠️ IMPORTANTE:** Super Users não podem ser criados via endpoints da API por segurança.
 
-#### 1. Cliente (isAdmin: false, isPersonal: false)
+#### 1. Cliente (role: 'user')
 - ✅ Visualizar dados (read-only)
 - ✅ Editar próprio perfil
 - ❌ Criar/editar/deletar recursos
 - 🔒 **Requer aprovação** para fazer login
 
-#### 2. Personal/Coach (isPersonal: true)
+#### 2. Personal/Coach (role: 'personal')
 - ✅ Visualizar dados
 - ✅ Criar dietas e treinos
 - ✅ Editar/deletar dietas e treinos que criou
@@ -139,7 +137,7 @@ Desenvolver uma API RESTful para gestão de múltiplas academias (multi-tenant) 
 - ✅ **Se aprovado:** Pode aprovar novos usuários da sua academia
 - 🔒 **Requer aprovação** para fazer login
 
-#### 3. Admin (isAdmin: true)
+#### 3. Admin (role: 'admin')
 - ✅ Controle total da sua academia
 - ✅ Criar/editar/deletar todos recursos da academia
 - ✅ Gerenciar todos usuários da academia
@@ -171,6 +169,7 @@ Diet (Dieta)
 ├── fats?: decimal
 ├── gym_id: number (FK)
 ├── creator_id?: number (FK - User)
+├── is_reusable: boolean (default: false)
 └── meals: Meal[]
     ├── name: string
     ├── description?: string
@@ -186,6 +185,8 @@ Diet (Dieta)
 - Atribuir dieta a cliente (user.diet_id)
 - Visualização read-only para clientes
 - Dietas isoladas por academia
+- Dietas reutilizáveis compartilhadas (`GET /diets/shared`)
+- Clonar dieta existente (`POST /diets/:id/clone`)
 - Informações nutricionais calculadas automaticamente (futuro)
 
 ---
@@ -203,10 +204,11 @@ Training (Treino)
 ├── gym_id: number (FK)
 ├── user_id: number (FK - cliente)
 ├── coach_id: number (FK - personal)
+├── is_reusable: boolean (default: false)
 └── exercises: Exercise[] (many-to-many)
     ├── name: string
     ├── reps: string (ex: "3x12")
-    ├── type: 'aerobico' | 'musculacao' | 'flexibilidade' | 'outro'
+    ├── type: 'aerobico' | 'funcional' | 'musculacao' | 'flexibilidade' | 'outro'
     ├── weight: decimal
     ├── rest_seconds: number
     ├── video_link?: string
@@ -216,9 +218,12 @@ Training (Treino)
 **Critérios de Aceitação:**
 - CRUD completo de treinos (Personal/Admin)
 - CRUD de exercícios (reutilizáveis)
-- Adicionar exercícios ao treino com personalização
+- Adicionar exercícios ao treino com personalização (`POST /trainings/:id/exercises`)
+- Remover exercício do treino (`DELETE /trainings/:id/exercises/:exerciseId`)
 - Personalização por treino: séries, peso, descanso customizados
 - Exercícios compartilhados entre treinos
+- Treinos reutilizáveis compartilhados (`GET /trainings/shared`)
+- Clonar treino existente (`POST /trainings/:id/clone`)
 - Cliente visualiza apenas seus treinos
 - Personal visualiza treinos que criou
 - Treinos isolados por academia
@@ -300,8 +305,8 @@ Personal João (Academia A) ajuda Academia B temporariamente
   user_id: number              // Cliente que concede
   grantee_type: 'gym' | 'personal'
   grantee_id: number           // ID da academia ou personal
-  can_edit_diet: boolean
-  can_edit_training: boolean
+  can_edit_diets: boolean
+  can_edit_trainings: boolean
   is_active: boolean
 }
 ```
@@ -459,7 +464,7 @@ Lucas viaja e treina temporariamente na Academia Z
 ### Tabelas Principais
 
 1. **gyms** - Academias (tenant)
-2. **users** - Usuários (3 tipos)
+2. **users** - Usuários (4 tipos: super, admin, personal, user)
 3. **diets** - Dietas
 4. **meals** - Refeições (dentro da dieta)
 5. **foods** - Alimentos (dentro da refeição)
@@ -597,6 +602,14 @@ Lucas viaja e treina temporariamente na Academia Z
 - [x] Documentação de otimizações (docs/OPTIMIZATIONS.md)
 - [x] README.md atualizado e completo
 
+### Sprint 7 - Reusabilidade ✅ (CONCLUÍDA)
+- [x] Campo `is_reusable` adicionado nas tabelas `diets` e `trainings`
+- [x] Rota `GET /diets/shared` - listagem de dietas reutilizáveis
+- [x] Rota `POST /diets/:id/clone` - clonagem de dieta
+- [x] Rota `GET /trainings/shared` - listagem de treinos reutilizáveis
+- [x] Rota `POST /trainings/:id/clone` - clonagem de treino
+- [x] Consolidação: migration `add_is_reusable` removida, campos migrados para criação das tabelas
+
 ---
 
 ## 11. Glossário
@@ -616,5 +629,6 @@ Lucas viaja e treina temporariamente na Academia Z
 ---
 
 **Documento elaborado em:** 16/02/2026  
-**Versão:** 1.0  
+**Última atualização:** 17/02/2026  
+**Versão:** 1.1  
 **Status:** 📝 Em implementação

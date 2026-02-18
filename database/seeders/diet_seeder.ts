@@ -54,7 +54,7 @@ export default class extends BaseSeeder {
         { name: 'Café com leite', meal_id: meal1.id },
       ])
 
-      const meal1_lunch = await Meal.create({
+      const meal1Lunch = await Meal.create({
         name: 'Almoço',
         description: 'Refeição principal do dia',
         hourly: '12:00',
@@ -62,10 +62,10 @@ export default class extends BaseSeeder {
       })
 
       await Food.createMany([
-        { name: 'Arroz integral (150g)', meal_id: meal1_lunch.id },
-        { name: 'Frango grelhado (200g)', meal_id: meal1_lunch.id },
-        { name: 'Brócolis (100g)', meal_id: meal1_lunch.id },
-        { name: 'Salada verde', meal_id: meal1_lunch.id },
+        { name: 'Arroz integral (150g)', meal_id: meal1Lunch.id },
+        { name: 'Frango grelhado (200g)', meal_id: meal1Lunch.id },
+        { name: 'Brócolis (100g)', meal_id: meal1Lunch.id },
+        { name: 'Salada verde', meal_id: meal1Lunch.id },
       ])
 
       // Dieta 2: Emagrecimento para Maria Oliveira (PowerFit)
@@ -93,7 +93,7 @@ export default class extends BaseSeeder {
         { name: 'Frutas vermelhas (100g)', meal_id: meal2.id },
       ])
 
-      const meal2_lunch = await Meal.create({
+      const meal2Lunch = await Meal.create({
         name: 'Almoço',
         description: 'Almoço balanceado',
         hourly: '12:00',
@@ -101,8 +101,8 @@ export default class extends BaseSeeder {
       })
 
       await Food.createMany([
-        { name: 'Quinoa (100g)', meal_id: meal2_lunch.id },
-        { name: 'Filé de frango (150g)', meal_id: meal2_lunch.id },
+        { name: 'Quinoa (100g)', meal_id: meal2Lunch.id },
+        { name: 'Filé de frango (150g)', meal_id: meal2Lunch.id },
         { name: 'Legumes grelhados (150g)', meal_id: meal2_lunch.id },
       ])
 

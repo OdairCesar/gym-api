@@ -37,8 +37,7 @@ export default class extends BaseSeeder {
       profession: 'Administrador',
       address: 'Rua Admin, 100',
       gym_id: powerfit.id,
-      is_admin: true,
-      is_personal: false,
+      role: 'admin',
       published: true,
     })
 
@@ -53,8 +52,7 @@ export default class extends BaseSeeder {
       profession: 'Personal Trainer',
       address: 'Rua Personal, 200',
       gym_id: powerfit.id,
-      is_admin: false,
-      is_personal: true,
+      role: 'personal',
       published: true,
     })
 
@@ -69,8 +67,7 @@ export default class extends BaseSeeder {
       profession: 'Engenheiro',
       address: 'Rua Cliente, 300',
       gym_id: powerfit.id,
-      is_admin: false,
-      is_personal: false,
+      role: 'user',
       published: true,
     })
 
@@ -85,8 +82,7 @@ export default class extends BaseSeeder {
       profession: 'Médica',
       address: 'Rua Cliente, 400',
       gym_id: powerfit.id,
-      is_admin: false,
-      is_personal: false,
+      role: 'user',
       published: true,
     })
 
@@ -102,8 +98,7 @@ export default class extends BaseSeeder {
       profession: 'Administrador',
       address: 'Av. Strong, 500',
       gym_id: strongGym.id,
-      is_admin: true,
-      is_personal: false,
+      role: 'admin',
       published: true,
     })
 
@@ -118,8 +113,7 @@ export default class extends BaseSeeder {
       profession: 'Personal Trainer',
       address: 'Av. Strong, 600',
       gym_id: strongGym.id,
-      is_admin: false,
-      is_personal: true,
+      role: 'personal',
       published: true,
     })
 
@@ -134,8 +128,7 @@ export default class extends BaseSeeder {
       profession: 'Contador',
       address: 'Av. Strong, 700',
       gym_id: strongGym.id,
-      is_admin: false,
-      is_personal: false,
+      role: 'user',
       published: true,
     })
 
@@ -151,8 +144,7 @@ export default class extends BaseSeeder {
       profession: 'Administradora',
       address: 'Rua Fitness, 800',
       gym_id: fitnessPlus.id,
-      is_admin: true,
-      is_personal: false,
+      role: 'admin',
       published: true,
     })
 
@@ -167,8 +159,7 @@ export default class extends BaseSeeder {
       profession: 'Designer',
       address: 'Rua Fitness, 900',
       gym_id: fitnessPlus.id,
-      is_admin: false,
-      is_personal: false,
+      role: 'user',
       published: true,
     })
 

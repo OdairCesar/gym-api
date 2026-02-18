@@ -1,18 +1,40 @@
-import User from '#models/user'
+import { inject } from '@adonisjs/core'
+import User, { UserRole } from '#models/user'
 import Diet from '#models/diet'
 import Training from '#models/training'
 import GymPermission from '#models/gym_permission'
 import UserPermission from '#models/user_permission'
 import db from '@adonisjs/lucid/services/db'
 
+export const ResourceType = {
+  DIET: 'diet',
+  TRAINING: 'training',
+  EXERCISE: 'exercise',
+} as const
+export type ResourceType = (typeof ResourceType)[keyof typeof ResourceType]
+
+@inject()
 export default class PermissionService {
-  /**
-   * Verifica se um personal tem permissão de uma academia para editar dietas
-   */
-  static async personalHasGymPermissionForDiets(
-    personalId: number,
-    gymId: number
-  ): Promise<boolean> {
+  /** Cache de permissões por request — descartado automaticamente ao fim do request */
+  readonly #cache = new Map<string, boolean>()
+
+  #cacheGet(key: string): boolean | undefined {
+    return this.#cache.get(key)
+  }
+
+  #cacheSet(key: string, value: boolean): boolean {
+    this.#cache.set(key, value)
+    return value
+  }
+  // ---------------------------------------------------------------------------
+  // Permissões de academia (GymPermission)
+  // ---------------------------------------------------------------------------
+
+  async personalHasGymPermissionForDiets(personalId: number, gymId: number): Promise<boolean> {
+    const key = `gymPerm:diets:${personalId}:${gymId}`
+    const cached = this.#cacheGet(key)
+    if (cached !== undefined) return cached
+
     const permission = await GymPermission.query()
       .where('personal_id', personalId)
       .where('gym_id', gymId)
@@ -20,16 +42,14 @@ export default class PermissionService {
       .where('is_active', true)
       .first()
 
-    return !!permission
+    return this.#cacheSet(key, !!permission)
   }
 
-  /**
-   * Verifica se um personal tem permissão de uma academia para editar treinos
-   */
-  static async personalHasGymPermissionForTrainings(
-    personalId: number,
-    gymId: number
-  ): Promise<boolean> {
+  async personalHasGymPermissionForTrainings(personalId: number, gymId: number): Promise<boolean> {
+    const key = `gymPerm:trainings:${personalId}:${gymId}`
+    const cached = this.#cacheGet(key)
+    if (cached !== undefined) return cached
+
     const permission = await GymPermission.query()
       .where('personal_id', personalId)
       .where('gym_id', gymId)
@@ -37,222 +57,231 @@ export default class PermissionService {
       .where('is_active', true)
       .first()
 
-    return !!permission
+    return this.#cacheSet(key, !!permission)
   }
 
-  /**
-   * Verifica se uma academia ou personal tem permissão do usuário para editar sua dieta
-   */
-  static async hasUserPermissionForDiet(
-    userId: number,
-    granteeType: 'gym' | 'personal',
-    granteeId: number
-  ): Promise<boolean> {
-    const permission = await UserPermission.query()
-      .where('user_id', userId)
-      .where('grantee_type', granteeType)
-      .where('grantee_id', granteeId)
-      .where('can_edit_diet', true)
-      .where('is_active', true)
-      .first()
+  // ---------------------------------------------------------------------------
+  // canEditDiet — com fix N+1: batch query no lugar do loop
+  // ---------------------------------------------------------------------------
 
-    return !!permission
+  async canEditDiet(personal: User, diet: Diet): Promise<boolean> {
+    const key = `canEditDiet:${personal.id}:${diet.id}`
+    const cached = this.#cacheGet(key)
+    if (cached !== undefined) return cached
+
+    return this.#cacheSet(key, await this.#computeCanEditDiet(personal, diet))
   }
 
-  /**
-   * Verifica se uma academia ou personal tem permissão do usuário para editar seu treino
-   */
-  static async hasUserPermissionForTraining(
-    userId: number,
-    granteeType: 'gym' | 'personal',
-    granteeId: number
-  ): Promise<boolean> {
-    const permission = await UserPermission.query()
-      .where('user_id', userId)
-      .where('grantee_type', granteeType)
-      .where('grantee_id', granteeId)
-      .where('can_edit_training', true)
-      .where('is_active', true)
-      .first()
+  async #computeCanEditDiet(personal: User, diet: Diet): Promise<boolean> {
+    if (personal.role === UserRole.SUPER) return true
+    if (personal.role === UserRole.ADMIN) return personal.gym_id === diet.gym_id
+    if (personal.role !== UserRole.PERSONAL) return false
 
-    return !!permission
-  }
+    if (diet.creator_id === personal.id) return true
+    if (diet.gym_id === personal.gym_id) return true
 
-  /**
-   * Verifica se um personal pode editar uma dieta específica
-   * Considera:
-   * - Se está na mesma academia
-   * - Se tem permissão da academia (cross-tenant)
-   * - Se tem permissão do usuário específico
-   */
-  static async canEditDiet(personal: User, diet: Diet): Promise<boolean> {
-    // Admin pode tudo
-    if (personal.is_admin) {
-      return true
-    }
+    const hasGymPermission = await this.personalHasGymPermissionForDiets(personal.id, diet.gym_id)
+    if (hasGymPermission) return true
 
-    // Não é personal nem admin, não pode editar
-    if (!personal.is_personal) {
-      return false
-    }
-
-    // Se criou a dieta, pode editar
-    if (diet.creator_id === personal.id) {
-      return true
-    }
-
-    // Carrega informações da dieta se necessário
-    await diet.load('gym')
+    // Batch: 1 query no lugar do loop com N queries
     await diet.load('users')
+    const userIds = (diet.users ?? []).map((u) => u.id)
+    if (userIds.length === 0) return false
 
-    const dietGymId = diet.gym_id
-    const personalGymId = personal.gym_id
+    const granted = await UserPermission.query()
+      .whereIn('user_id', userIds)
+      .where((q) => {
+        q.where((q1) => {
+          q1.where('grantee_type', 'personal').where('grantee_id', personal.id)
+        }).orWhere((q2) => {
+          q2.where('grantee_type', 'gym').where('grantee_id', personal.gym_id)
+        })
+      })
+      .where('can_edit_diets', true)
+      .where('is_active', true)
+      .first()
 
-    // 1. Se está na mesma academia, pode editar
-    if (dietGymId === personalGymId) {
-      return true
-    }
-
-    // 2. Verifica se tem permissão da academia da dieta
-    const hasGymPermission = await this.personalHasGymPermissionForDiets(personal.id, dietGymId)
-    if (hasGymPermission) {
-      return true
-    }
-
-    // 3. Verifica se algum usuário com essa dieta deu permissão específica
-    const usersWithDiet = diet.users || []
-    for (const user of usersWithDiet) {
-      // Permissão direta para o personal
-      const hasPersonalPermission = await this.hasUserPermissionForDiet(
-        user.id,
-        'personal',
-        personal.id
-      )
-      if (hasPersonalPermission) {
-        return true
-      }
-
-      // Permissão para a academia do personal
-      const hasGymPermissionFromUser = await this.hasUserPermissionForDiet(
-        user.id,
-        'gym',
-        personalGymId
-      )
-      if (hasGymPermissionFromUser) {
-        return true
-      }
-    }
-
-    return false
+    return !!granted
   }
 
-  /**
-   * Verifica se um personal pode editar um treino específico
-   * Considera:
-   * - Se está na mesma academia
-   * - Se é o coach do treino
-   * - Se tem permissão da academia (cross-tenant)
-   * - Se tem permissão do usuário específico
-   */
-  static async canEditTraining(personal: User, training: Training): Promise<boolean> {
-    // Admin pode tudo
-    if (personal.is_admin) {
-      return true
-    }
+  // ---------------------------------------------------------------------------
+  // canEditTraining — 1 query com OR no lugar de 2 queries sequenciais
+  // ---------------------------------------------------------------------------
 
-    // Não é personal nem admin, não pode editar
-    if (!personal.is_personal) {
-      return false
-    }
+  async canEditTraining(personal: User, training: Training): Promise<boolean> {
+    const key = `canEditTraining:${personal.id}:${training.id}`
+    const cached = this.#cacheGet(key)
+    if (cached !== undefined) return cached
 
-    // Se é o coach do treino, pode editar
-    if (training.coach_id === personal.id) {
-      return true
-    }
+    return this.#cacheSet(key, await this.#computeCanEditTraining(personal, training))
+  }
 
-    // Carrega informações do treino se necessário
-    await training.load('gym')
-    await training.load('user')
+  async #computeCanEditTraining(personal: User, training: Training): Promise<boolean> {
+    if (personal.role === UserRole.SUPER) return true
+    if (personal.role === UserRole.ADMIN) return personal.gym_id === training.gym_id
+    if (personal.role !== UserRole.PERSONAL) return false
 
-    const trainingGymId = training.gym_id
-    const personalGymId = personal.gym_id
-    const trainingUserId = training.user_id
+    if (training.coach_id === personal.id) return true
+    if (training.gym_id === personal.gym_id) return true
 
-    // 1. Se está na mesma academia, pode editar
-    if (trainingGymId === personalGymId) {
-      return true
-    }
-
-    // 2. Verifica se tem permissão da academia do treino
     const hasGymPermission = await this.personalHasGymPermissionForTrainings(
       personal.id,
-      trainingGymId
+      training.gym_id
     )
-    if (hasGymPermission) {
-      return true
+    if (hasGymPermission) return true
+
+    const granted = await UserPermission.query()
+      .where('user_id', training.user_id)
+      .where((q) => {
+        q.where((q1) => {
+          q1.where('grantee_type', 'personal').where('grantee_id', personal.id)
+        }).orWhere((q2) => {
+          q2.where('grantee_type', 'gym').where('grantee_id', personal.gym_id)
+        })
+      })
+      .where('can_edit_trainings', true)
+      .where('is_active', true)
+      .first()
+
+    return !!granted
+  }
+
+  // ---------------------------------------------------------------------------
+  // Versões por ID
+  // ---------------------------------------------------------------------------
+
+  async canEditDietById(personalId: number, dietId: number): Promise<boolean> {
+    const personal = await User.findOrFail(personalId)
+    const diet = await Diet.findOrFail(dietId)
+    return this.canEditDiet(personal, diet)
+  }
+
+  async canEditTrainingById(personalId: number, trainingId: number): Promise<boolean> {
+    const personal = await User.findOrFail(personalId)
+    const training = await Training.findOrFail(trainingId)
+    return this.canEditTraining(personal, training)
+  }
+
+  // ---------------------------------------------------------------------------
+  // hasFullAccessToResource — com cache
+  // ---------------------------------------------------------------------------
+
+  async hasFullAccessToResource(
+    user: User,
+    resourceType: ResourceType,
+    resourceId: number,
+    resourceGymId?: number
+  ): Promise<boolean> {
+    const key = `fullAccess:${resourceType}:${resourceId}:${user.id}`
+    const cached = this.#cacheGet(key)
+    if (cached !== undefined) return cached
+
+    return this.#cacheSet(
+      key,
+      await this.#computeFullAccess(user, resourceType, resourceId, resourceGymId)
+    )
+  }
+
+  async #computeFullAccess(
+    user: User,
+    resourceType: ResourceType,
+    resourceId: number,
+    resourceGymId?: number
+  ): Promise<boolean> {
+    if (user.role === UserRole.SUPER) return true
+
+    if (resourceType === ResourceType.EXERCISE) {
+      return user.role === UserRole.ADMIN || user.role === UserRole.PERSONAL
     }
 
-    // 3. Verifica se o usuário do treino deu permissão específica
-    // Permissão direta para o personal
-    const hasPersonalPermission = await this.hasUserPermissionForTraining(
-      trainingUserId,
-      'personal',
-      personal.id
-    )
-    if (hasPersonalPermission) {
-      return true
+    if (resourceType === ResourceType.DIET) {
+      if (user.role === UserRole.ADMIN) return user.gym_id === resourceGymId
+      if (user.role === UserRole.PERSONAL) return this.canEditDietById(user.id, resourceId)
+      return user.diet_id === resourceId
     }
 
-    // Permissão para a academia do personal
-    const hasGymPermissionFromUser = await this.hasUserPermissionForTraining(
-      trainingUserId,
-      'gym',
-      personalGymId
-    )
-    if (hasGymPermissionFromUser) {
-      return true
+    if (resourceType === ResourceType.TRAINING) {
+      if (user.role === UserRole.ADMIN) return user.gym_id === resourceGymId
+      if (user.role === UserRole.PERSONAL) return this.canEditTrainingById(user.id, resourceId)
+      const training = await Training.find(resourceId)
+      return training?.user_id === user.id
     }
 
     return false
   }
 
-  /**
-   * Lista todas as academias que deram permissão para um personal
-   */
-  static async getGymsWithPermissions(personalId: number) {
-    return await db
-      .from('gym_permissions')
-      .join('gyms', 'gyms.id', 'gym_permissions.gym_id')
-      .where('gym_permissions.personal_id', personalId)
-      .where('gym_permissions.is_active', true)
-      .select('gyms.*', 'gym_permissions.can_edit_diets', 'gym_permissions.can_edit_trainings')
+  // ---------------------------------------------------------------------------
+  // getFullAccessResourceIds — batch (evita N+1 nos endpoints de listagem)
+  // ---------------------------------------------------------------------------
+
+  async getFullAccessResourceIds(
+    user: User,
+    resourceType: ResourceType,
+    resources: {
+      id: number
+      gym_id?: number
+      user_id?: number
+      coach_id?: number
+      creator_id?: number | null
+    }[]
+  ): Promise<Set<number>> {
+    const fullAccessIds = new Set<number>()
+
+    if (user.role === UserRole.SUPER) {
+      resources.forEach((r) => fullAccessIds.add(r.id))
+      return fullAccessIds
+    }
+
+    if (resourceType === ResourceType.EXERCISE) {
+      if (user.role === UserRole.ADMIN || user.role === UserRole.PERSONAL) {
+        resources.forEach((r) => fullAccessIds.add(r.id))
+      }
+      return fullAccessIds
+    }
+
+    if (user.role === UserRole.ADMIN) {
+      resources.filter((r) => r.gym_id === user.gym_id).forEach((r) => fullAccessIds.add(r.id))
+      return fullAccessIds
+    }
+
+    if (resourceType === ResourceType.DIET) {
+      if (user.role === UserRole.PERSONAL) {
+        resources.filter((r) => r.creator_id === user.id).forEach((r) => fullAccessIds.add(r.id))
+
+        const permittedGymIds = await this.getGymsWithPermissionForPersonal(user.id, 'diets')
+        const permittedGymSet = new Set(permittedGymIds)
+
+        resources
+          .filter((r) => r.gym_id === user.gym_id || permittedGymSet.has(r.gym_id!))
+          .forEach((r) => fullAccessIds.add(r.id))
+      } else {
+        if (user.diet_id) fullAccessIds.add(user.diet_id)
+      }
+    }
+
+    if (resourceType === ResourceType.TRAINING) {
+      if (user.role === UserRole.PERSONAL) {
+        resources.filter((r) => r.coach_id === user.id).forEach((r) => fullAccessIds.add(r.id))
+
+        const permittedGymIds = await this.getGymsWithPermissionForPersonal(user.id, 'trainings')
+        const permittedGymSet = new Set(permittedGymIds)
+
+        resources
+          .filter((r) => r.gym_id === user.gym_id || permittedGymSet.has(r.gym_id!))
+          .forEach((r) => fullAccessIds.add(r.id))
+      } else {
+        resources.filter((r) => r.user_id === user.id).forEach((r) => fullAccessIds.add(r.id))
+      }
+    }
+
+    return fullAccessIds
   }
 
-  /**
-   * Lista todos os personals que têm permissão de uma academia
-   */
-  static async getPersonalsWithPermissions(gymId: number) {
-    return await db
-      .from('gym_permissions')
-      .join('users', 'users.id', 'gym_permissions.personal_id')
-      .where('gym_permissions.gym_id', gymId)
-      .where('gym_permissions.is_active', true)
-      .select('users.*', 'gym_permissions.can_edit_diets', 'gym_permissions.can_edit_trainings')
-  }
+  // ---------------------------------------------------------------------------
+  // Listagens
+  // ---------------------------------------------------------------------------
 
-  /**
-   * Lista todas as permissões específicas concedidas por um usuário
-   */
-  static async getUserGrantedPermissions(userId: number) {
-    return await UserPermission.query().where('user_id', userId).where('is_active', true)
-  }
-
-  /**
-   * Retorna IDs das academias onde o personal tem permissão
-   * @param personalId ID do personal
-   * @param resource Tipo de recurso: 'diets' ou 'trainings'
-   */
-  static async getGymsWithPermissionForPersonal(
+  async getGymsWithPermissionForPersonal(
     personalId: number,
     resource: 'diets' | 'trainings'
   ): Promise<number[]> {
@@ -268,23 +297,25 @@ export default class PermissionService {
     return permissions.map((p) => p.gym_id)
   }
 
-  /**
-   * Verifica se um personal pode editar uma dieta usando IDs
-   */
-  static async canEditDietById(personalId: number, dietId: number): Promise<boolean> {
-    const personal = await User.findOrFail(personalId)
-    const diet = await Diet.findOrFail(dietId)
-
-    return this.canEditDiet(personal, diet)
+  async getGymsWithPermissions(personalId: number) {
+    return await db
+      .from('gym_permissions')
+      .join('gyms', 'gyms.id', 'gym_permissions.gym_id')
+      .where('gym_permissions.personal_id', personalId)
+      .where('gym_permissions.is_active', true)
+      .select('gyms.*', 'gym_permissions.can_edit_diets', 'gym_permissions.can_edit_trainings')
   }
 
-  /**
-   * Verifica se um personal pode editar um treino usando IDs
-   */
-  static async canEditTrainingById(personalId: number, trainingId: number): Promise<boolean> {
-    const personal = await User.findOrFail(personalId)
-    const training = await Training.findOrFail(trainingId)
+  async getPersonalsWithPermissions(gymId: number) {
+    return await db
+      .from('gym_permissions')
+      .join('users', 'users.id', 'gym_permissions.personal_id')
+      .where('gym_permissions.gym_id', gymId)
+      .where('gym_permissions.is_active', true)
+      .select('users.*', 'gym_permissions.can_edit_diets', 'gym_permissions.can_edit_trainings')
+  }
 
-    return this.canEditTraining(personal, training)
+  async getUserGrantedPermissions(userId: number) {
+    return await UserPermission.query().where('user_id', userId).where('is_active', true)
   }
 }

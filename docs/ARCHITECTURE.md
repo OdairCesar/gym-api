@@ -276,8 +276,8 @@ Cliente (user_id: 10, gym_id: 1)
      │
      └────── concede permissão ──────────────▶  Personal (grantee_id: 15)
                  grantee_type: 'user'
-                 can_edit_diet: true
-                 can_edit_training: true
+                 can_edit_diets: true
+                 can_edit_trainings: true
 
 Resultado:
 • Personal (id: 15) pode editar DIETA e TREINO do Cliente (id: 10)
@@ -459,7 +459,7 @@ Exception Ocorre
 └────┬─────┘                                                   │
      │                                                          │
      │  POST /auth/register                                    │
-     │  {name, email, password, gymId, isAdmin, isPersonal}    │
+     │  {name, email, password, gymId, role}                   │
      ├────────────────────────────────────────────────────────▶
      │                                                          │
      │              ┌────────────────────────────────┐          │
@@ -467,7 +467,7 @@ Exception Ocorre
      │              │ 2. Hash password               │          │
      │              │ 3. Create user com:            │          │
      │              │    • approved = false          │          │
-     │              │    • is_super = false          │          │
+     │              │    • role informado ou 'user'  │          │
      │              │ 4. Gerar token                 │          │
      │              └────────────────────────────────┘          │
      │                                                          │
@@ -598,16 +598,16 @@ Exception Ocorre
 
 Permissões Cross-Tenant:
 
-┌─────────────────┐                    ┌─────────────────┐
+┌──────────────────┐                    ┌─────────────────┐
 │ GymPermission   │                    │ UserPermission  │
 ├─────────────────┤                    ├─────────────────┤
-│ owner_gym_id    │                    │ user_id         │
-│ granted_gym_id  │                    │ grantee_type    │
-│ personal_id     │                    │ grantee_id      │
-│ can_edit_diets  │                    │ can_edit_diet   │
-│ can_edit_trainings│                  │ can_edit_training│
-│ is_active       │                    │ is_active       │
-└─────────────────┘                    └─────────────────┘
+│ gym_id          │                    │ user_id         │
+│ personal_id     │                    │ grantee_type    │
+│ can_edit_diets  │                    │ grantee_id      │
+│ can_edit_trainings│                  │ can_edit_diets  │
+│ is_active       │                    │ can_edit_trainings│
+└─────────────────┘                    │ is_active       │
+                                         └─────────────────┘
 
 Multi-tenant: Todas as tabelas principais têm gym_id
 ```
@@ -699,7 +699,7 @@ Multi-tenant: Todas as tabelas principais têm gym_id
 - Rate limiting em múltiplos níveis
 - Policy-based authorization
 - Token authentication
-- Senha hasheada (bcrypt)
+- Senha hasheada (scrypt)
 
 ### Observability
 - Error monitoring (Sentry)
@@ -714,5 +714,5 @@ Multi-tenant: Todas as tabelas principais têm gym_id
 
 ---
 
-**Última atualização:** 16/02/2026  
-**Versão:** 1.0
+**Última atualização:** 17/02/2026  
+**Versão:** 1.1

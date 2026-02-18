@@ -12,16 +12,11 @@ export default class GymPermissionsController {
    * List all gym permissions (admin sees permissions of their gym)
    * GET /gym-permissions
    */
-  async index({ auth, request, response }: HttpContext) {
+  async index({ auth, bouncer, request, response }: HttpContext) {
     const currentUser = auth.getUserOrFail()
     logger.info(`Listing gym permissions: user ${currentUser.id}, gym ${currentUser.gym_id}`)
 
-    // Only admins can manage gym permissions
-    if (!currentUser.is_admin) {
-      return response.forbidden({
-        message: 'Only admins can view gym permissions',
-      })
-    }
+    await bouncer.with('GymPermissionPolicy').authorize('index')
 
     // Pagination
     const page = request.input('page', 1)
@@ -40,22 +35,17 @@ export default class GymPermissionsController {
    * Create gym permission (admin grants permission to external personal)
    * POST /gym-permissions
    */
-  async store({ auth, request, response }: HttpContext) {
+  async store({ auth, bouncer, request, response }: HttpContext) {
     const currentUser = auth.getUserOrFail()
     logger.info(`Creating gym permission: user ${currentUser.id}, gym ${currentUser.gym_id}`)
 
-    // Only admins can create gym permissions
-    if (!currentUser.is_admin) {
-      return response.forbidden({
-        message: 'Only admins can grant gym permissions',
-      })
-    }
+    await bouncer.with('GymPermissionPolicy').authorize('create')
 
     const data = await request.validateUsing(createGymPermissionValidator)
 
-    // Check if personal exists and is from another gym (or same gym, business logic allows)
+    // Check if personal exists and is a personal
     const personal = await User.find(data.personalId)
-    if (!personal || !personal.is_personal) {
+    if (!personal || personal.role !== 'personal') {
       return response.badRequest({ message: 'Personal not found or invalid' })
     }
 
@@ -92,7 +82,7 @@ export default class GymPermissionsController {
    * Show single gym permission
    * GET /gym-permissions/:id
    */
-  async show({ auth, params, response }: HttpContext) {
+  async show({ auth, bouncer, params, response }: HttpContext) {
     const currentUser = auth.getUserOrFail()
     logger.info(`Fetching gym permission details: permission ${params.id}, user ${currentUser.id}`)
 
@@ -101,10 +91,7 @@ export default class GymPermissionsController {
       .preload('personal')
       .firstOrFail()
 
-    // Only admin of the gym can view
-    if (!currentUser.is_admin || permission.gym_id !== currentUser.gym_id) {
-      return response.forbidden({ message: 'You do not have permission to view this' })
-    }
+    await bouncer.with('GymPermissionPolicy').authorize('show', permission)
 
     return response.ok(permission)
   }
@@ -113,15 +100,10 @@ export default class GymPermissionsController {
    * Update gym permission (toggle permissions or activate/deactivate)
    * PUT/PATCH /gym-permissions/:id
    */
-  async update({ auth, params, request, response }: HttpContext) {
-    const currentUser = auth.getUserOrFail()
-
+  async update({ bouncer, params, request, response }: HttpContext) {
     const permission = await GymPermission.findOrFail(params.id)
 
-    // Only admin of the gym can update
-    if (!currentUser.is_admin || permission.gym_id !== currentUser.gym_id) {
-      return response.forbidden({ message: 'You do not have permission to update this' })
-    }
+    await bouncer.with('GymPermissionPolicy').authorize('update', permission)
 
     const data = await request.validateUsing(updateGymPermissionValidator)
 
@@ -141,15 +123,10 @@ export default class GymPermissionsController {
    * Delete gym permission
    * DELETE /gym-permissions/:id
    */
-  async destroy({ auth, params, response }: HttpContext) {
-    const currentUser = auth.getUserOrFail()
-
+  async destroy({ bouncer, params, response }: HttpContext) {
     const permission = await GymPermission.findOrFail(params.id)
 
-    // Only admin of the gym can delete
-    if (!currentUser.is_admin || permission.gym_id !== currentUser.gym_id) {
-      return response.forbidden({ message: 'You do not have permission to delete this' })
-    }
+    await bouncer.with('GymPermissionPolicy').authorize('delete', permission)
 
     await permission.delete()
 
@@ -160,13 +137,10 @@ export default class GymPermissionsController {
    * List gyms where current personal has permissions
    * GET /my-gym-permissions
    */
-  async myPermissions({ auth, response }: HttpContext) {
+  async myPermissions({ auth, bouncer, response }: HttpContext) {
     const currentUser = auth.getUserOrFail()
 
-    // Only personals can check their permissions
-    if (!currentUser.is_personal) {
-      return response.forbidden({ message: 'Only personals can view their gym permissions' })
-    }
+    await bouncer.with('GymPermissionPolicy').authorize('viewMyPermissions')
 
     const permissions = await GymPermission.query()
       .where('personal_id', currentUser.id)

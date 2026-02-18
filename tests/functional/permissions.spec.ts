@@ -20,7 +20,7 @@ test.group('Gym Permissions - CRUD', (group) => {
       email: 'admin1@example.com',
       password: await hash.make('senha123'),
       gym_id: gym1.id,
-      is_admin: true,
+      role: 'admin',
     })
 
     const personal2 = await User.create({
@@ -28,7 +28,7 @@ test.group('Gym Permissions - CRUD', (group) => {
       email: 'personal2@example.com',
       password: await hash.make('senha123'),
       gym_id: gym2.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     const loginResponse = await client.post('/auth/login').json({
@@ -69,7 +69,7 @@ test.group('Gym Permissions - CRUD', (group) => {
       email: 'personal1@example.com',
       password: await hash.make('senha123'),
       gym_id: gym1.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     // Gym2 concede permissão ao personal1
@@ -115,7 +115,7 @@ test.group('User Permissions - CRUD', (group) => {
       email: 'personal2@example.com',
       password: await hash.make('senha123'),
       gym_id: gym2.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     const loginResponse = await client.post('/auth/login').json({
@@ -202,7 +202,7 @@ test.group('Permissions - Cross-Tenant Access', (group) => {
       email: 'personal1@example.com',
       password: await hash.make('senha123'),
       gym_id: gym1.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     const personal2 = await User.create({
@@ -210,7 +210,7 @@ test.group('Permissions - Cross-Tenant Access', (group) => {
       email: 'personal2@example.com',
       password: await hash.make('senha123'),
       gym_id: gym2.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     // Criar dieta na gym2
@@ -241,7 +241,7 @@ test.group('Permissions - Cross-Tenant Access', (group) => {
     const response = await client.get('/diets').bearerToken(token)
 
     response.assertStatus(200)
-    const dietFromGym2 = response.body().data.find((d: any) => d.id === diet.id)
+    const dietFromGym2 = response.body().data.data.find((d: any) => d.id === diet.id)
     assert.exists(dietFromGym2)
   })
 
@@ -263,7 +263,7 @@ test.group('Permissions - Cross-Tenant Access', (group) => {
       email: 'personal2@example.com',
       password: await hash.make('senha123'),
       gym_id: gym2.id,
-      is_personal: true,
+      role: 'personal',
     })
 
     // Criar dieta do client1
@@ -279,8 +279,8 @@ test.group('Permissions - Cross-Tenant Access', (group) => {
       user_id: client1.id,
       grantee_type: 'personal',
       grantee_id: personal2.id,
-      can_edit_diet: true,
-      can_edit_training: false,
+      can_edit_diets: true,
+      can_edit_trainings: false,
       is_active: true,
     })
 
