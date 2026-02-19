@@ -20,4 +20,5 @@ export const policies = {
   GymPolicy: () => import('#policies/gym_policy'),
   GymPermissionPolicy: () => import('#policies/gym_permission_policy'),
   UserPermissionPolicy: () => import('#policies/user_permission_policy'),
+  SubscriptionPolicy: () => import('#policies/subscription_policy'),
 }

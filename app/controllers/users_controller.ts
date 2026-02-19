@@ -3,8 +3,12 @@ import { createUserValidator, updateUserValidator } from '#validators/user_valid
 import { HttpContext } from '@adonisjs/core/http'
 import { DateTime } from 'luxon'
 import logger from '@adonisjs/core/services/logger'
+import { inject } from '@adonisjs/core'
+import PlanLimitService from '#services/plan_limit_service'
 
+@inject()
 export default class UsersController {
+  constructor(protected planLimitService: PlanLimitService) {}
   /**
    * List all users (filtered by gym)
    * GET /users
@@ -96,6 +100,17 @@ export default class UsersController {
 
     // Always force gym_id to be the same as current user's gym (multi-tenant)
     data.gymId = currentUser.gym_id
+
+    // Verificar limite de usuários do plano
+    const limitCheck = await this.planLimitService.canAddUser(data.gymId)
+    if (!limitCheck.allowed) {
+      return response.paymentRequired({
+        message: 'Limite de usuários do plano atingido. Faça upgrade para adicionar mais usuários.',
+        current_users: limitCheck.current,
+        plan_limit: limitCheck.max,
+        upgrade_url: '/gym-plans',
+      })
+    }
 
     // Determine if new user should be auto-approved
     let approved = false

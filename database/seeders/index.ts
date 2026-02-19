@@ -22,6 +22,10 @@ export default class extends BaseSeeder {
     console.log('🌱 Starting database seeding...')
 
     // Ordem de execução dos seeders (respeitando dependências)
+    console.log('📍 Seeding gym plans...')
+    await this.seed(await import('#database/seeders/gym_plan_seeder'))
+    console.log('✅ Gym plans seeded')
+
     console.log('📍 Seeding gyms...')
     await this.seed(await import('#database/seeders/gym_seeder'))
     console.log('✅ Gyms seeded')
@@ -52,6 +56,7 @@ export default class extends BaseSeeder {
 
     console.log('🎉 Database seeding completed successfully!')
     console.log(`📊 Summary:`)
+    console.log(`   - Gym Plans: 3`)
     console.log(`   - Gyms: 3`)
     console.log(`   - Users: 9 (3 admins, 2 personals, 4 clients)`)
     console.log(`   - Exercises: 12`)

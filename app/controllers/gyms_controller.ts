@@ -1,7 +1,11 @@
 import Gym from '#models/gym'
+import GymPlan from '#models/gym_plan'
+import GymSubscription from '#models/gym_subscription'
 import { createGymValidator, updateGymValidator } from '#validators/gym_validator'
 import { HttpContext } from '@adonisjs/core/http'
 import logger from '@adonisjs/core/services/logger'
+import { DateTime } from 'luxon'
+import { PLAN_SLUGS, SUBSCRIPTION_STATUS, PAYMENT_METHODS } from '#types/subscription_types'
 
 export default class GymsController {
   /**
@@ -41,6 +45,7 @@ export default class GymsController {
 
     const data = await request.validateUsing(createGymValidator)
 
+    // 1. Criar a academia
     const gym = await Gym.create({
       name: data.name,
       description: data.description,
@@ -51,7 +56,26 @@ export default class GymsController {
       published: data.published ?? true,
     })
 
-    logger.info(`Gym created successfully: ${gym.id} - ${gym.name}`)
+    // 2. Buscar o plano inicial (gratuito)
+    const initialPlan = await GymPlan.findByOrFail('slug', PLAN_SLUGS.INITIAL)
+
+    // 3. Criar a subscription inicial
+    const subscription = await GymSubscription.create({
+      gymId: gym.id,
+      gymPlanId: initialPlan.id,
+      status: SUBSCRIPTION_STATUS.ACTIVE,
+      paymentMethod: PAYMENT_METHODS.FREE,
+      currentPeriodStart: DateTime.now(),
+      currentPeriodEnd: null, // Plano free não expira
+    })
+
+    // 4. Atualizar gym com a subscription
+    gym.currentSubscriptionId = subscription.id
+    await gym.save()
+
+    logger.info(
+      `Gym created successfully: ${gym.id} - ${gym.name} with initial plan subscription ${subscription.id}`
+    )
 
     return response.created(gym)
   }

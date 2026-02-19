@@ -1,10 +1,11 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, hasMany, belongsTo } from '@adonisjs/lucid/orm'
+import type { HasMany, BelongsTo } from '@adonisjs/lucid/types/relations'
 import User from './user.js'
 import Diet from './diet.js'
 import Training from './training.js'
 import Product from './product.js'
+import GymSubscription from './gym_subscription.js'
 
 export default class Gym extends BaseModel {
   @column({ isPrimary: true })
@@ -31,6 +32,9 @@ export default class Gym extends BaseModel {
   @column()
   declare published: boolean
 
+  @column()
+  declare currentSubscriptionId: number | null
+
   @column.dateTime({ autoCreate: true, columnName: 'created_at' })
   declare created_at: DateTime
 
@@ -49,4 +53,10 @@ export default class Gym extends BaseModel {
 
   @hasMany(() => Product, { foreignKey: 'gym_id' })
   declare products: HasMany<typeof Product>
+
+  @belongsTo(() => GymSubscription, { foreignKey: 'currentSubscriptionId' })
+  declare currentSubscription: BelongsTo<typeof GymSubscription>
+
+  @hasMany(() => GymSubscription, { foreignKey: 'gymId' })
+  declare subscriptions: HasMany<typeof GymSubscription>
 }

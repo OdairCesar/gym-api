@@ -22,6 +22,8 @@ const GymsController = () => import('#controllers/gyms_controller')
 const ProductsController = () => import('#controllers/products_controller')
 const GymPermissionsController = () => import('#controllers/gym_permissions_controller')
 const UserPermissionsController = () => import('#controllers/user_permissions_controller')
+const GymPlansController = () => import('#controllers/gym_plans_controller')
+const GymSubscriptionsController = () => import('#controllers/gym_subscriptions_controller')
 const SwaggerController = () => import('#controllers/swagger_controller')
 
 // Health check
@@ -234,6 +236,33 @@ router
     router.delete('/:id', [UserPermissionsController, 'destroy'])
   })
   .prefix('/user-permissions')
+  .use([middleware.auth(), apiThrottle])
+
+/*
+|--------------------------------------------------------------------------
+| Gym Plans Routes (Public)
+|--------------------------------------------------------------------------
+*/
+router
+  .group(() => {
+    router.get('/', [GymPlansController, 'index'])
+    router.get('/:id', [GymPlansController, 'show'])
+  })
+  .prefix('/gym-plans')
+  .use(publicThrottle)
+
+/*
+|--------------------------------------------------------------------------
+| Gym Subscriptions Routes
+|--------------------------------------------------------------------------
+*/
+router
+  .group(() => {
+    router.get('/:gymId/subscription', [GymSubscriptionsController, 'show'])
+    router.post('/:gymId/subscription', [GymSubscriptionsController, 'store'])
+    router.delete('/:gymId/subscription', [GymSubscriptionsController, 'destroy'])
+  })
+  .prefix('/gyms')
   .use([middleware.auth(), apiThrottle])
 
 /*

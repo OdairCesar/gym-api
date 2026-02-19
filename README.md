@@ -75,6 +75,7 @@ Aplicação rodando em: `http://localhost:3333`
 - **[docs/RATE_LIMITING.md](docs/RATE_LIMITING.md)** - Rate limiting e proteção anti-abuso
 - **[docs/ERROR_MONITORING.md](docs/ERROR_MONITORING.md)** - Monitoramento de erros (Sentry)
 - **[docs/OPTIMIZATIONS.md](docs/OPTIMIZATIONS.md)** - Otimizações e índices do banco
+- **[docs/PAYMENT_SYSTEM.md](docs/PAYMENT_SYSTEM.md)** - Sistema de planos e pagamentos (Strategy Pattern)
 
 ### 📝 Outros Documentos
 
@@ -177,6 +178,15 @@ Ver diagrama completo em [ARCHITECTURE.md](docs/ARCHITECTURE.md).
   - Gym Permission: Academia → Personal externo
   - User Permission: Cliente → Personal/Academia específica
   - Controle granular (dietas, treinos)
+
+- **Planos e Pagamento**
+  - 3 planos: Inicial (Free, 25 usuários), Intermediário (R$ 50, 100 usuários), Ilimitado (R$ 100)
+  - Sistema de assinaturas com status tracking (active, cancelled, past_due)
+  - Provedores de pagamento: Free, Google Pay, Apple Pay (Strategy Pattern)
+  - Validação de limites de recursos (limite de usuários por plano)
+  - Assinatura automática ao criar academia (plano inicial gratuito)
+  - Transações atômicas para operações de pagamento
+  - Endpoints: `/gym-plans` (público), `/gym-subscriptions` (autenticado)
 
 - **Segurança**
   - Rate limiting (5 req/min login, 100 req/min API)
@@ -303,18 +313,22 @@ pm2 start ecosystem.config.js --env production
 - **Sprint 4** - Qualidade (Testes Funcionais + Seeders + Documentação API)
 - **Sprint 5** - Monitoramento e Segurança (Rate Limiting + Error Monitoring)
 - **Sprint 6** - Finalização (Otimizações + Deploy + Documentação Completa)
+- **Sprint 7** - Reusabilidade (Dietas e Treinos Compartilhados + Clone)
+- **Sprint 8** - Planos e Pagamento (Strategy Pattern + 3 Providers + Validação de Limites)
 
 ### 📈 Métricas
 
-- **Controllers:** 12
-- **Models:** 12
-- **Policies:** 7
-- **Validators:** 11
-- **Migrations:** 14
-- **Seeders:** 7
+- **Controllers:** 14 (adicionados: GymPlans, GymSubscriptions)
+- **Models:** 14 (adicionados: GymPlan, GymSubscription)
+- **Policies:** 8 (adicionado: Subscription)
+- **Validators:** 12 (adicionado: GymSubscription)
+- **Services:** 4 (adicionados: PaymentService, PlanLimitService)
+- **Strategies:** 3 (FreePlan, GooglePay, ApplePay)
+- **Migrations:** 17 (adicionadas: gym_plans, gym_subscriptions, add_subscription_to_gyms)
+- **Seeders:** 8 (adicionado: GymPlan)
 - **Tests:** 50+
 - **Índices DB:** 50+
-- **Documentação:** 2500+ linhas
+- **Documentação:** 5000+ linhas
 
 ---
 

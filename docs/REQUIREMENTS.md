@@ -30,10 +30,10 @@ Desenvolver uma API RESTful para gestão de múltiplas academias (multi-tenant) 
 - ✅ CRUD completo de produtos da academia
 - ✅ Sistema de permissões cross-tenant (academia-personal e usuário-específico)
 - ✅ Isolamento de dados por academia
+- ✅ Sistema de planos de assinatura e pagamento (Free, Intermediário, Ilimitado)
 
 ### 2.2 Não Inclui (Fora do Escopo MVP)
 - ❌ Interface web (frontend)
-- ❌ Sistema de pagamentos/financeiro
 - ❌ Agendamento de aulas/horários
 - ❌ Chat/mensagens entre usuários
 - ❌ Gamificação/rankings
@@ -336,6 +336,219 @@ Lucas viaja e treina temporariamente na Academia Z
 
 ---
 
+### RF08 - Sistema de Planos e Assinaturas
+**Prioridade:** 🟠 MÉDIA-ALTA
+
+**Descrição:** Sistema de monetização com planos de assinatura que limitam recursos da academia (principalmente quantidade de usuários).
+
+#### Planos Disponíveis
+
+**Plano Inicial (Free):**
+```typescript
+{
+  name: "Plano Inicial",
+  slug: "initial",
+  price: 0.00,
+  max_users: 25,
+  features: {
+    user_limit: 25,
+    trainings: true,
+    diets: true,
+    products: true
+  }
+}
+```
+
+**Plano Intermediário:**
+```typescript
+{
+  name: "Plano Intermediário",
+  slug: "intermediate",
+  price: 50.00,
+  max_users: 100,
+  features: {
+    user_limit: 100,
+    trainings: true,
+    diets: true,
+    products: true
+  }
+}
+```
+
+**Plano Ilimitado:**
+```typescript
+{
+  name: "Plano Ilimitado",
+  slug: "unlimited",
+  price: 100.00,
+  max_users: null, // ilimitado
+  features: {
+    unlimited_users: true,
+    trainings: true,
+    diets: true,
+    products: true,
+    priority_support: true
+  }
+}
+```
+
+#### Estrutura de Dados
+
+**Tabela:** `gym_plans`
+```typescript
+{
+  id: number
+  name: string
+  slug: string // 'initial' | 'intermediate' | 'unlimited'
+  price: decimal(10,2)
+  max_users: number | null
+  features: json
+  is_active: boolean
+}
+```
+
+**Tabela:** `gym_subscriptions`
+```typescript
+{
+  id: number
+  gym_id: number (FK)
+  plan_id: number (FK)
+  status: string // 'active' | 'cancelled' | 'past_due'
+  payment_method: string // 'free' | 'google_pay' | 'apple_pay'
+  payment_provider: string | null
+  payment_provider_id: string | null
+  payment_metadata: json | null
+  started_at: datetime
+  ends_at: datetime | null
+  cancelled_at: datetime | null
+}
+```
+
+#### Critérios de Aceitação
+
+**Gestão de Planos:**
+- Endpoint público para listar planos: `GET /gym-plans`
+- Endpoint público para detalhes do plano: `GET /gym-plans/:id`
+- Planos gerenciáveis apenas por Super Users via banco/seeders
+
+**Assinaturas:**
+- Toda academia recebe plano inicial (gratuito) na criação
+- Endpoint para visualizar assinatura atual: `GET /gym-subscriptions` (autenticado)
+- Endpoint para criar/trocar plano: `POST /gym-subscriptions` (admin/super)
+- Endpoint para cancelar assinatura: `DELETE /gym-subscriptions` (admin/super)
+
+**Validações:**
+- Plano gratuito só aceita `payment_method: 'free'`
+- Planos pagos não aceitam `payment_method: 'free'`
+- Validação de limite de usuários antes de criar novo usuário
+- Se academia atingir limite, retornar erro 403 ao tentar criar usuário
+
+**Provedores de Pagamento:**
+- **FreePlanStrategy**: Sempre disponível, sem validação
+- **GooglePayStrategy**: Requer `payment_data.token` (mock em dev)
+- **ApplePayStrategy**: Requer `payment_data.payment_token` (mock em dev)
+- Extensível via Strategy + Registry Pattern
+
+**Limites de Recursos:**
+- Validação de limite de usuários via `PlanLimitService`
+- `canAddUser(gym_id)` verifica se academia pode criar mais usuários
+- Plano ilimitado (`max_users: null`) nunca bloqueia
+
+**Transações:**
+- Criação/troca de assinatura protegida por `db.transaction()`
+- Cancelamento com refund (para planos pagos) em transação
+
+**Histórico:**
+- Assinatura anterior cancelada automaticamente ao criar nova
+- Status alterado para `cancelled` com `cancelled_at` preenchido
+
+#### Arquitetura
+
+```
+PaymentService (orchestrator)
+  ↓
+PaymentFactory (registry)
+  ↓
+PaymentStrategy (interface)
+  ├── FreePlanStrategy
+  ├── GooglePayStrategy
+  └── ApplePayStrategy
+```
+
+**Padrões de Design:**
+- **Strategy Pattern**: Cada provedor implementa `PaymentStrategy`
+- **Registry Pattern**: `PaymentFactory` gerencia estratégias
+- **Type Safety**: Constantes em `app/types/subscription_types.ts`
+
+#### Cenários de Uso
+
+**Cenário 1:** Nova academia criada
+```
+1. Sistema cria academia no banco
+2. PaymentService.subscribe(gym, 'initial', 'free')
+3. GymSubscription criada com status 'active'
+4. Academia pode criar até 25 usuários
+```
+
+**Cenário 2:** Upgrade para plano pago
+```
+1. Admin acessa POST /gym-subscriptions
+2. Envia: {plan_slug: 'intermediate', payment_method: 'google_pay', payment_data: {token: '...'}}
+3. Sistema valida combinação plano/método
+4. PaymentService cancela assinatura atual
+5. GooglePayStrategy processa pagamento
+6. Nova assinatura criada com status 'active'
+7. Academia agora pode ter até 100 usuários
+```
+
+**Cenário 3:** Tentativa de criar usuário além do limite
+```
+1. Academia com plano inicial (25 usuários) já tem 25 usuários
+2. Admin tenta criar 26º usuário: POST /users
+3. PlanLimitService.canAddUser(gym_id) → false
+4. Sistema retorna: 403 Forbidden {"error": "Limite de usuários atingido"}
+```
+
+**Cenário 4:** Cancelamento de assinatura
+```
+1. Admin acessa DELETE /gym-subscriptions
+2. PaymentService.cancel(gym)
+3. Se plano pago: GooglePayStrategy.refund(subscription_id)
+4. Assinatura marcada como 'cancelled' com data de cancelamento
+```
+
+#### TODOs e Limitações
+
+**Implementado:**
+- ✅ Models: GymPlan, GymSubscription com helpers
+- ✅ Migrations: Tabelas criadas e versionadas
+- ✅ Seeders: 3 planos iniciais
+- ✅ Services: PaymentService, PlanLimitService
+- ✅ Strategy Pattern: 3 providers implementados
+- ✅ Controllers: GymPlansController, GymSubscriptionsController
+- ✅ Validators: Validação de entrada completa
+- ✅ Policies: Autorização implementada
+- ✅ Routes: Endpoints configurados
+- ✅ Type Safety: Constantes tipadas
+- ✅ Transactions: Operações críticas protegidas
+
+**Pendente:**
+- 🚧 Integração real Google Pay (atualmente mock)
+- 🚧 Integração real Apple Pay (atualmente mock)
+- ❌ Renovação automática mensal (cron job)
+- ❌ Webhooks de pagamento (notificação de falhas)
+- ❌ Notificações (email quando pagamento falhar)
+- ❌ Histórico de assinaturas (manter registro de todas)
+- ❌ Testes automatizados end-to-end
+- ❌ Planos anuais com desconto
+- ❌ Trial periods (período gratuito)
+- ❌ Cupons de desconto
+
+**Documentação:**
+- 📄 Documentação detalhada em [docs/PAYMENT_SYSTEM.md](./PAYMENT_SYSTEM.md)
+
+---
+
 ## 4. Requisitos Não Funcionais
 
 ### RNF01 - Segurança
@@ -609,6 +822,24 @@ Lucas viaja e treina temporariamente na Academia Z
 - [x] Rota `GET /trainings/shared` - listagem de treinos reutilizáveis
 - [x] Rota `POST /trainings/:id/clone` - clonagem de treino
 - [x] Consolidação: migration `add_is_reusable` removida, campos migrados para criação das tabelas
+
+### Sprint 8 - Planos e Pagamento ✅ (CONCLUÍDA)
+- [x] Migrations: `gym_plans`, `gym_subscriptions`, relação com `gyms`
+- [x] Models: GymPlan, GymSubscription com helper methods
+- [x] Seeders: 3 planos (Initial, Intermediate, Unlimited)
+- [x] Services: PaymentService (subscribe, cancel, change)
+- [x] Services: PlanLimitService (validação de limites)
+- [x] Strategy Pattern: PaymentStrategy interface + PaymentFactory
+- [x] Providers: FreePlanStrategy, GooglePayStrategy, ApplePayStrategy
+- [x] Controllers: GymPlansController (público), GymSubscriptionsController (autenticado)
+- [x] Validators: GymSubscriptionValidator com validação de combinação plano/método
+- [x] Policies: SubscriptionPolicy (autorização admin/super)
+- [x] Routes: `/gym-plans` (público), `/gym-subscriptions` (autenticado)
+- [x] Type Safety: Constantes em `subscription_types.ts` (PLAN_SLUGS, SUBSCRIPTION_STATUS, PAYMENT_METHODS)
+- [x] Refactoring: Unificação de métodos, transações atômicas, DRY principles
+- [x] Integração: Assinatura automática ao criar academia
+- [x] Validação: Limite de usuários aplicado em UsersController
+- [x] Documentação: docs/PAYMENT_SYSTEM.md completo
 
 ---
 
