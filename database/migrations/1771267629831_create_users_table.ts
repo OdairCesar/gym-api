@@ -21,7 +21,7 @@ export default class extends BaseSchema {
       table.timestamp('approved_at').nullable()
       table.boolean('published').notNullable().defaultTo(true)
 
-      table.timestamp('created_at').notNullable()
+      table.timestamp('created_at').notNullable().defaultTo(this.now())
       table.timestamp('updated_at').nullable()
     })
   }

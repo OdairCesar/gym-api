@@ -1,11 +1,11 @@
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
-import Gym from '#models/gym'
-import User from '#models/user'
-import GymPermission from '#models/gym_permission'
-import UserPermission from '#models/user_permission'
-import Diet from '#models/diet'
-import Training from '#models/training'
+import Gym from '#models/gym.model'
+import User from '#models/user.model'
+import Gympermission from '#models/gympermission.model'
+import Userpermission from '#models/userpermission.model'
+import Diet from '#models/diet.model'
+import Training from '#models/training.model'
 import hash from '@adonisjs/core/services/hash'
 
 test.group('Gym Permissions - CRUD', (group) => {
@@ -52,7 +52,7 @@ test.group('Gym Permissions - CRUD', (group) => {
       can_edit_trainings: true,
     })
 
-    const permission = await GymPermission.query()
+    const permission = await Gympermission.query()
       .where('gym_id', gym1.id)
       .where('personal_id', personal2.id)
       .first()
@@ -73,7 +73,7 @@ test.group('Gym Permissions - CRUD', (group) => {
     })
 
     // Gym2 concede permissão ao personal1
-    await GymPermission.create({
+    await Gympermission.create({
       gym_id: gym2.id,
       personal_id: personal1.id,
       can_edit_diets: true,
@@ -139,7 +139,7 @@ test.group('User Permissions - CRUD', (group) => {
       grantee_id: personal2.id,
     })
 
-    const permission = await UserPermission.query()
+    const permission = await Userpermission.query()
       .where('user_id', client1.id)
       .where('grantee_id', personal2.id)
       .first()
@@ -178,7 +178,7 @@ test.group('User Permissions - CRUD', (group) => {
       grantee_id: gym2.id,
     })
 
-    const permission = await UserPermission.query()
+    const permission = await Userpermission.query()
       .where('user_id', client1.id)
       .where('grantee_type', 'gym')
       .first()
@@ -222,7 +222,7 @@ test.group('Permissions - Cross-Tenant Access', (group) => {
     })
 
     // Gym2 concede permissão ao personal1
-    await GymPermission.create({
+    await Gympermission.create({
       gym_id: gym2.id,
       personal_id: personal1.id,
       can_edit_diets: true,
@@ -275,7 +275,7 @@ test.group('Permissions - Cross-Tenant Access', (group) => {
     })
 
     // Client1 concede permissão ao personal2
-    await UserPermission.create({
+    await Userpermission.create({
       user_id: client1.id,
       grantee_type: 'personal',
       grantee_id: personal2.id,

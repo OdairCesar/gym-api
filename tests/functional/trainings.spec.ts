@@ -1,9 +1,9 @@
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
-import Gym from '#models/gym'
-import User from '#models/user'
-import Training from '#models/training'
-import Exercise from '#models/exercise'
+import Gym from '#models/gym.model'
+import User from '#models/user.model'
+import Training from '#models/training.model'
+import Exercise from '#models/exercise.model'
 import db from '@adonisjs/lucid/services/db'
 import hash from '@adonisjs/core/services/hash'
 
@@ -208,7 +208,7 @@ test.group('Trainings - Add/Remove Exercises', (group) => {
 
     // Verificar se foi adicionado na pivot
     const pivot = await db
-      .from('training_exercise')
+      .from('trainingexercise')
       .where('training_id', training.id)
       .where('exercise_id', exercise.id)
       .first()

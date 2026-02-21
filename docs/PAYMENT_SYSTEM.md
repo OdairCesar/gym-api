@@ -54,7 +54,7 @@ O sistema de pagamento da Gym API permite que academias (gyms) assinem planos co
 ┌──────────────────────┐
 │   Controllers        │
 │  ┌────────────────┐  │
-│  │ GymPlansCtrl   │  │  (HTTP Layer)
+│  │ GymplansCtrl   │  │  (HTTP Layer)
 │  │ GymSubsCtrl    │  │
 │  └────────────────┘  │
 └──────────┬───────────┘
@@ -84,8 +84,8 @@ O sistema de pagamento da Gym API permite que academias (gyms) assinem planos co
 ┌──────────▼───────────┐
 │   Models             │
 │  ┌────────────────┐  │
-│  │ GymPlan        │  │  (Data Layer)
-│  │ GymSubscription│  │
+│  │ Gymplan        │  │  (Data Layer)
+│  │ Gymsubscription│  │
 │  │ Gym            │  │
 │  └────────────────┘  │
 └──────────────────────┘
@@ -95,10 +95,10 @@ O sistema de pagamento da Gym API permite que academias (gyms) assinem planos co
 
 #### 1. **Strategy Pattern**
 
-Cada provedor de pagamento implementa a interface `PaymentStrategy`:
+Cada provedor de pagamento implementa a interface `Payment`:
 
 ```typescript
-interface PaymentStrategy {
+interface Payment {
   processPayment(data: PaymentData): Promise<PaymentResult>
   validatePaymentData(data: any): boolean
   refund(subscriptionId: number): Promise<RefundResult>
@@ -117,10 +117,10 @@ O `PaymentFactory` gerencia o registro e criação de estratégias:
 
 ```typescript
 class PaymentFactory {
-  private static strategies = new Map<string, PaymentStrategy>()
+  private static strategies = new Map<string, Payment>()
   
-  static register(method: string, strategy: PaymentStrategy): void
-  static create(method: string): PaymentStrategy
+  static register(method: string, strategy: Payment): void
+  static create(method: string): Payment
   static getSupportedMethods(): string[]
   static getConfiguredMethods(): string[]
 }
@@ -225,12 +225,12 @@ class PaymentFactory {
 
 ## 🗄️ Modelos de Dados
 
-### GymPlan
+### Gymplan
 
 **Arquivo**: [app/models/gym_plan.ts](../app/models/gym_plan.ts)
 
 ```typescript
-class GymPlan extends BaseModel {
+class Gymplan extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
@@ -266,12 +266,12 @@ class GymPlan extends BaseModel {
 - `isFree()`: Verifica se plano é gratuito
 - `hasUserLimit()`: Verifica se plano tem limite de usuários
 
-### GymSubscription
+### Gymsubscription
 
 **Arquivo**: [app/models/gym_subscription.ts](../app/models/gym_subscription.ts)
 
 ```typescript
-class GymSubscription extends BaseModel {
+class Gymsubscription extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
@@ -309,8 +309,8 @@ class GymSubscription extends BaseModel {
   @belongsTo(() => Gym)
   declare gym: BelongsTo<typeof Gym>
 
-  @belongsTo(() => GymPlan)
-  declare plan: BelongsTo<typeof GymPlan>
+  @belongsTo(() => Gymplan)
+  declare plan: BelongsTo<typeof Gymplan>
 
   // Helper Methods
   isActive(): boolean
@@ -330,8 +330,8 @@ class GymSubscription extends BaseModel {
 
 ```typescript
 // Gym.ts
-@hasOne(() => GymSubscription)
-declare subscription: HasOne<typeof GymSubscription>
+@hasOne(() => Gymsubscription)
+declare subscription: HasOne<typeof Gymsubscription>
 
 // Uso:
 const gym = await Gym.query().preload('subscription', (query) => {
@@ -353,17 +353,17 @@ sequenceDiagram
     participant GymsController
     participant Gym Model
     participant PaymentService
-    participant GymSubscription
-    participant GymPlan
+    participant Gymsubscription
+    participant Gymplan
 
     Client->>GymsController: POST /gyms {name, email, ...}
     GymsController->>Gym Model: create(data)
     Gym Model->>Gym Model: save()
     Gym Model->>PaymentService: subscribe(gym, 'initial', 'free')
-    PaymentService->>GymPlan: findBySlug('initial')
+    PaymentService->>Gymplan: findBySlug('initial')
     PaymentService->>PaymentService: createSubscription()
-    PaymentService->>GymSubscription: create(gym, plan, 'free')
-    GymSubscription-->>PaymentService: subscription
+    PaymentService->>Gymsubscription: create(gym, plan, 'free')
+    Gymsubscription-->>PaymentService: subscription
     PaymentService-->>Gym Model: subscription
     Gym Model-->>GymsController: gym + subscription
     GymsController-->>Client: 201 Created
@@ -389,15 +389,15 @@ sequenceDiagram
     participant PaymentFactory
     participant GooglePayStrategy
     participant DB Transaction
-    participant GymSubscription
+    participant Gymsubscription
 
     Client->>SubsController: POST /gym-subscriptions<br/>{plan_slug: 'intermediate', payment_method: 'google_pay', payment_data: {...}}
     SubsController->>SubsController: validatePlanPaymentCombination()
     SubsController->>PaymentService: subscribe(gym, 'intermediate', 'google_pay', paymentData)
     
     PaymentService->>DB Transaction: BEGIN
-    PaymentService->>GymSubscription: cancelCurrent(gym)
-    GymSubscription->>GymSubscription: set status='cancelled'
+    PaymentService->>Gymsubscription: cancelCurrent(gym)
+    Gymsubscription->>Gymsubscription: set status='cancelled'
     
     PaymentService->>PaymentFactory: create('google_pay')
     PaymentFactory-->>PaymentService: GooglePayStrategy
@@ -407,8 +407,8 @@ sequenceDiagram
     GooglePayStrategy->>GooglePayStrategy: callGooglePayAPI() [MOCK]
     GooglePayStrategy-->>PaymentService: {success: true, provider_id: 'gp_123'}
     
-    PaymentService->>GymSubscription: create(gym, plan, 'google_pay', metadata)
-    GymSubscription-->>PaymentService: newSubscription
+    PaymentService->>Gymsubscription: create(gym, plan, 'google_pay', metadata)
+    Gymsubscription-->>PaymentService: newSubscription
     
     PaymentService->>DB Transaction: COMMIT
     PaymentService-->>SubsController: subscription
@@ -418,7 +418,7 @@ sequenceDiagram
 **Código:**
 
 ```typescript
-// GymSubscriptionsController.store()
+// UserpermissionsControllers.store()
 const paymentData = request.input('payment_data')
 const subscription = await paymentService.subscribe(
   gym,
@@ -437,8 +437,8 @@ sequenceDiagram
     participant UsersController
     participant PlanLimitService
     participant Gym
-    participant GymSubscription
-    participant GymPlan
+    participant Gymsubscription
+    participant Gymplan
 
     Client->>UsersController: POST /users {name, email, gym_id, ...}
     UsersController->>PlanLimitService: canAddUser(gym_id)
@@ -477,14 +477,14 @@ sequenceDiagram
     participant Client
     participant SubsController
     participant PaymentService
-    participant GymSubscription
+    participant Gymsubscription
     participant PaymentFactory
     participant GooglePayStrategy
 
     Client->>SubsController: DELETE /gym-subscriptions
     SubsController->>PaymentService: cancel(gym)
     
-    PaymentService->>GymSubscription: findActiveByGym(gym)
+    PaymentService->>Gymsubscription: findActiveByGym(gym)
     
     alt Assinatura paga (not free)
         PaymentService->>PaymentFactory: create(payment_method)
@@ -494,7 +494,7 @@ sequenceDiagram
         GooglePayStrategy-->>PaymentService: {success: true}
     end
     
-    PaymentService->>GymSubscription: update({status: 'cancelled', cancelled_at: now()})
+    PaymentService->>Gymsubscription: update({status: 'cancelled', cancelled_at: now()})
     PaymentService-->>SubsController: subscription
     SubsController-->>Client: 200 OK
 ```
@@ -505,11 +505,11 @@ sequenceDiagram
 
 ### Estrutura de Provider
 
-Todos os provedores implementam a interface `PaymentStrategy`:
+Todos os provedores implementam a interface `Payment`:
 
 ```typescript
 // app/services/payment/payment_strategy.ts
-export interface PaymentStrategy {
+export interface Payment {
   /**
    * Processa um pagamento
    * @throws Error se pagamento falhar
@@ -538,7 +538,7 @@ export interface PaymentStrategy {
 **Arquivo**: [app/services/payment/free_plan_strategy.ts](../app/services/payment/free_plan_strategy.ts)
 
 ```typescript
-export default class FreePlanStrategy implements PaymentStrategy {
+export default class FreePlanStrategy implements Payment {
   async processPayment(data: PaymentData): Promise<PaymentResult> {
     return {
       success: true,
@@ -573,7 +573,7 @@ export default class FreePlanStrategy implements PaymentStrategy {
 **Arquivo**: [app/services/payment/google_pay_strategy.ts](../app/services/payment/google_pay_strategy.ts)
 
 ```typescript
-export default class GooglePayStrategy implements PaymentStrategy {
+export default class GooglePayStrategy implements Payment {
   async processPayment(data: PaymentData): Promise<PaymentResult> {
     if (!this.validatePaymentData(data.paymentData)) {
       throw new Error('Dados de pagamento inválidos para Google Pay')
@@ -637,7 +637,7 @@ GOOGLE_PAY_ENVIRONMENT=TEST # ou PRODUCTION
 **Arquivo**: [app/services/payment/apple_pay_strategy.ts](../app/services/payment/apple_pay_strategy.ts)
 
 ```typescript
-export default class ApplePayStrategy implements PaymentStrategy {
+export default class ApplePayStrategy implements Payment {
   async processPayment(data: PaymentData): Promise<PaymentResult> {
     if (!this.validatePaymentData(data.paymentData)) {
       throw new Error('Dados de pagamento inválidos para Apple Pay')
@@ -708,7 +708,7 @@ APPLE_PAY_ENVIRONMENT=sandbox # ou production
 
 ## 🌐 APIs e Endpoints
 
-### GymPlans (Público)
+### Gymplans (Público)
 
 #### `GET /gym-plans`
 Lista todos os planos disponíveis (públicos).
@@ -774,7 +774,7 @@ Detalhes de um plano específico.
 
 ---
 
-### GymSubscriptions (Autenticado)
+### Gymsubscriptions (Autenticado)
 
 #### `GET /gym-subscriptions`
 Retorna assinatura atual da academia do usuário logado.
@@ -827,7 +827,7 @@ Cria nova assinatura (upgrade/downgrade de plano).
 **Validações**:
 - ❌ Plano gratuito (`initial`) só aceita `payment_method: 'free'`
 - ❌ Planos pagos não aceitam `payment_method: 'free'`
-- ✅ `plan_slug` deve existir na tabela `gym_plans`
+- ✅ `plan_slug` deve existir na tabela `gymplans`
 - ✅ `payment_method` deve ser suportado pelo sistema
 - ✅ `payment_data` deve conter campos requeridos pelo provider
 
@@ -908,12 +908,12 @@ class PaymentService {
     planSlug: string,
     paymentMethod: string,
     paymentData?: any
-  ): Promise<GymSubscription>
+  ): Promise<Gymsubscription>
 
   /**
    * Cancela assinatura ativa (com refund se pago)
    */
-  async cancel(gym: Gym): Promise<GymSubscription>
+  async cancel(gym: Gym): Promise<Gymsubscription>
 
   /**
    * Troca plano da assinatura ativa
@@ -923,7 +923,7 @@ class PaymentService {
     newPlanSlug: string,
     paymentMethod: string,
     paymentData?: any
-  ): Promise<GymSubscription>
+  ): Promise<Gymsubscription>
 }
 ```
 
@@ -935,16 +935,16 @@ class PaymentService {
  */
 private async createSubscription(
   gym: Gym,
-  plan: GymPlan,
+  plan: Gymplan,
   paymentMethod: string,
   paymentData?: any
-): Promise<GymSubscription>
+): Promise<Gymsubscription>
 
 /**
  * Processa pagamento usando estratégia apropriada
  */
 private async processPayment(
-  plan: GymPlan,
+  plan: Gymplan,
   paymentMethod: string,
   paymentData: any
 ): Promise<PaymentResult>
@@ -1081,13 +1081,13 @@ class PaymentFactory {
   /**
    * Registra nova estratégia
    */
-  static register(method: string, strategy: PaymentStrategy): void
+  static register(method: string, strategy: Payment): void
 
   /**
    * Cria instância de estratégia
    * @throws Error se método não suportado
    */
-  static create(method: string): PaymentStrategy
+  static create(method: string): Payment
 
   /**
    * Lista todos métodos registrados
@@ -1139,11 +1139,11 @@ Crie arquivo em `app/services/payment/`:
 
 ```typescript
 // app/services/payment/stripe_strategy.ts
-import type { PaymentStrategy, PaymentData, PaymentResult, RefundResult } from './payment_strategy.js'
+import type { Payment, PaymentData, PaymentResult, RefundResult } from './payment_strategy.js'
 import env from '#start/env'
-import GymSubscription from '#models/gym_subscription'
+import Gymsubscription from '#models/gym_subscription'
 
-export default class StripeStrategy implements PaymentStrategy {
+export default class StripeStrategy implements Payment {
   private stripeClient: any // Import do SDK do Stripe
 
   constructor() {
@@ -1189,7 +1189,7 @@ export default class StripeStrategy implements PaymentStrategy {
   }
 
   async refund(subscriptionId: number): Promise<RefundResult> {
-    const subscription = await GymSubscription.findOrFail(subscriptionId)
+    const subscription = await Gymsubscription.findOrFail(subscriptionId)
     const chargeId = subscription.paymentMetadata?.charge_id
 
     if (!chargeId) {
@@ -1283,7 +1283,7 @@ POST /gym-subscriptions
 
 ### Checklist de Novo Provedor
 
-- [ ] Criar classe implementando `PaymentStrategy`
+- [ ] Criar classe implementando `Payment`
 - [ ] Implementar `processPayment()` com integração real
 - [ ] Implementar `validatePaymentData()` com validação específica
 - [ ] Implementar `refund()` com API de estorno
@@ -1336,7 +1336,7 @@ node ace db:seed
 Ou especificamente:
 
 ```bash
-node ace db:seed --files=database/seeders/gym_plan_seeder.ts
+node ace db:seed --files=database/seeders/gymplan.seeder.ts
 ```
 
 ### Migrations
@@ -1350,8 +1350,8 @@ node ace migration:rollback --batch=1
 ```
 
 **Order de Migrations:**
-1. `1739991600000_create_gym_plans_table.ts`
-2. `1739991700000_create_gym_subscriptions_table.ts`
+1. `1739991600000_create_gymplans_table.ts`
+2. `1739991700000_create_gymsubscriptions_table.ts`
 3. `1739991800000_add_subscription_to_gyms_table.ts`
 
 ---
@@ -1364,9 +1364,9 @@ node ace migration:rollback --batch=1
 // routes.ts
 router
   .group(() => {
-    router.get('/gym-subscriptions', [GymSubscriptionsController, 'show'])
-    router.post('/gym-subscriptions', [GymSubscriptionsController, 'store'])
-    router.delete('/gym-subscriptions', [GymSubscriptionsController, 'destroy'])
+    router.get('/gym-subscriptions', [UserpermissionsControllers, 'show'])
+    router.post('/gym-subscriptions', [UserpermissionsControllers, 'store'])
+    router.delete('/gym-subscriptions', [UserpermissionsControllers, 'destroy'])
   })
   .middleware(['auth']) // Requer autenticação
 ```
@@ -1374,7 +1374,7 @@ router
 ### Políticas de Autorização
 
 ```typescript
-// app/policies/subscription_policy.ts
+// app/policies/subscription.policy.ts
 export default class SubscriptionPolicy {
   // Apenas admins e super users podem modificar assinaturas
   canModify(user: User): boolean {
@@ -1391,8 +1391,8 @@ export default class SubscriptionPolicy {
 ### Validação de Dados
 
 ```typescript
-// app/validators/gym_subscription_validator.ts
-export const createGymSubscriptionValidator = vine.compile(
+// app/validators/gymsubscription.validator.ts
+export const createGymsubscriptionValidator = vine.compile(
   vine.object({
     plan_slug: vine.string().trim(),
     payment_method: vine.string().trim(),
@@ -1405,7 +1405,7 @@ export const createGymSubscriptionValidator = vine.compile(
 
 ```typescript
 // Queries sempre filtram por academia do usuário
-const subscription = await GymSubscription.query()
+const subscription = await Gymsubscription.query()
   .where('gym_id', auth.user.gymId)
   .preload('plan')
   .firstOrFail()
@@ -1423,7 +1423,7 @@ const subscription = await db.transaction(async (trx) => {
   const result = await paymentStrategy.processPayment(data)
   
   // Criar nova assinatura
-  return await GymSubscription.create({ ... }, { client: trx })
+  return await Gymsubscription.create({ ... }, { client: trx })
 })
 ```
 
@@ -1442,7 +1442,7 @@ const subscription = await db.transaction(async (trx) => {
 
 | Componente | Status | Descrição |
 |------------|--------|-----------|
-| **Modelos** | ✅ Completo | GymPlan, GymSubscription com helpers |
+| **Modelos** | ✅ Completo | Gymplan, Gymsubscription com helpers |
 | **Migrations** | ✅ Completo | Tabelas criadas e testadas |
 | **Seeders** | ✅ Completo | 3 planos iniciais |
 | **PaymentService** | ✅ Completo | Lógica de negócio implementada |
@@ -1451,7 +1451,7 @@ const subscription = await db.transaction(async (trx) => {
 | **FreePlanStrategy** | ✅ Completo | Produção ready |
 | **GooglePayStrategy** | 🚧 Mock | Aguardando credenciais |
 | **ApplePayStrategy** | 🚧 Mock | Aguardando certificados |
-| **Controllers** | ✅ Completo | GymPlans + GymSubscriptions |
+| **Controllers** | ✅ Completo | Gymplans + Gymsubscriptions |
 | **Validators** | ✅ Completo | Validação de input |
 | **Policies** | ✅ Completo | Autorização implementada |
 | **Routes** | ✅ Completo | Endpoints configurados |
@@ -1491,14 +1491,14 @@ const subscription = await db.transaction(async (trx) => {
 // app/commands/renew_subscriptions_command.ts
 
 import { BaseCommand } from '@adonisjs/core/ace'
-import GymSubscription from '#models/gym_subscription'
+import Gymsubscription from '#models/gym_subscription'
 import PaymentService from '#services/payment_service'
 
 export default class RenewSubscriptions extends BaseCommand {
   static commandName = 'subscriptions:renew'
 
   async run() {
-    const expiring = await GymSubscription.query()
+    const expiring = await Gymsubscription.query()
       .where('status', 'active')
       .where('ends_at', '<=', DateTime.now().plus({ days: 1 }))
       .whereNot('payment_method', 'free')
@@ -1529,7 +1529,7 @@ export default class RenewSubscriptions extends BaseCommand {
 
 ```typescript
 // TODO: Implementar endpoints de webhook
-// app/controllers/payment_webhooks_controller.ts
+// app/controllers/paymentwebhooks.controller.ts
 
 export default class PaymentWebhooksController {
   // Google Pay notifica sobre falhas/sucessos
@@ -1539,7 +1539,7 @@ export default class PaymentWebhooksController {
     
     // Validar assinatura
     // Processar evento (payment.success, payment.failed)
-    // Atualizar GymSubscription
+    // Atualizar Gymsubscription
   }
 
   // Apple Pay notifica sobre transações
@@ -1560,7 +1560,7 @@ export default class PaymentWebhooksController {
 
 // app/services/notification_service.ts
 class NotificationService {
-  async notifyPaymentFailed(subscription: GymSubscription) {
+  async notifyPaymentFailed(subscription: Gymsubscription) {
     // Enviar email para admin da academia
   }
 
@@ -1574,7 +1574,7 @@ class NotificationService {
 
 ```typescript
 // TODO: Criar testes end-to-end
-// tests/functional/gym_subscriptions.spec.ts
+// tests/functional/gymsubscriptions.spec.ts
 
 test('should create free subscription on gym creation', async ({ client, assert }) => {
   const response = await client.post('/gyms').json({
@@ -1585,7 +1585,7 @@ test('should create free subscription on gym creation', async ({ client, assert 
   response.assertStatus(201)
   const gym = response.body()
   
-  const subscription = await GymSubscription.findByOrFail('gym_id', gym.id)
+  const subscription = await Gymsubscription.findByOrFail('gym_id', gym.id)
   assert.equal(subscription.paymentMethod, 'free')
   assert.equal(subscription.status, 'active')
 })
@@ -1606,7 +1606,7 @@ test('should enforce user limit', async ({ client }) => {
 // Atualmente sobrescreve assinatura antiga
 
 // Migration: create_gym_subscription_history_table.ts
-// Model: GymSubscriptionHistory
+// Model: GymsubscriptionHistory
 // Salvar snapshot da assinatura ao cancelar/trocar
 ```
 
@@ -1631,7 +1631,7 @@ test('should enforce user limit', async ({ client }) => {
 // - Lifetime Value (LTV)
 // - Crescimento mensal
 
-// app/controllers/analytics_controller.ts
+// app/controllers/analytics.controller.ts
 export default class AnalyticsController {
   async dashboard({ auth }: HttpContext) {
     // Calcular métricas agregadas
@@ -1660,13 +1660,13 @@ export default class AnalyticsController {
 
 ### Arquivos do Projeto
 
-- [app/models/gym_plan.ts](../app/models/gym_plan.ts)
-- [app/models/gym_subscription.ts](../app/models/gym_subscription.ts)
-- [app/services/payment_service.ts](../app/services/payment_service.ts)
-- [app/services/plan_limit_service.ts](../app/services/plan_limit_service.ts)
-- [app/services/payment/payment_factory.ts](../app/services/payment/payment_factory.ts)
-- [app/controllers/gym_subscriptions_controller.ts](../app/controllers/gym_subscriptions_controller.ts)
-- [app/types/subscription_types.ts](../app/types/subscription_types.ts)
+- [app/models/gymplan.model.ts](../app/models/gymplan.model.ts)
+- [app/models/gymsubscription.model.ts](../app/models/gymsubscription.model.ts)
+- [app/services/payment.service.ts](../app/services/payment.service.ts)
+- [app/services/plan_limit.service.ts](../app/services/plan_limit.service.ts)
+- [app/services/factories/payment.factory.ts](../app/services/factories/payment.factory.ts)
+- [app/controllers/gymsubscriptions.controller.ts](../app/controllers/gymsubscriptions.controller.ts)
+- [app/types/subscription.type.ts](../app/types/subscription.type.ts)
 
 ### Outros Documentos
 

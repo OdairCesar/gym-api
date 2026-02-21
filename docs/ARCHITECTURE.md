@@ -49,8 +49,8 @@ Documentação visual da arquitetura e fluxos da aplicação.
 │  │  • DietsController, MealsController, FoodsController │   │
 │  │  • TrainingsController, ExercisesController          │   │
 │  │  • ProductsController, GymsController                │   │
-│  │  • GymPermissionsController, UserPermissionsController│  │
-│  │  • GymPlansController, GymSubscriptionsController    │   │
+│  │  • GympermissionsController, UserpermissionsController│  │
+│  │  • GymplansController, UserpermissionsControllers    │   │
 │  └────────────────────┬─────────────────────────────────┘   │
 │                       │                                      │
 │  ┌────────────────────▼─────────────────────────────────┐   │
@@ -66,14 +66,14 @@ Documentação visual da arquitetura e fluxos da aplicação.
 │  │  • User, Gym, AccessToken                            │   │
 │  │  • Diet, Meal, Food                                  │   │
 │  │  • Training, Exercise (many-to-many)                 │   │
-│  │  • Product, GymPermission, UserPermission            │   │
-│  │  • GymPlan, GymSubscription                          │   │
+│  │  • Product, Gympermission, Userpermission            │   │
+│  │  • Gymplan, Gymsubscription                          │   │
 │  └────────────────────┬─────────────────────────────────┘   │
 │                       │                                      │
 │  ┌────────────────────▼─────────────────────────────────┐   │
 │  │            SERVICES LAYER                            │   │
 │  │  • PermissionService (cross-tenant logic)            │   │
-│  │  • ErrorMonitoringService (Sentry/None)              │   │
+│  │  • ErrorMonitoring (Sentry/None)              │   │
 │  │  • PaymentService (subscriptions orchestrator)       │   │
 │  │  • PlanLimitService (resource limits validation)     │   │
 │  │                                                       │   │
@@ -88,7 +88,7 @@ Documentação visual da arquitetura e fluxos da aplicação.
 │  • Multi-tenant (logical isolation via gym_id)               │
 │  • Tables: users, gyms, diets, trainings, products, etc.     │
 │  • Rate limiting table                                       │
-│  • Payment tables: gym_plans, gym_subscriptions              │
+│  • Payment tables: gymplans, gymsubscriptions              │
 └──────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────┐
@@ -129,7 +129,7 @@ Documentação visual da arquitetura e fluxos da aplicação.
      │         │    • payment_method required      │           │
      │         │                                   │           │
      │         │ 3. Controller                     │           │
-     │         │    • GymSubscriptionsController   │           │
+     │         │    • UserpermissionsControllers   │           │
      │         │    • validatePlanPaymentCombination()        │
      │         │      - Free plan → 'free' only    │           │
      │         │      - Paid plans → not 'free'    │           │
@@ -152,7 +152,7 @@ Documentação visual da arquitetura e fluxos da aplicação.
      │         │    │      (mock em dev)       │  │           │
      │         │    │    • return result       │  │           │
      │         │    │                          │  │           │
-     │         │    │ c) Create GymSubscription│  │           │
+     │         │    │ c) Create Gymsubscription│  │           │
      │         │    │    • status: 'active'    │  │           │
      │         │    │    • payment_provider_id │  │           │
      │         │    │    • started_at: now()   │  │           │
@@ -256,7 +256,7 @@ Fluxo de Validação de Limite (Diagrama):
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                     PaymentStrategy                          │
+│                     Payment                          │
 │                      (Interface)                             │
 │                                                              │
 │  + processPayment(data): Promise<PaymentResult>              │
@@ -500,8 +500,8 @@ Fluxo de Verificação:
 │          │      │          │      │   Service    │      │          │
 └──────────┘      └──────────┘      └──────────────┘      └──────────┘
                        │                    │
-                       │                    ├─ Check GymPermission
-                       │                    ├─ Check UserPermission
+                       │                    ├─ Check Gympermission
+                       │                    ├─ Check Userpermission
                        │                    └─ Return boolean
                        │
                        └─ Allow/Deny access
@@ -787,13 +787,13 @@ Exception Ocorre
      │                 │                 │                 │               │
      ▼                 ▼                 ▼                 ▼               ▼
 ┌─────────┐      ┌─────────┐      ┌──────────┐     ┌──────────┐   ┌──────────────┐
-│  User   │      │ Product │      │   Diet   │     │ Training │   │GymSubscription│
+│  User   │      │ Product │      │   Diet   │     │ Training │   │Gymsubscription│
 └────┬────┘      └─────────┘      └────┬─────┘     └────┬─────┘   └──────┬───────┘
      │                                  │                 │                │ N:1
      │ 1:N                              │ 1:N             │ 1:N            │
      │                                  │                 │                ▼
      ├──────────────┐                   ▼                 ▼          ┌──────────┐
-     │              │             ┌─────────┐       ┌──────────┐     │ GymPlan  │
+     │              │             ┌─────────┐       ┌──────────┐     │ Gymplan  │
      ▼              ▼             │  Meal   │       │ Exercise │     └──────────┘
 ┌─────────┐  ┌──────────────┐    └────┬────┘       └────┬─────┘
 │  Diet   │  │   Training   │         │                  │
@@ -808,7 +808,7 @@ Exception Ocorre
 Planos e Assinaturas:
 
 ┌──────────────┐
-│   GymPlan    │  (3 planos: initial, intermediate, unlimited)
+│   Gymplan    │  (3 planos: initial, intermediate, unlimited)
 ├──────────────┤
 │ id           │
 │ name         │
@@ -822,11 +822,11 @@ Planos e Assinaturas:
        │
        ▼
 ┌──────────────────┐
-│ GymSubscription  │  (Cada gym tem uma assinatura ativa)
+│ Gymsubscription  │  (Cada gym tem uma assinatura ativa)
 ├──────────────────┤
 │ id               │
 │ gym_id           │ → FK to gyms
-│ plan_id          │ → FK to gym_plans
+│ plan_id          │ → FK to gymplans
 │ status           │ → 'active' | 'cancelled' | 'past_due'
 │ payment_method   │ → 'free' | 'google_pay' | 'apple_pay'
 │ payment_provider │
@@ -840,7 +840,7 @@ Planos e Assinaturas:
 Permissões Cross-Tenant:
 
 ┌──────────────────┐                    ┌─────────────────┐
-│ GymPermission   │                    │ UserPermission  │
+│ Gympermission   │                    │ Userpermission  │
 ├─────────────────┤                    ├─────────────────┤
 │ gym_id          │                    │ user_id         │
 │ personal_id     │                    │ grantee_type    │

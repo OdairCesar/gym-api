@@ -1,10 +1,10 @@
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
-import Gym from '#models/gym'
-import User from '#models/user'
-import Diet from '#models/diet'
-import Meal from '#models/meal'
-import Food from '#models/food'
+import Gym from '#models/gym.model'
+import User from '#models/user.model'
+import Diet from '#models/diet.model'
+import Meal from '#models/meal.model'
+import Food from '#models/food.model'
 import hash from '@adonisjs/core/services/hash'
 
 test.group('Diets - Create', (group) => {

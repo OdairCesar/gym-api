@@ -34,7 +34,7 @@ new Ignitor(APP_ROOT, { importer: IMPORTER })
     app.booting(async () => {
       await import('#start/env')
       // Inicializar Payment Factory
-      const { PaymentFactory } = await import('#services/payment/payment_factory')
+      const { PaymentFactory } = await import('#services/factories/payment.factory')
       PaymentFactory.initialize()
     })
     app.listen('SIGTERM', () => app.terminate())

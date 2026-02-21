@@ -11,20 +11,20 @@ import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
 import { authThrottle, apiThrottle, publicThrottle } from '#start/limiter'
 
-const AuthController = () => import('#controllers/auth_controller')
-const UsersController = () => import('#controllers/users_controller')
-const DietsController = () => import('#controllers/diets_controller')
-const MealsController = () => import('#controllers/meals_controller')
-const FoodsController = () => import('#controllers/foods_controller')
-const TrainingsController = () => import('#controllers/trainings_controller')
-const ExercisesController = () => import('#controllers/exercises_controller')
-const GymsController = () => import('#controllers/gyms_controller')
-const ProductsController = () => import('#controllers/products_controller')
-const GymPermissionsController = () => import('#controllers/gym_permissions_controller')
-const UserPermissionsController = () => import('#controllers/user_permissions_controller')
-const GymPlansController = () => import('#controllers/gym_plans_controller')
-const GymSubscriptionsController = () => import('#controllers/gym_subscriptions_controller')
-const SwaggerController = () => import('#controllers/swagger_controller')
+const AuthController = () => import('#controllers/auth.controller')
+const DietsController = () => import('#controllers/diets.controller')
+const ExercisesController = () => import('#controllers/exercises.controller')
+const FoodsController = () => import('#controllers/foods.controller')
+const GympermissionsController = () => import('#controllers/gympermissions.controller')
+const GymsController = () => import('#controllers/gyms.controller')
+const GymplansController = () => import('#controllers/gymplans.controller')
+const UserpermissionsControllers = () => import('#controllers/gymsubscriptions.controller')
+const MealsController = () => import('#controllers/meals.controller')
+const ProductsController = () => import('#controllers/products.controller')
+const SwaggerController = () => import('#controllers/swagger.controller')
+const TrainingsController = () => import('#controllers/trainings.controller')
+const UserpermissionsController = () => import('#controllers/userpermissions.controller')
+const UsersController = () => import('#controllers/users.controller')
 
 // Health check
 router
@@ -209,13 +209,13 @@ router
 */
 router
   .group(() => {
-    router.get('/', [GymPermissionsController, 'index'])
-    router.get('/my-permissions', [GymPermissionsController, 'myPermissions'])
-    router.get('/:id', [GymPermissionsController, 'show'])
-    router.post('/', [GymPermissionsController, 'store'])
-    router.put('/:id', [GymPermissionsController, 'update'])
-    router.patch('/:id', [GymPermissionsController, 'update'])
-    router.delete('/:id', [GymPermissionsController, 'destroy'])
+    router.get('/', [GympermissionsController, 'index'])
+    router.get('/my-permissions', [GympermissionsController, 'myPermissions'])
+    router.get('/:id', [GympermissionsController, 'show'])
+    router.post('/', [GympermissionsController, 'store'])
+    router.put('/:id', [GympermissionsController, 'update'])
+    router.patch('/:id', [GympermissionsController, 'update'])
+    router.delete('/:id', [GympermissionsController, 'destroy'])
   })
   .prefix('/gym-permissions')
   .use([middleware.auth(), apiThrottle])
@@ -227,13 +227,13 @@ router
 */
 router
   .group(() => {
-    router.get('/', [UserPermissionsController, 'index'])
-    router.get('/granted-to-me', [UserPermissionsController, 'grantedToMe'])
-    router.get('/:id', [UserPermissionsController, 'show'])
-    router.post('/', [UserPermissionsController, 'store'])
-    router.put('/:id', [UserPermissionsController, 'update'])
-    router.patch('/:id', [UserPermissionsController, 'update'])
-    router.delete('/:id', [UserPermissionsController, 'destroy'])
+    router.get('/', [UserpermissionsController, 'index'])
+    router.get('/granted-to-me', [UserpermissionsController, 'grantedToMe'])
+    router.get('/:id', [UserpermissionsController, 'show'])
+    router.post('/', [UserpermissionsController, 'store'])
+    router.put('/:id', [UserpermissionsController, 'update'])
+    router.patch('/:id', [UserpermissionsController, 'update'])
+    router.delete('/:id', [UserpermissionsController, 'destroy'])
   })
   .prefix('/user-permissions')
   .use([middleware.auth(), apiThrottle])
@@ -245,8 +245,8 @@ router
 */
 router
   .group(() => {
-    router.get('/', [GymPlansController, 'index'])
-    router.get('/:id', [GymPlansController, 'show'])
+    router.get('/', [GymplansController, 'index'])
+    router.get('/:id', [GymplansController, 'show'])
   })
   .prefix('/gym-plans')
   .use(publicThrottle)
@@ -258,9 +258,9 @@ router
 */
 router
   .group(() => {
-    router.get('/:gymId/subscription', [GymSubscriptionsController, 'show'])
-    router.post('/:gymId/subscription', [GymSubscriptionsController, 'store'])
-    router.delete('/:gymId/subscription', [GymSubscriptionsController, 'destroy'])
+    router.get('/:gymId/subscription', [UserpermissionsControllers, 'show'])
+    router.post('/:gymId/subscription', [UserpermissionsControllers, 'store'])
+    router.delete('/:gymId/subscription', [UserpermissionsControllers, 'destroy'])
   })
   .prefix('/gyms')
   .use([middleware.auth(), apiThrottle])

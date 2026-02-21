@@ -23,35 +23,35 @@ export default class extends BaseSeeder {
 
     // Ordem de execução dos seeders (respeitando dependências)
     console.log('📍 Seeding gym plans...')
-    await this.seed(await import('#database/seeders/gym_plan_seeder'))
+    await this.seed(await import('#database/seeders/gymplan.seeder'))
     console.log('✅ Gym plans seeded')
 
     console.log('📍 Seeding gyms...')
-    await this.seed(await import('#database/seeders/gym_seeder'))
+    await this.seed(await import('#database/seeders/gym.seeder'))
     console.log('✅ Gyms seeded')
 
     console.log('📍 Seeding users...')
-    await this.seed(await import('#database/seeders/user_seeder'))
+    await this.seed(await import('#database/seeders/user.seeder'))
     console.log('✅ Users seeded')
 
     console.log('📍 Seeding exercises...')
-    await this.seed(await import('#database/seeders/exercise_seeder'))
+    await this.seed(await import('#database/seeders/exercise.seeder'))
     console.log('✅ Exercises seeded')
 
     console.log('📍 Seeding diets...')
-    await this.seed(await import('#database/seeders/diet_seeder'))
+    await this.seed(await import('#database/seeders/diet.seeder'))
     console.log('✅ Diets seeded')
 
     console.log('📍 Seeding trainings...')
-    await this.seed(await import('#database/seeders/training_seeder'))
+    await this.seed(await import('#database/seeders/training.seeder'))
     console.log('✅ Trainings seeded')
 
     console.log('📍 Seeding products...')
-    await this.seed(await import('#database/seeders/product_seeder'))
+    await this.seed(await import('#database/seeders/product.seeder'))
     console.log('✅ Products seeded')
 
     console.log('📍 Seeding permissions...')
-    await this.seed(await import('#database/seeders/permission_seeder'))
+    await this.seed(await import('#database/seeders/permission.seeder'))
     console.log('✅ Permissions seeded')
 
     console.log('🎉 Database seeding completed successfully!')

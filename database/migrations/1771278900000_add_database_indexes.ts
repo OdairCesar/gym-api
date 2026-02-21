@@ -6,8 +6,6 @@ export default class extends BaseSchema {
     this.schema.alterTable('users', (table) => {
       table.index('gym_id', 'users_gym_id_index')
       table.index('email', 'users_email_index')
-      table.index(['gym_id', 'is_admin'], 'users_gym_admin_index')
-      table.index(['gym_id', 'is_personal'], 'users_gym_personal_index')
     })
 
     // Diets table indexes
@@ -41,9 +39,9 @@ export default class extends BaseSchema {
     })
 
     // Training_Exercise pivot table indexes
-    this.schema.alterTable('training_exercise', (table) => {
-      table.index('training_id', 'training_exercise_training_id_index')
-      table.index('exercise_id', 'training_exercise_exercise_id_index')
+    this.schema.alterTable('trainingexercise', (table) => {
+      table.index('training_id', 'trainingexercise_training_id_index')
+      table.index('exercise_id', 'trainingexercise_exercise_id_index')
     })
 
     // Products table indexes
@@ -61,20 +59,20 @@ export default class extends BaseSchema {
     })
 
     // Gym Permissions table indexes
-    this.schema.alterTable('gym_permissions', (table) => {
-      table.index('gym_id', 'gym_permissions_gym_id_index')
-      table.index('personal_id', 'gym_permissions_personal_id_index')
-      table.index('is_active', 'gym_permissions_is_active_index')
+    this.schema.alterTable('gympermissions', (table) => {
+      table.index('gym_id', 'gympermissions_gym_id_index')
+      table.index('personal_id', 'gympermissions_personal_id_index')
+      table.index('is_active', 'gympermissions_is_active_index')
     })
 
     // User Permissions table indexes
-    this.schema.alterTable('user_permissions', (table) => {
-      table.index('user_id', 'user_permissions_user_id_index')
-      table.index('grantee_type', 'user_permissions_grantee_type_index')
-      table.index('grantee_id', 'user_permissions_grantee_id_index')
-      table.index('is_active', 'user_permissions_is_active_index')
-      table.index(['grantee_id', 'grantee_type'], 'user_permissions_grantee_index')
-      table.index(['user_id', 'grantee_id'], 'user_permissions_user_grantee_index')
+    this.schema.alterTable('userpermissions', (table) => {
+      table.index('user_id', 'userpermissions_user_id_index')
+      table.index('grantee_type', 'userpermissions_grantee_type_index')
+      table.index('grantee_id', 'userpermissions_grantee_id_index')
+      table.index('is_active', 'userpermissions_is_active_index')
+      table.index(['grantee_id', 'grantee_type'], 'userpermissions_grantee_index')
+      table.index(['user_id', 'grantee_id'], 'userpermissions_user_grantee_index')
     })
 
     // Access Tokens table indexes
@@ -95,8 +93,6 @@ export default class extends BaseSchema {
     this.schema.alterTable('users', (table) => {
       table.dropIndex('gym_id', 'users_gym_id_index')
       table.dropIndex('email', 'users_email_index')
-      table.dropIndex(['gym_id', 'is_admin'], 'users_gym_admin_index')
-      table.dropIndex(['gym_id', 'is_personal'], 'users_gym_personal_index')
     })
 
     // Diets
@@ -130,9 +126,9 @@ export default class extends BaseSchema {
     })
 
     // Training_Exercise
-    this.schema.alterTable('training_exercise', (table) => {
-      table.dropIndex('training_id', 'training_exercise_training_id_index')
-      table.dropIndex('exercise_id', 'training_exercise_exercise_id_index')
+    this.schema.alterTable('trainingexercise', (table) => {
+      table.dropIndex('training_id', 'trainingexercise_training_id_index')
+      table.dropIndex('exercise_id', 'trainingexercise_exercise_id_index')
     })
 
     // Products
@@ -150,20 +146,20 @@ export default class extends BaseSchema {
     })
 
     // Gym Permissions
-    this.schema.alterTable('gym_permissions', (table) => {
-      table.dropIndex('gym_id', 'gym_permissions_gym_id_index')
-      table.dropIndex('personal_id', 'gym_permissions_personal_id_index')
-      table.dropIndex('is_active', 'gym_permissions_is_active_index')
+    this.schema.alterTable('gympermissions', (table) => {
+      table.dropIndex('gym_id', 'gympermissions_gym_id_index')
+      table.dropIndex('personal_id', 'gympermissions_personal_id_index')
+      table.dropIndex('is_active', 'gympermissions_is_active_index')
     })
 
     // User Permissions
-    this.schema.alterTable('user_permissions', (table) => {
-      table.dropIndex('user_id', 'user_permissions_user_id_index')
-      table.dropIndex('grantee_type', 'user_permissions_grantee_type_index')
-      table.dropIndex('grantee_id', 'user_permissions_grantee_id_index')
-      table.dropIndex('is_active', 'user_permissions_is_active_index')
-      table.dropIndex(['grantee_id', 'grantee_type'], 'user_permissions_grantee_index')
-      table.dropIndex(['user_id', 'grantee_id'], 'user_permissions_user_grantee_index')
+    this.schema.alterTable('userpermissions', (table) => {
+      table.dropIndex('user_id', 'userpermissions_user_id_index')
+      table.dropIndex('grantee_type', 'userpermissions_grantee_type_index')
+      table.dropIndex('grantee_id', 'userpermissions_grantee_id_index')
+      table.dropIndex('is_active', 'userpermissions_is_active_index')
+      table.dropIndex(['grantee_id', 'grantee_type'], 'userpermissions_grantee_index')
+      table.dropIndex(['user_id', 'grantee_id'], 'userpermissions_user_grantee_index')
     })
 
     // Access Tokens

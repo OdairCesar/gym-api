@@ -942,13 +942,13 @@
       "parentId": "folder_products"
     },
     {
-      "_id": "folder_gym_permissions",
+      "_id": "folder_gympermissions",
       "_type": "request_group",
       "name": "Gym Permissions",
       "parentId": "wrk_gym_api"
     },
     {
-      "_id": "req_gym_permissions_list",
+      "_id": "req_gympermissions_list",
       "_type": "request",
       "name": "List Gym Permissions",
       "method": "GET",
@@ -959,10 +959,10 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_gym_permissions"
+      "parentId": "folder_gympermissions"
     },
     {
-      "_id": "req_gym_permissions_my",
+      "_id": "req_gympermissions_my",
       "_type": "request",
       "name": "My Gym Permissions",
       "method": "GET",
@@ -973,10 +973,10 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_gym_permissions"
+      "parentId": "folder_gympermissions"
     },
     {
-      "_id": "req_gym_permissions_show",
+      "_id": "req_gympermissions_show",
       "_type": "request",
       "name": "Show Gym Permission",
       "method": "GET",
@@ -987,10 +987,10 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_gym_permissions"
+      "parentId": "folder_gympermissions"
     },
     {
-      "_id": "req_gym_permissions_create",
+      "_id": "req_gympermissions_create",
       "_type": "request",
       "name": "Create Gym Permission",
       "method": "POST",
@@ -1009,10 +1009,10 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_gym_permissions"
+      "parentId": "folder_gympermissions"
     },
     {
-      "_id": "req_gym_permissions_update",
+      "_id": "req_gympermissions_update",
       "_type": "request",
       "name": "Update Gym Permission",
       "method": "PUT",
@@ -1031,10 +1031,10 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_gym_permissions"
+      "parentId": "folder_gympermissions"
     },
     {
-      "_id": "req_gym_permissions_delete",
+      "_id": "req_gympermissions_delete",
       "_type": "request",
       "name": "Delete Gym Permission",
       "method": "DELETE",
@@ -1045,16 +1045,16 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_gym_permissions"
+      "parentId": "folder_gympermissions"
     },
     {
-      "_id": "folder_user_permissions",
+      "_id": "folder_userpermissions",
       "_type": "request_group",
       "name": "User Permissions",
       "parentId": "wrk_gym_api"
     },
     {
-      "_id": "req_user_permissions_list",
+      "_id": "req_userpermissions_list",
       "_type": "request",
       "name": "List User Permissions",
       "method": "GET",
@@ -1065,10 +1065,10 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_user_permissions"
+      "parentId": "folder_userpermissions"
     },
     {
-      "_id": "req_user_permissions_granted",
+      "_id": "req_userpermissions_granted",
       "_type": "request",
       "name": "Permissions Granted To Me",
       "method": "GET",
@@ -1079,10 +1079,10 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_user_permissions"
+      "parentId": "folder_userpermissions"
     },
     {
-      "_id": "req_user_permissions_show",
+      "_id": "req_userpermissions_show",
       "_type": "request",
       "name": "Show User Permission",
       "method": "GET",
@@ -1093,10 +1093,10 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_user_permissions"
+      "parentId": "folder_userpermissions"
     },
     {
-      "_id": "req_user_permissions_create",
+      "_id": "req_userpermissions_create",
       "_type": "request",
       "name": "Create User Permission",
       "method": "POST",
@@ -1115,10 +1115,10 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_user_permissions"
+      "parentId": "folder_userpermissions"
     },
     {
-      "_id": "req_user_permissions_update",
+      "_id": "req_userpermissions_update",
       "_type": "request",
       "name": "Update User Permission",
       "method": "PUT",
@@ -1137,10 +1137,10 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_user_permissions"
+      "parentId": "folder_userpermissions"
     },
     {
-      "_id": "req_user_permissions_delete",
+      "_id": "req_userpermissions_delete",
       "_type": "request",
       "name": "Delete User Permission",
       "method": "DELETE",
@@ -1151,7 +1151,7 @@
           "value": "Bearer {{ _.token }}"
         }
       ],
-      "parentId": "folder_user_permissions"
+      "parentId": "folder_userpermissions"
     },
     {
       "_id": "folder_health",

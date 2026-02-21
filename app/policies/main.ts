@@ -13,12 +13,12 @@
 */
 
 export const policies = {
-  UserPolicy: () => import('#policies/user_policy'),
-  DietPolicy: () => import('#policies/diet_policy'),
-  TrainingPolicy: () => import('#policies/training_policy'),
-  ProductPolicy: () => import('#policies/product_policy'),
-  GymPolicy: () => import('#policies/gym_policy'),
-  GymPermissionPolicy: () => import('#policies/gym_permission_policy'),
-  UserPermissionPolicy: () => import('#policies/user_permission_policy'),
-  SubscriptionPolicy: () => import('#policies/subscription_policy'),
+  DietPolicy: () => import('#policies/diet.policy'),
+  GymPolicy: () => import('#policies/gym.policy'),
+  GympermissionPolicy: () => import('#policies/gympermission.policy'),
+  ProductPolicy: () => import('#policies/product.policy'),
+  SubscriptionPolicy: () => import('#policies/subscription.policy'),
+  TrainingPolicy: () => import('#policies/training.policy'),
+  UserPolicy: () => import('#policies/user.policy'),
+  UserpermissionPolicy: () => import('#policies/userpermission.policy'),
 }

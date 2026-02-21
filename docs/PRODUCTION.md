@@ -202,7 +202,7 @@ Adicione ao crontab (`crontab -e`):
 mysql -u root -p -e "
   USE gym_api_production;
   OPTIMIZE TABLE users, gyms, diets, trainings, products, exercises, meals, foods, 
-    gym_permissions, user_permissions, access_tokens, rate_limits;
+    gympermissions, userpermissions, access_tokens, rate_limits;
 "
 
 # Analisar tabelas

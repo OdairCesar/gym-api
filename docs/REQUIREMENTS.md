@@ -265,7 +265,7 @@ Product
 
 #### Tipo 1: Academia → Personal Externo
 
-**Tabela:** `gym_permissions`
+**Tabela:** `gympermissions`
 
 **Estrutura:**
 ```typescript
@@ -296,7 +296,7 @@ Personal João (Academia A) ajuda Academia B temporariamente
 
 #### Tipo 2: Cliente → Personal/Academia Específica
 
-**Tabela:** `user_permissions`
+**Tabela:** `userpermissions`
 
 **Estrutura:**
 ```typescript
@@ -394,7 +394,7 @@ Lucas viaja e treina temporariamente na Academia Z
 
 #### Estrutura de Dados
 
-**Tabela:** `gym_plans`
+**Tabela:** `gymplans`
 ```typescript
 {
   id: number
@@ -407,7 +407,7 @@ Lucas viaja e treina temporariamente na Academia Z
 }
 ```
 
-**Tabela:** `gym_subscriptions`
+**Tabela:** `gymsubscriptions`
 ```typescript
 {
   id: number
@@ -469,16 +469,16 @@ PaymentService (orchestrator)
   ↓
 PaymentFactory (registry)
   ↓
-PaymentStrategy (interface)
+Payment (interface)
   ├── FreePlanStrategy
   ├── GooglePayStrategy
   └── ApplePayStrategy
 ```
 
 **Padrões de Design:**
-- **Strategy Pattern**: Cada provedor implementa `PaymentStrategy`
+- **Strategy Pattern**: Cada provedor implementa `Payment`
 - **Registry Pattern**: `PaymentFactory` gerencia estratégias
-- **Type Safety**: Constantes em `app/types/subscription_types.ts`
+- **Type Safety**: Constantes em `app/types/subscription.type.ts`
 
 #### Cenários de Uso
 
@@ -486,7 +486,7 @@ PaymentStrategy (interface)
 ```
 1. Sistema cria academia no banco
 2. PaymentService.subscribe(gym, 'initial', 'free')
-3. GymSubscription criada com status 'active'
+3. Gymsubscription criada com status 'active'
 4. Academia pode criar até 25 usuários
 ```
 
@@ -520,12 +520,12 @@ PaymentStrategy (interface)
 #### TODOs e Limitações
 
 **Implementado:**
-- ✅ Models: GymPlan, GymSubscription com helpers
+- ✅ Models: Gymplan, Gymsubscription com helpers
 - ✅ Migrations: Tabelas criadas e versionadas
 - ✅ Seeders: 3 planos iniciais
 - ✅ Services: PaymentService, PlanLimitService
 - ✅ Strategy Pattern: 3 providers implementados
-- ✅ Controllers: GymPlansController, GymSubscriptionsController
+- ✅ Controllers: GymplansController, UserpermissionsControllers
 - ✅ Validators: Validação de entrada completa
 - ✅ Policies: Autorização implementada
 - ✅ Routes: Endpoints configurados
@@ -643,7 +643,7 @@ PaymentStrategy (interface)
 ### RN06 - Exercícios no Treino
 - Exercícios são cadastrados globalmente (reutilizáveis)
 - Cada treino personaliza exercícios (séries, peso, descanso)
-- Personalização armazenada na tabela pivot `training_exercise`
+- Personalização armazenada na tabela pivot `trainingexercise`
 
 ### RN07 - Soft Delete (Futuro)
 - Academias não são deletadas fisicamente
@@ -683,10 +683,10 @@ PaymentStrategy (interface)
 5. **foods** - Alimentos (dentro da refeição)
 6. **trainings** - Treinos
 7. **exercises** - Exercícios (reutilizáveis)
-8. **training_exercise** - Pivot (treino-exercício com personalizações)
+8. **trainingexercise** - Pivot (treino-exercício com personalizações)
 9. **products** - Produtos da academia
-10. **gym_permissions** - Permissões academia-personal
-11. **user_permissions** - Permissões cliente-específico
+10. **gympermissions** - Permissões academia-personal
+11. **userpermissions** - Permissões cliente-específico
 12. **auth_access_tokens** - Tokens de autenticação
 
 ### Índices Necessários
@@ -699,8 +699,8 @@ PaymentStrategy (interface)
 - `trainings.user_id` - Treinos do cliente
 - `trainings.coach_id` - Treinos do coach
 - `products.gym_id` - Filtragem por academia
-- `gym_permissions(gym_id, personal_id)` - Lookup rápido
-- `user_permissions(user_id, grantee_type, grantee_id)` - Lookup rápido
+- `gympermissions(gym_id, personal_id)` - Lookup rápido
+- `userpermissions(user_id, grantee_type, grantee_id)` - Lookup rápido
 
 ---
 
@@ -790,8 +790,8 @@ PaymentStrategy (interface)
 - [x] ExerciseController (CRUD)
 
 ### Sprint 3 - Permissões ✅ (CONCLUÍDA)
-- [x] GymPermissionController
-- [x] UserPermissionController
+- [x] GympermissionController
+- [x] UserpermissionController
 - [x] ProductController
 - [x] GymController
 
@@ -824,18 +824,18 @@ PaymentStrategy (interface)
 - [x] Consolidação: migration `add_is_reusable` removida, campos migrados para criação das tabelas
 
 ### Sprint 8 - Planos e Pagamento ✅ (CONCLUÍDA)
-- [x] Migrations: `gym_plans`, `gym_subscriptions`, relação com `gyms`
-- [x] Models: GymPlan, GymSubscription com helper methods
+- [x] Migrations: `gymplans`, `gymsubscriptions`, relação com `gyms`
+- [x] Models: Gymplan, Gymsubscription com helper methods
 - [x] Seeders: 3 planos (Initial, Intermediate, Unlimited)
 - [x] Services: PaymentService (subscribe, cancel, change)
 - [x] Services: PlanLimitService (validação de limites)
-- [x] Strategy Pattern: PaymentStrategy interface + PaymentFactory
+- [x] Strategy Pattern: Payment interface + PaymentFactory
 - [x] Providers: FreePlanStrategy, GooglePayStrategy, ApplePayStrategy
-- [x] Controllers: GymPlansController (público), GymSubscriptionsController (autenticado)
-- [x] Validators: GymSubscriptionValidator com validação de combinação plano/método
+- [x] Controllers: GymplansController (público), UserpermissionsControllers (autenticado)
+- [x] Validators: GymsubscriptionValidator com validação de combinação plano/método
 - [x] Policies: SubscriptionPolicy (autorização admin/super)
 - [x] Routes: `/gym-plans` (público), `/gym-subscriptions` (autenticado)
-- [x] Type Safety: Constantes em `subscription_types.ts` (PLAN_SLUGS, SUBSCRIPTION_STATUS, PAYMENT_METHODS)
+- [x] Type Safety: Constantes em `subscription.type.ts` (PLAN_SLUGS, SUBSCRIPTION_STATUS, PAYMENT_METHODS)
 - [x] Refactoring: Unificação de métodos, transações atômicas, DRY principles
 - [x] Integração: Assinatura automática ao criar academia
 - [x] Validação: Limite de usuários aplicado em UsersController

@@ -129,7 +129,7 @@ gym-api-adonis/
 Isolamento lógico via `gym_id`:
 - Todas queries filtradas automaticamente
 - Policies garantem acesso apenas aos dados da academia
-- Permissões cross-tenant via `GymPermission` e `UserPermission`
+- Permissões cross-tenant via `Gympermission` e `Userpermission`
 
 Ver diagrama completo em [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
@@ -318,14 +318,14 @@ pm2 start ecosystem.config.js --env production
 
 ### 📈 Métricas
 
-- **Controllers:** 14 (adicionados: GymPlans, GymSubscriptions)
-- **Models:** 14 (adicionados: GymPlan, GymSubscription)
+- **Controllers:** 14 (adicionados: Gymplans, Gymsubscriptions)
+- **Models:** 14 (adicionados: Gymplan, Gymsubscription)
 - **Policies:** 8 (adicionado: Subscription)
-- **Validators:** 12 (adicionado: GymSubscription)
+- **Validators:** 12 (adicionado: Gymsubscription)
 - **Services:** 4 (adicionados: PaymentService, PlanLimitService)
 - **Strategies:** 3 (FreePlan, GooglePay, ApplePay)
-- **Migrations:** 17 (adicionadas: gym_plans, gym_subscriptions, add_subscription_to_gyms)
-- **Seeders:** 8 (adicionado: GymPlan)
+- **Migrations:** 17 (adicionadas: gymplans, gymsubscriptions, add_subscription_to_gyms)
+- **Seeders:** 8 (adicionado: Gymplan)
 - **Tests:** 50+
 - **Índices DB:** 50+
 - **Documentação:** 5000+ linhas

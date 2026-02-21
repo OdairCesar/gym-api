@@ -1,8 +1,8 @@
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
-import Gym from '#models/gym'
-import User from '#models/user'
-import Product from '#models/product'
+import Gym from '#models/gym.model'
+import User from '#models/user.model'
+import Product from '#models/product.model'
 import hash from '@adonisjs/core/services/hash'
 
 test.group('Products - CRUD', (group) => {
