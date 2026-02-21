@@ -48,7 +48,7 @@ export default class Diet extends BaseModel {
   @belongsTo(() => User, { foreignKey: 'creator_id' })
   declare criador: BelongsTo<typeof User>
 
-  @hasMany(() => Meal)
+  @hasMany(() => Meal, { foreignKey: 'diet_id' })
   declare meals: HasMany<typeof Meal>
 
   @hasMany(() => User, { foreignKey: 'diet_id' })

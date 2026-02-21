@@ -127,6 +127,13 @@ Desenvolver uma API RESTful para gestão de múltiplas academias (multi-tenant) 
 - ❌ Criar/editar/deletar recursos
 - 🔒 **Requer aprovação** para fazer login
 
+**Acesso a usuários:**
+- ✅ Pode visualizar seus próprios dados
+- ✅ Pode visualizar dados de **todos os personals** da mesma academia
+- ❌ **NÃO** pode visualizar dados de outros clientes (users)
+- ❌ **NÃO** pode visualizar dados de admins
+- ❌ **NÃO** pode visualizar dados de super users
+
 #### 2. Personal/Coach (role: 'personal')
 - ✅ Visualizar dados
 - ✅ Criar dietas e treinos
@@ -136,6 +143,14 @@ Desenvolver uma API RESTful para gestão de múltiplas academias (multi-tenant) 
 - ✅ Receber permissões cross-tenant
 - ✅ **Se aprovado:** Pode aprovar novos usuários da sua academia
 - 🔒 **Requer aprovação** para fazer login
+
+**Acesso a usuários:**
+- ✅ Pode visualizar seus próprios dados
+- ✅ Pode visualizar dados de **users (alunos)** da mesma academia
+- ✅ Pode editar/deletar apenas **users (alunos)** da mesma academia
+- ❌ **NÃO** pode visualizar dados de admins
+- ❌ **NÃO** pode visualizar dados de outros personals
+- ❌ **NÃO** pode editar/deletar admins ou outros personals
 
 #### 3. Admin (role: 'admin')
 - ✅ Controle total da sua academia

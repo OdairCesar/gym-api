@@ -9,6 +9,33 @@ export default class UserPolicy extends BasePolicy {
 
   show(user: User, targetUser: User): AuthorizerResponse {
     if (user.role === UserRole.SUPER) return true
+
+    // User pode ver apenas ele mesmo ou qualquer personal da mesma academia
+    if (user.role === UserRole.USER) {
+      if (user.id === targetUser.id) return true
+
+      // Pode ver qualquer personal da mesma academia
+      if (targetUser.role === UserRole.PERSONAL && user.isInSameGym(targetUser)) {
+        return true
+      }
+
+      return false
+    }
+
+    // Personal pode ver apenas ele mesmo e users (alunos) da mesma academia
+    if (user.role === UserRole.PERSONAL) {
+      if (user.id === targetUser.id) return true
+
+      // NÃO pode ver admins nem outros personals
+      if (targetUser.role === UserRole.ADMIN || targetUser.role === UserRole.PERSONAL) {
+        return false
+      }
+
+      // Pode ver users (alunos) da mesma academia
+      return user.isInSameGym(targetUser)
+    }
+
+    // Admin pode ver todos da mesma academia
     return user.isInSameGym(targetUser)
   }
 

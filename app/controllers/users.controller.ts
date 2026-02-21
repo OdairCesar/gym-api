@@ -30,14 +30,32 @@ export default class UsersController {
     // Users can only see users from their own gym
     query = query.where('gym_id', currentUser.gym_id)
 
-    // Filter by type if provided
-    const type = request.input('type') // 'admin', 'personal', 'user'
-    if (type === 'admin') {
-      query = query.where('role', 'admin')
-    } else if (type === 'personal') {
-      query = query.where('role', 'personal')
-    } else if (type === 'client') {
-      query = query.where('role', 'user')
+    // Aplicar filtros específicos por role
+    if (currentUser.role === 'user') {
+      // User só pode ver:
+      // 1. Ele mesmo
+      // 2. Todos os personals da mesma academia
+      query = query.where((subQuery) => {
+        subQuery.where('id', currentUser.id).orWhere('role', 'personal')
+      })
+    } else if (currentUser.role === 'personal') {
+      // Personal só pode ver:
+      // 1. Ele mesmo
+      // 2. Users (alunos) da mesma academia
+      // NÃO pode ver admins nem outros personals
+      query = query.where((subQuery) => {
+        subQuery.where('id', currentUser.id).orWhere('role', 'user')
+      })
+    } else {
+      // Para outros roles, aplicar filtro por tipo se fornecido
+      const type = request.input('type') // 'admin', 'personal', 'user'
+      if (type === 'admin') {
+        query = query.where('role', 'admin')
+      } else if (type === 'personal') {
+        query = query.where('role', 'personal')
+      } else if (type === 'client') {
+        query = query.where('role', 'user')
+      }
     }
 
     // Filter by published status
