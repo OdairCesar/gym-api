@@ -68,6 +68,23 @@ export default defineConfig({
 
   /*
 |--------------------------------------------------------------------------
+| Meta files
+|--------------------------------------------------------------------------
+|
+| List of files to copy from the project root to the build folder.
+| The public directory must be included so static HTML files are
+| available in production.
+|
+*/
+  metaFiles: [
+    {
+      pattern: 'public/**',
+      reloadServer: false,
+    },
+  ],
+
+  /*
+|--------------------------------------------------------------------------
 | Tests
 |--------------------------------------------------------------------------
 |
