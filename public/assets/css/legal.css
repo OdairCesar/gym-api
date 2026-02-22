@@ -1,0 +1,139 @@
+/* =========================================================
+   LEGAL — Estilos compartilhados entre privacy e terms
+   Cada página deve declarar em :root:
+     --page-color       (cor principal, ex: #6366F1 ou #22D3EE)
+     --page-color-alpha (versão translúcida, ex: rgba(99,102,241,.2))
+     --page-color-soft  (fundo suave, ex: rgba(99,102,241,.08))
+   ========================================================= */
+
+/* ── Layout base ─────────────────────────────────────── */
+body { line-height: 1.7; }
+a    { color: var(--accent2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.container     { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+.container-wide { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Nav ─────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(11,13,26,.9);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+.nav-inner     { display: flex; align-items: center; gap: 12px; }
+.nav-inner img { height: 34px; width: 34px; border-radius: 7px; }
+.nav-inner a   { color: var(--text); font-weight: 700; font-size: 1rem; }
+.nav-inner span { color: var(--muted); font-size: .85rem; }
+.nav-inner .sep { color: var(--muted); opacity: .4; }
+
+/* ── Cabeçalho de página ─────────────────────────────── */
+.page-hero {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 64px 24px 48px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% -20%, var(--page-color-alpha) 0%, transparent 70%);
+  pointer-events: none;
+}
+.tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--page-color-soft);
+  border: 1px solid var(--page-color-alpha);
+  color: var(--page-color); border-radius: 99px;
+  font-size: .72rem; font-weight: 600; letter-spacing: .06em;
+  padding: 4px 14px; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.page-hero h1 { font-size: clamp(1.8rem, 4vw, 2.75rem); font-weight: 900; letter-spacing: -.03em; margin-bottom: 12px; }
+.page-hero p  { color: var(--muted); font-size: .95rem; }
+
+/* ── Conteúdo ────────────────────────────────────────── */
+.content { padding: 64px 24px 100px; }
+
+/* ── Índice ──────────────────────────────────────────── */
+.toc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  margin-bottom: 52px;
+}
+.toc h3 { font-size: .85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 16px; }
+.toc ol { list-style: none; display: flex; flex-direction: column; gap: 8px; counter-reset: toc; padding: 0; }
+.toc ol li { counter-increment: toc; display: flex; gap: 10px; align-items: baseline; }
+.toc ol li::before { content: counter(toc) "."; color: var(--page-color); font-weight: 700; font-size: .8rem; min-width: 20px; }
+.toc ol li a { font-size: .88rem; color: var(--muted); }
+.toc ol li a:hover { color: var(--text); }
+
+/* ── Artigo ──────────────────────────────────────────── */
+article section { margin-bottom: 52px; }
+article h2 {
+  font-size: 1.35rem; font-weight: 800; letter-spacing: -.02em;
+  margin-bottom: 20px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+article h3     { font-size: 1rem; font-weight: 700; margin: 24px 0 10px; color: var(--page-color); }
+article p      { color: var(--muted); margin-bottom: 14px; font-size: .93rem; }
+article ul,
+article ol     { color: var(--muted); font-size: .93rem; padding-left: 20px; margin-bottom: 14px; }
+article li     { margin-bottom: 6px; }
+article strong { color: var(--text); }
+
+/* ── Caixas de destaque ──────────────────────────────── */
+.highlight-box {
+  background: var(--page-color-soft);
+  border: 1px solid var(--page-color-alpha);
+  border-radius: 10px;
+  padding: 20px 24px; margin: 20px 0;
+  font-size: .88rem; color: var(--muted);
+}
+.highlight-box strong { color: var(--page-color); }
+
+.warn-box {
+  background: rgba(251,146,60,.07);
+  border: 1px solid rgba(251,146,60,.2);
+  border-radius: 10px;
+  padding: 20px 24px; margin: 20px 0;
+  font-size: .88rem; color: var(--muted);
+}
+.warn-box strong { color: #FB923C; }
+
+/* ── Grid de informações ─────────────────────────────── */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 20px 0; }
+.info-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px 20px;
+}
+.info-item .label { font-size: .72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.info-item .value { font-size: .88rem; font-weight: 600; }
+
+/* ── Tabela de planos ────────────────────────────────── */
+.plan-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: .85rem; }
+.plan-table th {
+  text-align: left; padding: 10px 14px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted); font-weight: 600; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em;
+}
+.plan-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--muted); }
+.plan-table td strong { color: var(--text); }
+.plan-table tr:last-child td { border-bottom: none; }
+
+/* ── Footer ──────────────────────────────────────────── */
+footer { border-top: 1px solid var(--border); padding: 40px 24px; }
+.footer-inner  { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
+.footer-logo   { display: flex; align-items: center; gap: 10px; }
+.footer-logo img  { height: 28px; width: 28px; border-radius: 5px; }
+.footer-logo span { font-weight: 700; }
+.footer-links  { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; list-style: none; }
+.footer-links a { font-size: .82rem; color: var(--muted); }
+.footer-links a:hover { color: var(--text); text-decoration: none; }
+.footer-copy   { font-size: .78rem; color: var(--muted); }

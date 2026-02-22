@@ -1,0 +1,35 @@
+/* =========================================================
+   BASE — Variáveis, reset e estilos globais compartilhados
+   ========================================================= */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0B0D1A;
+  --surface:  #131627;
+  --surface2: #1A1E35;
+  --border:   rgba(255,255,255,.07);
+  --accent:   #6366F1;
+  --accent2:  #818CF8;
+  --cyan:     #22D3EE;
+  --green:    #4ADE80;
+  --orange:   #FB923C;
+  --red:      #F87171;
+  --text:     #F1F5F9;
+  --muted:    #94A3B8;
+  --radius:   14px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a   { color: inherit; text-decoration: none; }
+img { max-width: 100%; }
