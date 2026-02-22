@@ -171,10 +171,18 @@ router
 | Gyms Routes
 |--------------------------------------------------------------------------
 */
+// Public routes - accessible without token (returns limited data)
 router
   .group(() => {
     router.get('/', [GymsController, 'index'])
     router.get('/:id', [GymsController, 'show'])
+  })
+  .prefix('/gyms')
+  .use(publicThrottle)
+
+// Protected routes - require authentication
+router
+  .group(() => {
     router.post('/', [GymsController, 'store'])
     router.put('/:id', [GymsController, 'update'])
     router.patch('/:id', [GymsController, 'update'])

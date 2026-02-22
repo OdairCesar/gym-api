@@ -9,23 +9,39 @@ import { PLAN_SLUGS, SUBSCRIPTION_STATUS, PAYMENT_METHODS } from '#types/subscri
 
 export default class GymsController {
   /**
-   * List all gyms (users can only see their own gym)
+   * List all gyms
+   * - Unauthenticated: returns all published gyms with limited fields
+   * - Authenticated: returns the user's own gym with full data
    * GET /gyms
    */
   async index({ auth, request, response }: HttpContext) {
-    const currentUser = auth.getUserOrFail()
-    logger.info(`Listing gyms: user ${currentUser.id}`)
+    const isAuthenticated = await auth.check()
 
     // Pagination
     const page = request.input('page', 1)
     const limit = request.input('limit', 20)
 
-    let query = Gym.query()
+    if (isAuthenticated) {
+      const currentUser = auth.getUserOrFail()
+      logger.info(`Listing gyms: user ${currentUser.id}`)
 
-    // All users can only see their own gym (multi-tenant)
-    query = query.where('id', currentUser.gym_id)
+      // Authenticated users can only see their own gym (multi-tenant)
+      const gyms = await Gym.query()
+        .where('id', currentUser.gym_id)
+        .orderBy('name', 'asc')
+        .paginate(page, limit)
 
-    const gyms = await query.orderBy('name', 'asc').paginate(page, limit)
+      return response.ok(gyms)
+    }
+
+    // Unauthenticated: return all published gyms with limited public fields
+    logger.info('Listing public gyms (unauthenticated)')
+
+    const gyms = await Gym.query()
+      .where('published', true)
+      .select('id', 'name', 'description', 'address', 'phone', 'published')
+      .orderBy('name', 'asc')
+      .paginate(page, limit)
 
     return response.ok(gyms)
   }
@@ -82,20 +98,44 @@ export default class GymsController {
 
   /**
    * Show single gym
+   * - Unauthenticated: returns limited fields if gym is published
+   * - Authenticated: returns full data (own gym only)
    * GET /gyms/:id
    */
   async show({ auth, params, response }: HttpContext) {
-    const currentUser = auth.getUserOrFail()
-    logger.info(`Fetching gym details: gym ${params.id}, user ${currentUser.id}`)
+    const isAuthenticated = await auth.check()
 
     const gym = await Gym.findOrFail(params.id)
 
-    // Users can only see their own gym (multi-tenant)
-    if (gym.id !== currentUser.gym_id) {
-      return response.forbidden({ message: 'You do not have permission to view this gym' })
+    if (isAuthenticated) {
+      const currentUser = auth.getUserOrFail()
+      logger.info(`Fetching gym details: gym ${params.id}, user ${currentUser.id}`)
+
+      // Users can only see their own gym (multi-tenant)
+      if (gym.id !== currentUser.gym_id) {
+        return response.forbidden({ message: 'You do not have permission to view this gym' })
+      }
+
+      return response.ok(gym)
     }
 
-    return response.ok(gym)
+    // Unauthenticated: only allow access to published gyms with limited fields
+    logger.info(`Fetching public gym details: gym ${params.id}`)
+
+    if (!gym.published) {
+      return response.notFound({ message: 'Gym not found' })
+    }
+
+    const publicData = {
+      id: gym.id,
+      name: gym.name,
+      description: gym.description,
+      address: gym.address,
+      phone: gym.phone,
+      published: gym.published,
+    }
+
+    return response.ok(publicData)
   }
 
   /**
