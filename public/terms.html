@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Termos de Uso — Gym API</title>
+  <meta name="description" content="Termos de Uso da Gym API. Condições para utilização da plataforma de gestão de academias." />
+  <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/legal.css" />
+  <style>
+    :root {
+      --page-color:       #22D3EE;
+      --page-color-alpha: rgba(34,211,238,.25);
+      --page-color-soft:  rgba(34,211,238,.06);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container-wide nav-inner">
+      <img src="/assets/img/logo.png" alt="Gym API" />
+      <a href="/">Gym API</a>
+      <span class="sep">/</span>
+      <span>Termos de Uso</span>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <div class="tag">Legal</div>
+    <h1>Termos de Uso</h1>
+    <p>Última atualização: 22 de fevereiro de 2026 &nbsp;·&nbsp; Versão 1.0</p>
+  </div>
+
+  <div class="content">
+    <div class="container">
+
+      <div class="toc">
+        <h3>Nesta página</h3>
+        <ol>
+          <li><a href="#s1">Aceitação dos termos</a></li>
+          <li><a href="#s2">Descrição do serviço</a></li>
+          <li><a href="#s3">Cadastro e elegibilidade</a></li>
+          <li><a href="#s4">Uso aceitável</a></li>
+          <li><a href="#s5">Planos e pagamentos</a></li>
+          <li><a href="#s6">Propriedade intelectual</a></li>
+          <li><a href="#s7">Conteúdo do usuário</a></li>
+          <li><a href="#s8">Disponibilidade e SLA</a></li>
+          <li><a href="#s9">Limitação de responsabilidade</a></li>
+          <li><a href="#s10">Cancelamento e rescisão</a></li>
+          <li><a href="#s11">Alterações nos termos</a></li>
+          <li><a href="#s12">Legislação e foro</a></li>
+        </ol>
+      </div>
+
+      <article>
+
+        <section id="s1">
+          <h2>1. Aceitação dos Termos</h2>
+          <p>Ao acessar ou utilizar a <strong>Gym API</strong> — seja por meio de integração direta com a API REST, por meio de aplicações construídas sobre ela ou por meio desta interface —, você concorda em vincular-se a estes Termos de Uso e à nossa <a href="/privacy">Política de Privacidade</a>.</p>
+          <p>Se você representa uma organização (academia), ao aceitar estes termos, você declara possuir autoridade para vincular tal organização. Neste caso, "<strong>você</strong>" refere-se tanto ao indivíduo quanto à organização representada.</p>
+          <div class="warn-box">
+            <strong>Atenção:</strong> Se não concordar com qualquer parte destes termos, não utilize a plataforma.
+          </div>
+        </section>
+
+        <section id="s2">
+          <h2>2. Descrição do Serviço</h2>
+          <p>A Gym API é uma plataforma de software no modelo SaaS que oferece:</p>
+          <ul>
+            <li>API RESTful multi-tenant para gestão de academias</li>
+            <li>Sistema de gerenciamento de usuários com 4 níveis de acesso (Super, Admin, Personal, Cliente)</li>
+            <li>Criação e gerenciamento de dietas personalizadas (refeições e alimentos)</li>
+            <li>Criação e gerenciamento de treinos personalizados (exercícios)</li>
+            <li>Controle de estoque e produtos da academia</li>
+            <li>Sistema de permissões cross-tenant para colaboração entre academias</li>
+            <li>Planos de assinatura com diferentes limites de recursos</li>
+          </ul>
+          <p>O serviço é disponibilizado "no estado em que se encontra" durante o período de MVP (Minimum Viable Product). Funcionalidades podem ser adicionadas, alteradas ou removidas conforme o desenvolvimento do produto.</p>
+        </section>
+
+        <section id="s3">
+          <h2>3. Cadastro e Elegibilidade</h2>
+          <h3>3.1 Requisitos</h3>
+          <ul>
+            <li>Ter 18 anos ou mais, ou ser menor com autorização de responsável legal</li>
+            <li>Fornecer informações verdadeiras, precisas e completas no cadastro</li>
+            <li>Manter as informações de cadastro atualizadas</li>
+            <li>Ser responsável pela confidencialidade das credenciais de acesso</li>
+          </ul>
+          <h3>3.2 Moderação de contas</h3>
+          <p>Novos usuários são criados com status <strong>pendente de aprovação</strong>. O acesso completo está condicionado à aprovação por um administrador ou personal da academia. Reservamo-nos o direito de suspender contas que violem estes termos.</p>
+          <h3>3.3 Super Users</h3>
+          <p>Contas com nível "Super User" são criadas exclusivamente via banco de dados por administradores do sistema e não podem ser solicitadas por usuários comuns via API, por razões de segurança.</p>
+        </section>
+
+        <section id="s4">
+          <h2>4. Uso Aceitável</h2>
+          <h3>4.1 Você se compromete a NÃO:</h3>
+          <ul>
+            <li>Utilizar a plataforma para fins ilegais, fraudulentos ou prejudiciais a terceiros</li>
+            <li>Tentar acessar dados de outras academias sem autorização expressa (violação do isolamento multi-tenant)</li>
+            <li>Realizar engenharia reversa, descompilação ou extração do código-fonte</li>
+            <li>Sobrecarregar deliberadamente a API com requisições excessivas (DDoS)</li>
+            <li>Compartilhar tokens de acesso com terceiros não autorizados</li>
+            <li>Cadastrar dados de usuários sem o consentimento dos titulares</li>
+            <li>Armazenar ou transmitir dados de cartão de crédito diretamente pela API (use os provedores de pagamento integrados)</li>
+            <li>Inserir, armazenar ou transmitir malware, vírus ou código malicioso</li>
+          </ul>
+          <h3>4.2 Rate Limiting</h3>
+          <p>A plataforma aplica limites de requisições por IP e por usuário para garantir a disponibilidade a todos. O excesso de requisições resultará em bloqueio temporário (HTTP 429). Limites específicos estão documentados na API.</p>
+        </section>
+
+        <section id="s5">
+          <h2>5. Planos e Pagamentos</h2>
+          <h3>5.1 Planos disponíveis</h3>
+          <table class="plan-table">
+            <thead>
+              <tr>
+                <th>Plano</th>
+                <th>Preço</th>
+                <th>Limite de usuários</th>
+                <th>Recursos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Inicial (Free)</strong></td>
+                <td>R$ 0/mês</td>
+                <td>Até 25 usuários</td>
+                <td>Treinos, Dietas, Produtos</td>
+              </tr>
+              <tr>
+                <td><strong>Intermediário</strong></td>
+                <td>R$ 50/mês</td>
+                <td>Até 100 usuários</td>
+                <td>Tudo do plano anterior</td>
+              </tr>
+              <tr>
+                <td><strong>Ilimitado</strong></td>
+                <td>R$ 100/mês</td>
+                <td>Ilimitado</td>
+                <td>Tudo + suporte prioritário</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3>5.2 Cobrança</h3>
+          <p>Planos pagos são cobrados mensalmente no início de cada ciclo de faturamento. Os pagamentos são processados por provedores terceirizados (Google Pay, Apple Pay) e sujeitos aos termos desses provedores.</p>
+          <h3>5.3 Upgrades e downgrades</h3>
+          <p>Você pode alterar seu plano a qualquer momento. Upgrades têm efeito imediato. Em caso de downgrade, o novo limite de usuários será aplicado no próximo ciclo — usuários excedentes não serão excluídos automaticamente, mas a criação de novos usuários ficará bloqueada até que o número esteja dentro do limite.</p>
+          <h3>5.4 Cancelamento e reembolso</h3>
+          <p>O cancelamento encerra o acesso ao plano ao final do período vigente. Não há reembolso proporcional para cancelamentos no meio do ciclo, salvo determinação legal em contrário ou acordo expresso.</p>
+          <div class="highlight-box">
+            <strong>Plano gratuito:</strong> Academias que não efetuarem upgrade permanecem no plano inicial indefinidamente, sujeitas ao limite de 25 usuários.
+          </div>
+        </section>
+
+        <section id="s6">
+          <h2>6. Propriedade Intelectual</h2>
+          <p>Todo o código-fonte, documentação, marcas, logotipos e demais ativos da Gym API são propriedade exclusiva de seus desenvolvdores e protegidos pelas leis de propriedade intelectual aplicáveis.</p>
+          <p>Estes termos não transferem qualquer direito de propriedade intelectual a você. É concedida apenas uma licença limitada, não exclusiva, não transferível e revogável para utilizar a plataforma conforme previsto nestes termos.</p>
+        </section>
+
+        <section id="s7">
+          <h2>7. Conteúdo do Usuário</h2>
+          <p>Você mantém a propriedade de todos os dados inseridos na plataforma (dados de usuários, dietas, treinos, produtos). Ao utilizar o serviço, você nos concede uma licença limitada para armazenar, processar e transmitir esses dados exclusivamente para fins de prestação do serviço contratado.</p>
+          <p>Você é o único responsável pela precisão, legalidade e adequação dos dados inseridos, incluindo a obtenção dos consentimentos necessários dos titulares dos dados pessoais cadastrados.</p>
+        </section>
+
+        <section id="s8">
+          <h2>8. Disponibilidade e SLA</h2>
+          <p>Nos comprometemos a manter a disponibilidade da plataforma de acordo com os seguintes níveis de serviço:</p>
+          <ul>
+            <li><strong>Plano Inicial e Intermediário:</strong> disponibilidade alvo de 99,5% ao mês</li>
+            <li><strong>Plano Ilimitado:</strong> disponibilidade alvo de 99,5% ao mês com suporte prioritário</li>
+          </ul>
+          <p>Manutenções programadas serão comunicadas com antecedência mínima de 24 horas. Não nos responsabilizamos por indisponibilidades causadas por fatores fora do nosso controle (falhas de infraestrutura de terceiros, ataques DDoS, eventos de força maior).</p>
+          <div class="warn-box">
+            <strong>MVP:</strong> Durante o período de MVP, os SLAs acima são objetivos e não garantias contratuais formais. SLAs com penalidades serão formalizados em contratos específicos mediante solicitação.
+          </div>
+        </section>
+
+        <section id="s9">
+          <h2>9. Limitação de Responsabilidade</h2>
+          <p>Na máxima extensão permitida pela lei aplicável:</p>
+          <ul>
+            <li>O serviço é fornecido "<strong>no estado em que se encontra</strong>", sem garantias expressas ou implícitas</li>
+            <li>Não somos responsáveis por danos indiretos, incidentais, especiais ou consequenciais decorrentes do uso ou incapacidade de uso do serviço</li>
+            <li>Nossa responsabilidade total perante você não excederá o valor pago pelo serviço nos 3 meses anteriores ao evento que originou a reclamação</li>
+            <li>Não garantimos que o serviço será livre de erros ou que vulnerabilidades de segurança não ocorrerão</li>
+          </ul>
+          <p>Algumas jurisdições não permitem certas limitações de responsabilidade; nesse caso, as limitações acima se aplicam na extensão máxima permitida.</p>
+        </section>
+
+        <section id="s10">
+          <h2>10. Cancelamento e Rescisão</h2>
+          <h3>10.1 Por você</h3>
+          <p>Você pode cancelar sua conta ou assinatura a qualquer momento através dos endpoints de cancelamento disponíveis na API ou entrando em contato com nosso suporte. Após o cancelamento, seus dados serão excluídos conforme descrito na Política de Privacidade.</p>
+          <h3>10.2 Por nós</h3>
+          <p>Podemos suspender ou encerrar sua conta imediatamente, com ou sem aviso prévio, em caso de:</p>
+          <ul>
+            <li>Violação destes termos de uso</li>
+            <li>Atividade fraudulenta ou ilegal</li>
+            <li>Não pagamento de faturas vencidas (após aviso e prazo de regularização)</li>
+            <li>Requisição de autoridade legal competente</li>
+          </ul>
+          <h3>10.3 Encerramento do serviço</h3>
+          <p>Em caso de descontinuação da plataforma, comunicaremos com antecedência mínima de 60 dias, oferecendo ferramentas de exportação dos seus dados.</p>
+        </section>
+
+        <section id="s11">
+          <h2>11. Alterações nos Termos</h2>
+          <p>Podemos atualizar estes termos periodicamente. Alterações materiais serão comunicadas com antecedência mínima de 30 dias por e-mail ou mediante aviso proeminente na plataforma.</p>
+          <p>O uso continuado do serviço após a data de vigência das alterações constitui aceitação dos novos termos. Se não concordar com as alterações, você deve encerrar sua conta antes da data de vigência.</p>
+        </section>
+
+        <section id="s12">
+          <h2>12. Legislação e Foro</h2>
+          <p>Estes termos são regidos pelas leis da República Federativa do Brasil. Para a resolução de controvérsias decorrentes da interpretação ou execução destes termos, fica eleito o foro da Comarca de São Paulo/SP, com renúncia expressa a qualquer outro, por mais privilegiado que seja.</p>
+          <p>Antes de recorrer ao judiciário, as partes comprometem-se a buscar solução amigável por um período mínimo de 30 dias mediante comunicação formal.</p>
+          <div class="highlight-box">
+            <strong>Dúvidas?</strong> Entre em contato pelo e-mail <a href="mailto:suporte@gymapi.com">suporte@gymapi.com</a> ou consulte nossa <a href="/privacy">Política de Privacidade</a>.
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="/assets/img/logo.png" alt="Gym API" />
+        <span>Gym API</span>
+      </div>
+      <ul class="footer-links">
+        <li><a href="/">Início</a></li>
+        <li><a href="/docs">Documentação API</a></li>
+        <li><a href="/privacy">Política de Privacidade</a></li>
+        <li><a href="/terms">Termos de Uso</a></li>
+      </ul>
+      <p class="footer-copy">© 2026 Gym API — Sistema Multi-Tenant para Gestão de Academias</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidade — Gym API</title>
+  <meta name="description" content="Política de Privacidade da Gym API. Saiba como coletamos, usamos e protegemos seus dados." />
+  <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/legal.css" />
+  <style>
+    :root {
+      --page-color:       #6366F1;
+      --page-color-alpha: rgba(99,102,241,.2);
+      --page-color-soft:  rgba(99,102,241,.08);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container-wide nav-inner">
+      <img src="/assets/img/logo.png" alt="Gym API" />
+      <a href="/">Gym API</a>
+      <span class="sep">/</span>
+      <span>Política de Privacidade</span>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <div class="tag">Legal</div>
+    <h1>Política de Privacidade</h1>
+    <p>Última atualização: 22 de fevereiro de 2026 &nbsp;·&nbsp; Versão 1.0</p>
+  </div>
+
+  <div class="content">
+    <div class="container">
+
+      <div class="toc">
+        <h3>Nesta página</h3>
+        <ol>
+          <li><a href="#s1">Quem somos</a></li>
+          <li><a href="#s2">Dados que coletamos</a></li>
+          <li><a href="#s3">Como utilizamos os dados</a></li>
+          <li><a href="#s4">Base legal para o tratamento</a></li>
+          <li><a href="#s5">Compartilhamento de dados</a></li>
+          <li><a href="#s6">Retenção e exclusão</a></li>
+          <li><a href="#s7">Segurança</a></li>
+          <li><a href="#s8">Seus direitos (LGPD)</a></li>
+          <li><a href="#s9">Cookies e logs</a></li>
+          <li><a href="#s10">Contato e DPO</a></li>
+        </ol>
+      </div>
+
+      <article>
+
+        <section id="s1">
+          <h2>1. Quem somos</h2>
+          <p>A <strong>Gym API</strong> é uma plataforma de software no modelo SaaS (Software as a Service) voltada para a gestão de academias. Por meio de uma API RESTful multi-tenant, oferecemos funcionalidades de gerenciamento de usuários, dietas, treinos e produtos para academias ("Clientes") e seus respectivos membros ("Usuários Finais").</p>
+          <p>Nesta política, "<strong>nós</strong>" refere-se ao time responsável pela operação da Gym API. "<strong>Você</strong>" refere-se tanto aos administradores das academias quanto aos usuários finais que acessam a plataforma através de integrações construídas sobre nossa API.</p>
+        </section>
+
+        <section id="s2">
+          <h2>2. Dados que coletamos</h2>
+          <h3>2.1 Dados fornecidos diretamente</h3>
+          <p>Durante o registro e uso da plataforma, coletamos as seguintes categorias de dados:</p>
+          <ul>
+            <li><strong>Dados de identificação:</strong> nome completo, e-mail, CPF</li>
+            <li><strong>Dados de contato:</strong> telefone, endereço</li>
+            <li><strong>Dados demográficos:</strong> data de nascimento, gênero</li>
+            <li><strong>Dados profissionais:</strong> profissão (para personals/coaches)</li>
+            <li><strong>Dados de saúde e atividade física:</strong> dietas, refeições, alimentos, treinos, exercícios, carga e repetições</li>
+            <li><strong>Dados de acesso:</strong> tokens de autenticação, data/hora de login</li>
+          </ul>
+          <h3>2.2 Dados coletados automaticamente</h3>
+          <ul>
+            <li>Endereço IP e User-Agent nas requisições à API</li>
+            <li>Logs de acesso (audit trail) para fins de segurança</li>
+            <li>Metadados de operações (timestamps de criação e atualização de registros)</li>
+          </ul>
+          <div class="highlight-box">
+            <strong>Dados sensíveis:</strong> Informações sobre dietas e atividades físicas podem ser consideradas dados sensíveis de saúde nos termos da LGPD (Lei nº 13.709/2018). Tratamos esses dados com camada adicional de proteção.
+          </div>
+        </section>
+
+        <section id="s3">
+          <h2>3. Como utilizamos os dados</h2>
+          <p>Utilizamos os dados coletados para as seguintes finalidades:</p>
+          <ul>
+            <li>Criar e gerenciar sua conta na plataforma</li>
+            <li>Autenticar e autorizar o acesso aos recursos da API</li>
+            <li>Possibilitar que personals/coaches acessem e editem planos dos seus alunos</li>
+            <li>Controlar limites de uso conforme o plano contratado pela academia</li>
+            <li>Garantir o isolamento de dados entre academias (multi-tenant)</li>
+            <li>Detectar e prevenir fraudes, abusos e acessos não autorizados</li>
+            <li>Prestar suporte técnico quando solicitado</li>
+            <li>Cumprir obrigações legais e regulatórias</li>
+          </ul>
+          <p>Não utilizamos seus dados para fins de publicidade comportamental ou venda a terceiros.</p>
+        </section>
+
+        <section id="s4">
+          <h2>4. Base legal para o tratamento</h2>
+          <p>O tratamento dos seus dados pessoais é realizado com base nas seguintes hipóteses legais previstas na LGPD:</p>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="label">Execução de contrato</div>
+              <div class="value">Para prestar os serviços contratados</div>
+            </div>
+            <div class="info-item">
+              <div class="label">Consentimento</div>
+              <div class="value">Para dados de saúde e atividade física</div>
+            </div>
+            <div class="info-item">
+              <div class="label">Legítimo interesse</div>
+              <div class="value">Para segurança e prevenção de fraudes</div>
+            </div>
+            <div class="info-item">
+              <div class="label">Obrigação legal</div>
+              <div class="value">Para cumprimento de normas aplicáveis</div>
+            </div>
+          </div>
+        </section>
+
+        <section id="s5">
+          <h2>5. Compartilhamento de dados</h2>
+          <p>Seus dados podem ser compartilhados nas seguintes situações:</p>
+          <h3>5.1 Dentro da plataforma (multi-tenant)</h3>
+          <p>Dados de um usuário são acessíveis <strong>apenas</strong> dentro do contexto da academia à qual pertencem. Personals de outras academias somente acessam dados de um usuário mediante autorização explícita concedida pelo próprio usuário ou pelo admin da academia (permissões cross-tenant).</p>
+          <h3>5.2 Provedores de pagamento</h3>
+          <p>Para assinaturas pagas, dados de pagamento são transmitidos diretamente ao provedor (Google Pay / Apple Pay) e não são armazenados em nossos servidores. Seguimos o padrão PCI-DSS para essas integrações.</p>
+          <h3>5.3 Obrigação legal</h3>
+          <p>Podemos divulgar dados quando exigido por lei, ordem judicial ou autoridade governamental competente.</p>
+          <p>Não vendemos, alugamos ou trocamos dados pessoais com terceiros para fins comerciais.</p>
+        </section>
+
+        <section id="s6">
+          <h2>6. Retenção e exclusão</h2>
+          <p>Mantemos seus dados pelo tempo necessário para a prestação dos serviços contratados ou conforme exigido por lei.</p>
+          <ul>
+            <li><strong>Dados de conta ativa:</strong> retidos durante toda a vigência do contrato</li>
+            <li><strong>Logs de acesso e segurança:</strong> retidos por até 12 meses</li>
+            <li><strong>Dados após cancelamento:</strong> excluídos em até 90 dias após solicitação, salvo obrigação legal de retenção</li>
+            <li><strong>Dados fiscais/financeiros:</strong> retidos pelo prazo legal obrigatório (5 anos)</li>
+          </ul>
+        </section>
+
+        <section id="s7">
+          <h2>7. Segurança</h2>
+          <p>Adotamos medidas técnicas e organizacionais para proteger seus dados:</p>
+          <ul>
+            <li><strong>Senhas:</strong> criptografadas com algoritmo Scrypt (resistente a ataques de força bruta)</li>
+            <li><strong>Autenticação:</strong> Bearer Tokens com expiração configurável; logout invalida o token imediatamente</li>
+            <li><strong>Transporte:</strong> comunicação via HTTPS/TLS em produção</li>
+            <li><strong>Banco de dados:</strong> queries parametrizadas via ORM, prevenindo SQL Injection</li>
+            <li><strong>Isolamento:</strong> todas as queries filtradas por <code>gym_id</code>, impedindo acesso cross-tenant não autorizado</li>
+            <li><strong>Rate limiting:</strong> proteção contra brute force e abuso da API</li>
+            <li><strong>Monitoramento:</strong> rastreamento de erros e anomalias em tempo real</li>
+          </ul>
+        </section>
+
+        <section id="s8">
+          <h2>8. Seus direitos (LGPD)</h2>
+          <p>Nos termos da Lei Geral de Proteção de Dados (Lei nº 13.709/2018), você possui os seguintes direitos:</p>
+          <ul>
+            <li><strong>Confirmação e acesso:</strong> saber se tratamos seus dados e acessá-los</li>
+            <li><strong>Correção:</strong> solicitar correção de dados incompletos, inexatos ou desatualizados</li>
+            <li><strong>Anonimização, bloqueio ou eliminação:</strong> quando o tratamento for desnecessário ou excessivo</li>
+            <li><strong>Portabilidade:</strong> receber seus dados em formato estruturado e interoperável</li>
+            <li><strong>Eliminação:</strong> excluir dados tratados com base no consentimento</li>
+            <li><strong>Revogação do consentimento:</strong> retirar consentimento a qualquer momento</li>
+            <li><strong>Informação:</strong> sobre as entidades com quem compartilhamos seus dados</li>
+            <li><strong>Oposição:</strong> quando tratar com base em legítimo interesse</li>
+          </ul>
+          <div class="highlight-box">
+            Para exercer qualquer um desses direitos, entre em contato através do canal indicado na seção 10. Responderemos sua solicitação em até <strong>15 dias úteis</strong>.
+          </div>
+        </section>
+
+        <section id="s9">
+          <h2>9. Cookies e logs</h2>
+          <p>A Gym API é uma API REST e, em sua forma nativa, <strong>não utiliza cookies</strong>. Logs de acesso (IP, endpoint, timestamp) são registrados para fins de segurança, diagnóstico e prevenção de abusos, conforme descrito na seção 2.2.</p>
+          <p>Aplicações de terceiros construídas sobre a Gym API podem fazer uso de cookies em suas interfaces — essas práticas são reguladas pelas políticas de privacidade de cada aplicação.</p>
+        </section>
+
+        <section id="s10">
+          <h2>10. Contato e DPO</h2>
+          <p>Para dúvidas, solicitações relacionadas aos seus direitos ou qualquer questão sobre esta política, entre em contato:</p>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="label">E-mail</div>
+              <div class="value">privacidade@gymapi.com</div>
+            </div>
+            <div class="info-item">
+              <div class="label">Resposta</div>
+              <div class="value">Até 15 dias úteis</div>
+            </div>
+            <div class="info-item">
+              <div class="label">Autoridade</div>
+              <div class="value">ANPD — anpd.gov.br</div>
+            </div>
+          </div>
+          <p>Caso não fique satisfeito com nossa resposta, você pode acionar a <strong>Autoridade Nacional de Proteção de Dados (ANPD)</strong> em <a href="https://www.gov.br/anpd" target="_blank" rel="noopener">gov.br/anpd</a>.</p>
+        </section>
+
+      </article>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="/assets/img/logo.png" alt="Gym API" />
+        <span>Gym API</span>
+      </div>
+      <ul class="footer-links">
+        <li><a href="/">Início</a></li>
+        <li><a href="/docs">Documentação API</a></li>
+        <li><a href="/privacy">Política de Privacidade</a></li>
+        <li><a href="/terms">Termos de Uso</a></li>
+      </ul>
+      <p class="footer-copy">© 2026 Gym API — Sistema Multi-Tenant para Gestão de Academias</p>
+    </div>
+  </footer>
+
+</body>
+</html>

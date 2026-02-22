@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gym API — Gerencie sua academia de verdade</title>
+  <meta name="description" content="A plataforma completa para donos de academia, personals e alunos. Treinos, dietas e gestão de membros em um só lugar." />
+  <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/index.css" />
+</head>
+<body>
+
+  <!-- ── Nav ───────────────────────────────────────────── -->
+  <nav>
+    <div class="container nav-inner">
+      <div class="nav-logo">
+        <img src="/assets/img/logo.png" alt="Gym API" />
+        <strong>Gym API</strong>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#story">Como funciona</a></li>
+        <li><a href="#personas">Para quem é</a></li>
+        <li><a href="#pricing">Planos</a></li>
+        <li><a href="#faq">Dúvidas</a></li>
+        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfJXcMdITupHSLMfbDYx4vL8hggC5o5d1j9Fg726ve0R2IJQQ/viewform?usp=publish-editor" target="_blank" rel="noopener" class="nav-cta">Começar grátis</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Hero ──────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-eyebrow">
+        <span class="pill">🏋️ Para academias que levam a sério</span>
+      </div>
+      <h1>
+        Sua academia organizada.<br />
+        Seus alunos <span class="gradient-text">evoluindo de verdade.</span>
+      </h1>
+      <p class="lead">
+        Pare de gerenciar planilha por planilha e grupo de WhatsApp por grupo de WhatsApp.
+        A Gym API centraliza seus membros, personals, treinos e dietas — para que você
+        foque no que importa: <strong style="color:var(--text)">transformar vidas.</strong>
+      </p>
+      <div class="hero-actions">
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfJXcMdITupHSLMfbDYx4vL8hggC5o5d1j9Fg726ve0R2IJQQ/viewform?usp=publish-editor" target="_blank" rel="noopener" class="btn-primary">Começar gratuitamente</a>
+        <a href="#story" class="btn-ghost">Ver como funciona</a>
+      </div>
+      <div class="hero-proof">
+        <div class="proof-item">
+          <span class="proof-icon">✅</span>
+          <span class="proof-text">Sem burocracia no cadastro</span>
+        </div>
+        <div class="proof-sep"></div>
+        <div class="proof-item">
+          <span class="proof-icon">🔒</span>
+          <span class="proof-text">Dados dos alunos protegidos</span>
+        </div>
+        <div class="proof-sep"></div>
+        <div class="proof-item">
+          <span class="proof-icon">💸</span>
+          <span class="proof-text">Plano gratuito para começar</span>
+        </div>
+        <div class="proof-sep"></div>
+        <div class="proof-item">
+          <span class="proof-icon">📱</span>
+          <span class="proof-text">Acesso de qualquer dispositivo</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Problema ───────────────────────────────────────── -->
+  <section class="pain">
+    <div class="container">
+      <div class="pain-intro">
+        <span class="pill pill-red">Você se identifica?</span>
+        <h2>A realidade de quem gerencia uma academia hoje</h2>
+        <p>Se alguma dessas situações soa familiar, você chegou ao lugar certo.</p>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="emoji">📋</div>
+          <h3>"O treino do João está na planilha… qual mesmo?"</h3>
+          <p>Cada personal tem sua planilha, o aluno não sabe onde está e você não tem visibilidade de nada.</p>
+        </div>
+        <div class="pain-card">
+          <div class="emoji">📲</div>
+          <h3>"Manda o treino no WhatsApp, depois eu atualizo."</h3>
+          <p>Print de treino, foto de dieta, áudio de instrução. Informal, desorganizado, fácil de perder.</p>
+        </div>
+        <div class="pain-card">
+          <div class="emoji">🤷</div>
+          <h3>"Quantos alunos ativos eu tenho mesmo?"</h3>
+          <p>Sem controle centralizado, é impossível saber quanto sua academia cresceu e onde estão os gargalos.</p>
+        </div>
+        <div class="pain-card">
+          <div class="emoji">🏃</div>
+          <h3>"O aluno sumiu e levou a dieta com ele."</h3>
+          <p>Quando o aluno ou personal sai, os dados vão junto — ou ficam presos num celular pessoal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Story ──────────────────────────────────────────── -->
+  <section class="story" id="story">
+    <div class="container">
+      <div class="story-header">
+        <span class="pill">A virada</span>
+        <h2>Conheça Paulo — e como ele <span class="gradient-text">transformou sua academia</span></h2>
+        <p>Uma história que muitos donos de academia vão reconhecer.</p>
+      </div>
+
+      <!-- Capítulo 1 -->
+      <div class="chapter">
+        <div class="chapter-text">
+          <div class="chapter-num">Capítulo 1</div>
+          <h3>O caos do crescimento</h3>
+          <p>Paulo tem uma academia de médio porte. Durante anos, funcionou bem: um bloco de anotações, um grupo de WhatsApp com os personals e muita boa vontade. <strong>Funcionava… até a academia começar a crescer.</strong></p>
+          <p>Com 60 alunos, as planilhas viraram um labirinto. O personal Marcos não sabia se a dieta da aluna Ana havia sido atualizada pelo personal Júlia. Paulo passou a gastar mais tempo resolvendo conflito de informação do que cuidando do negócio.</p>
+          <p><strong>Ele precisava de ordem. Precisava de controle.</strong></p>
+        </div>
+        <div class="chapter-visual">
+          <div class="mock-card">
+            <div class="mock-label">Painel da academia</div>
+            <div class="mock-stats-row">
+              <div class="mock-card mock-stat"><div class="mock-label">Ativos</div><div class="mock-stat-num" style="color:var(--green)">62</div></div>
+              <div class="mock-card mock-stat"><div class="mock-label">Pendentes</div><div class="mock-stat-num" style="color:var(--orange)">8</div></div>
+              <div class="mock-card mock-stat"><div class="mock-label">Personals</div><div class="mock-stat-num" style="color:var(--accent2)">4</div></div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-label">Membros recentes</div>
+            <ul class="mock-list">
+              <li>
+                <div class="mock-person">
+                  <div class="mock-avatar">A</div>
+                  <div><div class="mock-person-name">Ana Souza</div><div class="mock-person-role">Aluna · Personal: Marcos</div></div>
+                </div>
+              </li>
+              <li>
+                <div class="mock-person">
+                  <div class="mock-avatar" style="background:linear-gradient(135deg,#06b6d4,#4ade80)">R</div>
+                  <div><div class="mock-person-name">Ricardo Lima</div><div class="mock-person-role">Aluno · Personal: Júlia</div></div>
+                </div>
+              </li>
+              <li>
+                <div class="mock-person">
+                  <div class="mock-avatar" style="background:linear-gradient(135deg,#f97316,#fbbf24)">C</div>
+                  <div><div class="mock-person-name">Carla Matos</div><div class="mock-person-role">Aluna · Personal: Marcos</div></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Capítulo 2 -->
+      <div class="chapter reverse">
+        <div class="chapter-text">
+          <div class="chapter-num">Capítulo 2</div>
+          <h3>Os personals ganham superpoderes</h3>
+          <p>Com a plataforma, Marcos e Júlia passaram a ter cada aluno à palma da mão. Criar um treino virou questão de minutos: exercícios, séries, repetições, descanso e até o link do vídeo demonstrativo.</p>
+          <p>A dieta da Ana? Atualizada em tempo real, com refeições e macronutrientes detalhados. <strong>Cada personal vê apenas seus alunos. Cada aluno vê apenas seus dados.</strong></p>
+          <p>De bônus: quando um personal de outra academia foi cobrir as férias de Marcos, Paulo liberou o acesso temporário sem complicação — e revogou no dia seguinte que Marcos voltou.</p>
+        </div>
+        <div class="chapter-visual">
+          <div class="mock-card">
+            <div class="mock-label">Treino da Ana — Musculação A</div>
+            <ul class="mock-list">
+              <li>Supino reto — 4×12 · 40kg · 60s descanso</li>
+              <li>Desenvolvimento — 3×10 · 22kg · 60s descanso</li>
+              <li>Tríceps corda — 3×15 · 18kg · 45s descanso</li>
+              <li>Elevação lateral — 3×12 · 8kg · 45s descanso</li>
+            </ul>
+          </div>
+          <div class="mock-card">
+            <div class="mock-row">
+              <div>
+                <div class="mock-label">Dieta da Ana</div>
+                <div class="mock-value">2.100 kcal · 150g proteína</div>
+              </div>
+              <span class="mock-badge badge-green">Atualizada</span>
+            </div>
+            <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:78%"></div></div>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:6px">78% do objetivo semanal atingido</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Capítulo 3 -->
+      <div class="chapter">
+        <div class="chapter-text">
+          <div class="chapter-num">Capítulo 3</div>
+          <h3>O aluno que finalmente evoluiu</h3>
+          <p>Ana sempre achou que "faltava disciplina" para seguir uma dieta. A realidade era outra: as informações chegavam fragmentadas — um print aqui, um áudio ali. <strong>Sem um lugar único, a motivação ia embora junto com a informação.</strong></p>
+          <p>Agora ela abre o app e encontra seu treino do dia com vídeos de referência, e sua dieta com cada refeição detalhada. Ela mesma autorizou que o personal da academia de verão pudesse acompanhar seu progresso por uma semana.</p>
+          <p><strong>Resultado: ela ficou. Evoluiu. E indicou três amigas para a academia de Paulo.</strong></p>
+        </div>
+        <div class="chapter-visual">
+          <div class="mock-card">
+            <div class="mock-label">Minha alimentação hoje</div>
+            <div class="mock-row" style="margin-bottom:12px">
+              <div class="mock-value">☀️ Café da manhã</div>
+              <span class="mock-badge badge-cyan">08:00</span>
+            </div>
+            <div class="mock-row" style="margin-bottom:12px">
+              <div class="mock-value">🥗 Almoço</div>
+              <span class="mock-badge badge-cyan">12:30</span>
+            </div>
+            <div class="mock-row">
+              <div class="mock-value">🍗 Jantar</div>
+              <span class="mock-badge badge-cyan">19:00</span>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-label">Quem pode ver meus dados</div>
+            <ul class="mock-list">
+              <li>Personal Marcos (Academia FitLife)</li>
+              <li>Academia Praia Sol — por 7 dias</li>
+            </ul>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:10px">
+              Você controla quem vê e edita seus dados. Revogue quando quiser.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Stats ──────────────────────────────────────────── -->
+  <div class="stats-banner">
+    <div class="container">
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-num">25</div>
+          <div class="stat-desc">alunos gratuitos para começar</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">100%</div>
+          <div class="stat-desc">dos dados isolados por academia</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">4</div>
+          <div class="stat-desc">perfis: dono, admin, personal, aluno</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">99,5%</div>
+          <div class="stat-desc">uptime nos planos pagos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Benefícios por audiência ───────────────────────── -->
+  <section class="benefits" id="benefits">
+    <div class="container">
+      <div class="benefits-header">
+        <span class="pill">Para cada um do seu jeito</span>
+        <h2>Benefícios que fazem diferença no dia a dia</h2>
+        <p>Selecione seu perfil e veja o que a plataforma faz por você.</p>
+      </div>
+      <div class="audience-tabs">
+        <button class="tab-btn active" onclick="switchTab('manager', this)">🏢 Dono / Admin</button>
+        <button class="tab-btn" onclick="switchTab('personal', this)">🏋️ Personal / Coach</button>
+        <button class="tab-btn" onclick="switchTab('student', this)">👤 Aluno</button>
+      </div>
+
+      <div id="tab-manager" class="tab-panel active">
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <div class="benefit-icon">👥</div>
+            <h3>Visão total dos membros</h3>
+            <p>Veja todos os alunos, personals e admins da sua academia em um único lugar. Aprove e gerencie com poucos cliques.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🔐</div>
+            <h3>Controle de acesso granular</h3>
+            <p>Defina quem pode fazer o quê. Personal não edita outro personal. Aluno não vê dados de outros alunos. Você decide.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🤝</div>
+            <h3>Parcerias com outras academias</h3>
+            <p>Convide personals externos para cobrir férias ou auxiliar em projetos. Controle o acesso e revogue quando quiser.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">📦</div>
+            <h3>Loja de produtos integrada</h3>
+            <p>Cadastre suplementos, roupas e acessórios com controle de estoque. Seus alunos visualizam tudo pelo app.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">📈</div>
+            <h3>Escala conforme cresce</h3>
+            <p>Comece grátis com 25 alunos. Quando a academia crescer, faça upgrade para 100 ou ilimitado sem complicações.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🛡️</div>
+            <h3>Seus dados são seus</h3>
+            <p>Cada academia tem seus dados completamente separados. Nenhum outro gestor ou aluno vê informações da sua academia.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-personal" class="tab-panel">
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <div class="benefit-icon">💪</div>
+            <h3>Monte treinos em minutos</h3>
+            <p>Crie treinos com exercícios detalhados: séries, repetições, carga, descanso e vídeo de referência para cada movimento.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🥗</div>
+            <h3>Dietas ricas em detalhes</h3>
+            <p>Monte planos alimentares com refeições e alimentos individuais, macronutrientes e horários. Atribua a qualquer aluno com um clique.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">♻️</div>
+            <h3>Reutilize o que já criou</h3>
+            <p>Marque treinos e dietas como templates. Clone e personalize para novos alunos sem começar do zero toda vez.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🌐</div>
+            <h3>Trabalhe em múltiplas academias</h3>
+            <p>Receba autorizações de outras academias e atenda alunos fora da sua academia principal, tudo centralizado.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">📋</div>
+            <h3>Histórico organizado</h3>
+            <p>Todos os treinos e dietas que você criou, organizados e acessíveis. Nunca mais perca o histórico de um aluno.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">⚙️</div>
+            <h3>Mais autonomia no dia a dia</h3>
+            <p>Aprove novos membros, gerencie alunos e colabore com admins sem depender da gerência para cada ação.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-student" class="tab-panel">
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <div class="benefit-icon">📱</div>
+            <h3>Treino sempre na palma da mão</h3>
+            <p>Acesse seu treino de onde estiver, com todos os detalhes: exercício, séries, carga e vídeo demonstrativo.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🍽️</div>
+            <h3>Dieta organizada de verdade</h3>
+            <p>Veja sua dieta completa com cada refeição, horários e alimentos. Nada mais de print no WhatsApp.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🔏</div>
+            <h3>Você controla seus dados</h3>
+            <p>Autorize ou revogue o acesso de personals e academias aos seus dados. Ninguém acessa sem sua permissão.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🏖️</div>
+            <h3>Continue seu plano em qualquer academia</h3>
+            <p>Viajou ou mudou temporariamente? Dê acesso à academia local e continue seu programa de onde parou.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">👁️</div>
+            <h3>Veja seus personals disponíveis</h3>
+            <p>Consulte os perfis dos personals da sua academia e escolha com quem quer trabalhar.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🌟</div>
+            <h3>Foco na evolução, não na burocracia</h3>
+            <p>Com tudo organizado, você foca no que importa: treinar, evoluir e atingir seus objetivos.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Como funciona ──────────────────────────────────── -->
+  <section class="how" id="how">
+    <div class="container">
+      <div class="how-header">
+        <span class="pill pill-green">Simples assim</span>
+        <h2>Da criação ao resultado em <span class="gradient-text-green">3 passos</span></h2>
+        <p>Sem treinamento longo, sem implantação cara. Sua academia no ar em minutos.</p>
+      </div>
+      <div class="steps">
+        <div class="step-item">
+          <div class="step-circle">🏢</div>
+          <h3>Cadastre sua academia</h3>
+          <p>Crie sua conta, registre os dados da academia e convide o primeiro admin ou personal. O plano gratuito começa automaticamente.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-circle">👥</div>
+          <h3>Adicione os membros</h3>
+          <p>Personals e alunos se cadastram vinculados à sua academia. Você aprova cada um antes de liberar o acesso completo.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-circle">🚀</div>
+          <h3>Treinos e dietas em ação</h3>
+          <p>Personals criam treinos e dietas personalizadas. Alunos acessam tudo pelo app. Você acompanha o crescimento da academia.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Personas ────────────────────────────────────────── -->
+  <section class="personas" id="personas">
+    <div class="container">
+      <div class="personas-header">
+        <span class="pill pill-cyan">Para quem é</span>
+        <h2>Cada perfil tem seu espaço aqui</h2>
+        <p>A plataforma foi pensada de fora para dentro — começando pelas pessoas que a usam.</p>
+      </div>
+      <div class="personas-grid">
+
+        <div class="persona-card pc-manager">
+          <div class="persona-top">
+            <div class="persona-avatar pa-manager">🏢</div>
+            <h3>Paulo, 38 anos</h3>
+            <p class="persona-role">Dono de academia há 8 anos</p>
+            <p class="persona-quote">"Eu precisava parar de apagar incêndio e começar a crescer de verdade. Hoje sei exatamente quantos alunos tenho, quem são os personals ativos e onde está cada treino."</p>
+          </div>
+          <div class="persona-bottom">
+            <ul class="persona-wins">
+              <li><span class="win-icon">✅</span>Controla todos os membros da academia</li>
+              <li><span class="win-icon">✅</span>Aprova e gerencia personals e admins</li>
+              <li><span class="win-icon">✅</span>Faz parcerias com personals externos</li>
+              <li><span class="win-icon">✅</span>Gerencia produtos e estoque da loja</li>
+              <li><span class="win-icon">✅</span>Escala o plano conforme a academia cresce</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="persona-card pc-personal">
+          <div class="persona-top">
+            <div class="persona-avatar pa-personal">🏋️</div>
+            <h3>Márcia, 29 anos</h3>
+            <p class="persona-role">Personal trainer · 5 anos de experiência</p>
+            <p class="persona-quote">"Antes eu mandava treino por WhatsApp e torcia para o aluno não perder. Agora tudo está no sistema: treino, dieta, histórico. Meus alunos evoluem mais porque têm clareza do que fazer."</p>
+          </div>
+          <div class="persona-bottom">
+            <ul class="persona-wins">
+              <li><span class="win-icon">✅</span>Cria treinos e dietas detalhadas</li>
+              <li><span class="win-icon">✅</span>Usa templates e clona planos</li>
+              <li><span class="win-icon">✅</span>Atende alunos em múltiplas academias</li>
+              <li><span class="win-icon">✅</span>Aprova novos membros da academia</li>
+              <li><span class="win-icon">✅</span>Histórico completo de cada aluno</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="persona-card pc-student">
+          <div class="persona-top">
+            <div class="persona-avatar pa-student">👤</div>
+            <h3>Lucas, 24 anos</h3>
+            <p class="persona-role">Aluno · faz academia há 1 ano</p>
+            <p class="persona-quote">"Sempre achei que não tinha disciplina para dieta. Depois percebi que o problema era a informação chegando bagunçada. Com tudo organizado, fica fácil de seguir. Em 3 meses vi mais resultado do que no ano inteiro."</p>
+          </div>
+          <div class="persona-bottom">
+            <ul class="persona-wins">
+              <li><span class="win-icon">✅</span>Acessa treino e dieta de qualquer lugar</li>
+              <li><span class="win-icon">✅</span>Vídeos e instruções de cada exercício</li>
+              <li><span class="win-icon">✅</span>Controla quem acessa seus dados</li>
+              <li><span class="win-icon">✅</span>Continua o plano mesmo viajando</li>
+              <li><span class="win-icon">✅</span>Edita suas próprias informações de perfil</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Depoimentos ────────────────────────────────────── -->
+  <section class="proof" id="proof">
+    <div class="container">
+      <div class="proof-header">
+        <span class="pill pill-orange">Quem já usa</span>
+        <h2>O que as academias estão dizendo</h2>
+      </div>
+      <div class="testimonials">
+        <div class="testimonial">
+          <div class="stars">★★★★★</div>
+          <blockquote>"Abri minha segunda unidade e teria sido um caos sem a plataforma. Os dados de cada academia ficam completamente separados — os alunos da unidade 1 não veem nada da unidade 2. Exatamente o que eu precisava."</blockquote>
+          <div class="testimonial-author">
+            <div class="t-avatar" style="background:linear-gradient(135deg,#6366f1,#818cf8)">RF</div>
+            <div>
+              <div class="t-name">Roberto Figueiredo</div>
+              <div class="t-role">Dono de duas academias · São Paulo</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <div class="stars">★★★★★</div>
+          <blockquote>"Atendo alunos em três academias diferentes e antes a bagunça era total. Agora cada academia me autoriza no sistema e eu gerencio tudo centralizado. Profissionalismo que os alunos percebem."</blockquote>
+          <div class="testimonial-author">
+            <div class="t-avatar" style="background:linear-gradient(135deg,#4ade80,#22d3ee)">JC</div>
+            <div>
+              <div class="t-name">Juliana Costa</div>
+              <div class="t-role">Personal trainer autônoma · Rio de Janeiro</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <div class="stars">★★★★★</div>
+          <blockquote>"O treino no sistema me fez seguir com muito mais consistência. Não tem mais desculpa de 'não sei o que fazer hoje'. Abro, vejo os exercícios com os vídeos, e vai. O resultado veio rápido."</blockquote>
+          <div class="testimonial-author">
+            <div class="t-avatar" style="background:linear-gradient(135deg,#fb923c,#fbbf24)">TM</div>
+            <div>
+              <div class="t-name">Thiago Martins</div>
+              <div class="t-role">Aluno há 8 meses · Belo Horizonte</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Pricing ────────────────────────────────────────── -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="pricing-header">
+        <span class="pill">Planos e preços</span>
+        <h2>Comece grátis. <span class="gradient-text">Cresça sem limite.</span></h2>
+        <p>Todos os planos incluem treinos, dietas, produtos e controle de membros. A diferença é só na escala.</p>
+      </div>
+      <div class="pricing-grid">
+
+        <div class="plan-card">
+          <div class="plan-name">Plano Inicial</div>
+          <div class="plan-price"><sup>R$</sup>0<sub>/mês</sub></div>
+          <p class="plan-tagline">Para academias menores ou que querem testar sem risco.</p>
+          <ul class="plan-features">
+            <li>Até <strong>25 alunos ativos</strong></li>
+            <li>Personals e admins ilimitados</li>
+            <li>Treinos e dietas completos</li>
+            <li>Controle de loja e estoque</li>
+            <li>Parcerias com outras academias</li>
+          </ul>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfJXcMdITupHSLMfbDYx4vL8hggC5o5d1j9Fg726ve0R2IJQQ/viewform?usp=publish-editor" target="_blank" rel="noopener" class="plan-btn outline">Começar grátis</a>
+        </div>
+
+        <div class="plan-card featured">
+          <div class="plan-badge">Mais escolhido</div>
+          <div class="plan-name">Plano Intermediário</div>
+          <div class="plan-price"><sup>R$</sup>50<sub>/mês</sub></div>
+          <p class="plan-tagline">Para academias em crescimento que precisam de mais espaço.</p>
+          <ul class="plan-features">
+            <li>Até <strong>100 alunos ativos</strong></li>
+            <li>Tudo do plano gratuito</li>
+            <li>Pagamentos via Google Pay e Apple Pay</li>
+            <li>Suporte por e-mail prioritário</li>
+            <li>SLA garantido de 99,5%</li>
+          </ul>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfJXcMdITupHSLMfbDYx4vL8hggC5o5d1j9Fg726ve0R2IJQQ/viewform?usp=publish-editor" target="_blank" rel="noopener" class="plan-btn solid">Assinar agora</a>
+        </div>
+
+        <div class="plan-card">
+          <div class="plan-name">Plano Ilimitado</div>
+          <div class="plan-price"><sup>R$</sup>100<sub>/mês</sub></div>
+          <p class="plan-tagline">Para redes de academias e grandes operações.</p>
+          <ul class="plan-features">
+            <li><strong>Alunos ilimitados</strong></li>
+            <li>Tudo do plano intermediário</li>
+            <li>Suporte prioritário dedicado</li>
+            <li>Acesso antecipado a novas funcionalidades</li>
+            <li>Ideal para múltiplas unidades</li>
+          </ul>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfJXcMdITupHSLMfbDYx4vL8hggC5o5d1j9Fg726ve0R2IJQQ/viewform?usp=publish-editor" target="_blank" rel="noopener" class="plan-btn outline">Falar com a equipe</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ────────────────────────────────────────────── -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="faq-header">
+        <span class="pill">Dúvidas frequentes</span>
+        <h2>Tudo que você quer saber antes de começar</h2>
+      </div>
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            Preciso ser técnico ou contratar um programador para usar?
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a"><p>Não, desde que seu sistema (site ou aplicativo de academia) seja integrado à Gym API pelo desenvolvedor responsável. A plataforma organiza os dados nos bastidores — gestores, personals e alunos interagem por meio de um app que já usa a Gym API.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            Os dados dos alunos de uma academia podem vazar para outra?
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a"><p>Nunca. Cada academia tem seus dados completamente isolados. Nenhum gerente, personal ou aluno de outra academia acessa informações da sua. O único acesso entre academias é o que você mesmo autoriza explicitamente — por exemplo, um personal visitante.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            Posso ter mais de uma unidade?
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a"><p>Sim! Cada unidade é cadastrada como uma academia independente, com seu próprio plano e isolamento completo de dados. Você pode ter quantas unidades quiser, cada uma gerenciada de forma autônoma.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            O que acontece se eu atingir o limite de alunos do plano gratuito?
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a"><p>Os 25 alunos ativos continuam funcionando normalmente. A plataforma bloqueia apenas a criação de novos alunos até que você faça upgrade. O upgrade é imediato, sem migração de dados ou interrupção do serviço.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            O aluno pode ver dados de outros alunos?
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a"><p>Não. O aluno acessa apenas os próprios dados: treino, dieta e perfil. Ele também pode consultar os perfis dos personals da academia para escolher com quem trabalhar, mas nunca vê os planos de outros alunos.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            Posso cancelar quando quiser?
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a"><p>Sim, sem multa ou fidelidade. O cancelamento pode ser feito a qualquer momento. Você continua com acesso até o final do período pago e seus dados ficam disponíveis para exportação por 90 dias após o cancelamento.</p></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA final ───────────────────────────────────────── -->
+  <section class="cta-final" id="cta">
+    <div class="container">
+      <h2>
+        Sua academia merece<br />
+        <span class="gradient-text">mais do que uma planilha.</span>
+      </h2>
+      <p>Junte-se às academias que já deixaram o caos para trás. Comece grátis hoje, sem cartão de crédito, sem compromisso.</p>
+      <div class="cta-actions">
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfJXcMdITupHSLMfbDYx4vL8hggC5o5d1j9Fg726ve0R2IJQQ/viewform?usp=publish-editor" target="_blank" rel="noopener" class="btn-primary">Começar gratuitamente →</a>
+        <a href="#faq" class="btn-ghost">Ainda tenho dúvidas</a>
+      </div>
+      <p class="cta-note">✓ Plano gratuito para até 25 alunos &nbsp;·&nbsp; ✓ Sem cartão de crédito &nbsp;·&nbsp; ✓ Cancele quando quiser</p>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <img src="/assets/img/logo.png" alt="Gym API" />
+            <strong>Gym API</strong>
+          </div>
+          <p>A plataforma de gestão completa para academias que querem crescer com organização e profissionalismo.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Plataforma</h4>
+          <ul>
+            <li><a href="#benefits">Funcionalidades</a></li>
+            <li><a href="#how">Como funciona</a></li>
+            <li><a href="#pricing">Planos e preços</a></li>
+            <li><a href="#faq">Perguntas frequentes</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Para quem é</h4>
+          <ul>
+            <li><a href="#personas">Donos de academia</a></li>
+            <li><a href="#personas">Personals e coaches</a></li>
+            <li><a href="#personas">Alunos</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="/privacy">Política de Privacidade</a></li>
+            <li><a href="/terms">Termos de Uso</a></li>
+            <li><a href="/docs">Documentação técnica</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Gym API — Todos os direitos reservados.</p>
+        <div class="footer-legal">
+          <a href="/privacy">Privacidade</a>
+          <a href="/terms">Termos</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/index.js"></script>
+
+</body>
+</html>

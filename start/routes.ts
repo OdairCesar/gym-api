@@ -26,9 +26,12 @@ const TrainingsController = () => import('#controllers/trainings.controller')
 const UserpermissionsController = () => import('#controllers/userpermissions.controller')
 const UsersController = () => import('#controllers/users.controller')
 
+// Landing page
+router.get('/', [SwaggerController, 'index']).use(publicThrottle)
+
 // Health check
 router
-  .get('/', async () => {
+  .get('/health', async () => {
     return {
       app: 'Gym API',
       version: '1.0.0',
@@ -280,3 +283,5 @@ router
 */
 router.get('/swagger.json', [SwaggerController, 'json'])
 router.get('/docs', [SwaggerController, 'ui'])
+router.get('/privacy', [SwaggerController, 'privacy'])
+router.get('/terms', [SwaggerController, 'terms'])
