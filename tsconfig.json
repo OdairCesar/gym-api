@@ -4,5 +4,6 @@
     "rootDir": "./",
     "outDir": "./build",
     "noUnusedLocals": false
-  }
+  },
+  "exclude": ["tests/**/*", "bin/test.ts"]
 }
