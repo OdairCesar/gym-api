@@ -4,7 +4,11 @@ export default class FreePlanStrategy implements Payment {
   readonly name = 'free'
   readonly providerType = 'free' as const
 
-  async processPayment(amount: number, currency: string, paymentData: any): Promise<PaymentResult> {
+  async processPayment(
+    amount: number,
+    currency: string,
+    _paymentData: any
+  ): Promise<PaymentResult> {
     // Plano free não processa pagamento
     return {
       success: true,
@@ -18,12 +22,12 @@ export default class FreePlanStrategy implements Payment {
     }
   }
 
-  async validatePaymentData(paymentData: any): Promise<boolean> {
+  async validatePaymentData(_paymentData: any): Promise<boolean> {
     // Free plan não requer dados de pagamento
     return true
   }
 
-  async refund(transactionId: string, amount?: number): Promise<RefundResult> {
+  async refund(_transactionId: string, _amount?: number): Promise<RefundResult> {
     // Free plan não tem o que reembolsar
     return {
       success: true,
