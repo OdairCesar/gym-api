@@ -17,12 +17,14 @@ export default class PlanLimitService {
     // Buscar academia com subscription e plano
     const gym = await this.getGymWithPlan(gymId)
 
-    // Se não tem subscription ativa, bloquear
+    // Se não tem subscription ativa, considera limite mínimo (ex: 25 usuários)
     if (!gym.currentSubscription || !gym.currentSubscription.isActive()) {
+      const currentUsers = await this.countUsers(gymId)
+      const defaultMaxUsers = 25
       return {
-        allowed: false,
-        current: 0,
-        max: 0,
+        allowed: currentUsers < defaultMaxUsers,
+        current: currentUsers,
+        max: defaultMaxUsers,
       }
     }
 
