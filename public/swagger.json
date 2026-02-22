@@ -871,6 +871,42 @@
             "bearerAuth": []
           }
         ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Número da página"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "description": "Limite de itens por página"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filtrar por ID do usuário (aluno) que tem a dieta atribuída - apenas admin/personal"
+          },
+          {
+            "name": "creator_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filtrar por ID do criador da dieta (personal/admin) - apenas admin/personal/super"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Lista de dietas"
@@ -995,6 +1031,42 @@
         "security": [
           {
             "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Número da página"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "description": "Limite de itens por página"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filtrar por ID do usuário (aluno) - apenas admin/personal"
+          },
+          {
+            "name": "coach_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filtrar por ID do personal (coach) - apenas admin/personal/super"
           }
         ],
         "responses": {
@@ -1139,10 +1211,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["exercise_id"],
+                "required": ["exerciseId"],
                 "properties": {
-                  "exercise_id": {
+                  "exerciseId": {
                     "type": "integer"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Nome personalizado para o exercício no treino"
+                  },
+                  "reps": {
+                    "type": "string",
+                    "description": "Repetições personalizadas (ex: 4x12)"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["aerobico", "musculacao", "flexibilidade", "outro"],
+                    "description": "Tipo do exercício"
+                  },
+                  "weight": {
+                    "type": "number",
+                    "description": "Peso em kg"
+                  },
+                  "restSeconds": {
+                    "type": "integer",
+                    "description": "Tempo de descanso em segundos"
+                  },
+                  "videoLink": {
+                    "type": "string",
+                    "description": "Link do vídeo de demonstração"
+                  },
+                  "priority": {
+                    "type": "integer",
+                    "description": "Prioridade/ordem do exercício no treino"
                   }
                 }
               }

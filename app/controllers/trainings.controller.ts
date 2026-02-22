@@ -1,5 +1,9 @@
 ﻿import Training from '#models/training.model'
-import { createTrainingValidator, updateTrainingValidator } from '#validators/training.validator'
+import {
+  createTrainingValidator,
+  updateTrainingValidator,
+  addExerciseToTrainingValidator,
+} from '#validators/training.validator'
 import { HttpContext } from '@adonisjs/core/http'
 import PermissionService from '#services/permission.service'
 import logger from '@adonisjs/core/services/logger'
@@ -30,6 +34,7 @@ export default class TrainingsController {
 
     const page = request.input('page', 1)
     const limit = request.input('limit', 20)
+    const userIdFilter = request.input('user_id') // Filtro por usuário
 
     let query = Training.query().preload('gym').preload('coach').preload('user')
 
@@ -54,10 +59,20 @@ export default class TrainingsController {
       })
     }
 
-    // Filter by user if provided (admin/personal only)
-    const userId = request.input('user_id')
-    if (userId && (currentUser.role === 'admin' || currentUser.role === 'personal')) {
-      query = query.where('user_id', userId)
+    // Filter by user_id (admin/personal only) - aplicado separadamente para não quebrar a lógica OR
+    if (userIdFilter && (currentUser.role === 'admin' || currentUser.role === 'personal')) {
+      query = query.andWhere('user_id', userIdFilter)
+    }
+
+    // Filter by coach_id if provided
+    const coachIdFilter = request.input('coach_id')
+    if (
+      coachIdFilter &&
+      (currentUser.role === 'admin' ||
+        currentUser.role === 'personal' ||
+        currentUser.role === 'super')
+    ) {
+      query = query.andWhere('coach_id', coachIdFilter)
     }
 
     const trainings = await query.paginate(page, limit)
@@ -224,6 +239,17 @@ export default class TrainingsController {
 
     const data = await request.validateUsing(createTrainingValidator)
 
+    // Validação multi-tenant: garantir que o userId pertence à mesma academia
+    const UserModel = await import('#models/user.model')
+    const User = UserModel.default
+    const targetUser = await User.findOrFail(data.userId)
+
+    if (!targetUser.belongsToGym(currentUser.gym_id)) {
+      return response.forbidden({
+        message: 'You can only create trainings for users in your gym',
+      })
+    }
+
     const training = await Training.create({
       name: data.name,
       description: data.description,
@@ -256,6 +282,19 @@ export default class TrainingsController {
     await bouncer.with('TrainingPolicy').authorize('update', training)
 
     const data = await request.validateUsing(updateTrainingValidator)
+
+    // Se está alterando o userId, validar multi-tenant
+    if (data.userId !== undefined && data.userId !== training.user_id) {
+      const UserModel = await import('#models/user.model')
+      const User = UserModel.default
+      const targetUser = await User.findOrFail(data.userId)
+
+      if (!targetUser.belongsToGym(currentUser.gym_id)) {
+        return response.forbidden({
+          message: 'You can only assign trainings to users in your gym',
+        })
+      }
+    }
 
     training.merge({
       name: data.name,
@@ -297,27 +336,22 @@ export default class TrainingsController {
 
     await bouncer.with('TrainingPolicy').authorize('update', training)
 
-    const data = request.only([
-      'exercise_id',
-      'name',
-      'reps',
-      'type',
-      'weight',
-      'rest_seconds',
-      'video_link',
-      'priority',
-    ])
+    const data = await request.validateUsing(addExerciseToTrainingValidator)
+
+    // Prepare pivot data, excluding undefined values
+    const pivotData: Record<string, any> = {}
+
+    if (data.name !== undefined) pivotData.name = data.name
+    if (data.reps !== undefined) pivotData.reps = data.reps
+    if (data.type !== undefined) pivotData.type = data.type
+    if (data.weight !== undefined) pivotData.weight = data.weight
+    if (data.restSeconds !== undefined) pivotData.rest_seconds = data.restSeconds
+    if (data.videoLink !== undefined) pivotData.video_link = data.videoLink
+    if (data.priority !== undefined) pivotData.priority = data.priority
+    else pivotData.priority = 0
 
     await training.related('exercises').attach({
-      [data.exercise_id]: {
-        name: data.name,
-        reps: data.reps,
-        type: data.type,
-        weight: data.weight,
-        rest_seconds: data.rest_seconds,
-        video_link: data.video_link,
-        priority: data.priority || 0,
-      },
+      [data.exerciseId]: pivotData,
     })
 
     await training.load('exercises')

@@ -34,3 +34,25 @@ export const updateTrainingValidator = vine.compile(
       .optional(),
   })
 )
+
+/**
+ * Validator for adding exercise to training
+ */
+export const addExerciseToTrainingValidator = vine.compile(
+  vine.object({
+    exerciseId: vine
+      .number()
+      .positive()
+      .exists(async (db, value) => {
+        const exercise = await db.from('exercises').where('id', value).first()
+        return !!exercise
+      }),
+    name: vine.string().trim().minLength(3).maxLength(255).optional(),
+    reps: vine.string().trim().maxLength(50).optional(),
+    type: vine.enum(['aerobico', 'musculacao', 'flexibilidade', 'outro']).optional(),
+    weight: vine.number().min(0).optional(),
+    restSeconds: vine.number().min(0).max(600).optional(),
+    videoLink: vine.string().trim().maxLength(500).optional(),
+    priority: vine.number().min(0).max(100).optional(),
+  })
+)

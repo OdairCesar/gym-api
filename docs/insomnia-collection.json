@@ -342,11 +342,35 @@
       "_type": "request",
       "name": "List Diets",
       "method": "GET",
-      "url": "{{ _.base_url }}/diets",
+      "url": "{{ _.base_url }}/diets?page=1&limit=20",
       "headers": [
         {
           "name": "Authorization",
           "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "disabled": false
+        },
+        {
+          "name": "limit",
+          "value": "20",
+          "disabled": false
+        },
+        {
+          "name": "user_id",
+          "value": "",
+          "disabled": true,
+          "description": "Filtrar por aluno (ID do usuário que tem a dieta)"
+        },
+        {
+          "name": "creator_id",
+          "value": "",
+          "disabled": true,
+          "description": "Filtrar por criador (ID do personal/admin)"
         }
       ],
       "parentId": "folder_diets"
@@ -618,11 +642,35 @@
       "_type": "request",
       "name": "List Trainings",
       "method": "GET",
-      "url": "{{ _.base_url }}/trainings",
+      "url": "{{ _.base_url }}/trainings?page=1&limit=20",
       "headers": [
         {
           "name": "Authorization",
           "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "disabled": false
+        },
+        {
+          "name": "limit",
+          "value": "20",
+          "disabled": false
+        },
+        {
+          "name": "user_id",
+          "value": "",
+          "disabled": true,
+          "description": "Filtrar por aluno (ID do usuário)"
+        },
+        {
+          "name": "coach_id",
+          "value": "",
+          "disabled": true,
+          "description": "Filtrar por personal (ID do coach)"
         }
       ],
       "parentId": "folder_trainings"
@@ -707,7 +755,7 @@
       "url": "{{ _.base_url }}/trainings/1/exercises",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"exercise_id\": 1\n}"
+        "text": "{\n  \"exerciseId\": 1,\n  \"reps\": \"4x12\",\n  \"weight\": 60,\n  \"restSeconds\": 90,\n  \"priority\": 1\n}"
       },
       "headers": [
         {

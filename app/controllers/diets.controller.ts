@@ -32,6 +32,8 @@ export default class DietsController {
 
     const page = request.input('page', 1)
     const limit = request.input('limit', 20)
+    const userIdFilter = request.input('user_id') // Filtrar por usuário (que tem a dieta atribuída)
+    const creatorIdFilter = request.input('creator_id') // Filtrar por criador (personal/admin)
 
     // Build query: accessÃ­veis + reusable de outras gyms
     let query = Diet.query().preload('gym').preload('criador')
@@ -60,6 +62,23 @@ export default class DietsController {
       } else {
         query = query.where('is_reusable', true)
       }
+    }
+
+    // Filter by user_id (admin/personal only) - usuário que tem a dieta atribuída
+    if (userIdFilter && (currentUser.role === 'admin' || currentUser.role === 'personal')) {
+      query = query.whereHas('users', (usersQuery) => {
+        usersQuery.where('id', userIdFilter)
+      })
+    }
+
+    // Filter by creator_id (admin/personal/super only) - quem criou a dieta
+    if (
+      creatorIdFilter &&
+      (currentUser.role === 'admin' ||
+        currentUser.role === 'personal' ||
+        currentUser.role === 'super')
+    ) {
+      query = query.andWhere('creator_id', creatorIdFilter)
     }
 
     const diets = await query.paginate(page, limit)

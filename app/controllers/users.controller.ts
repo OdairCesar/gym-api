@@ -222,7 +222,6 @@ export default class UsersController {
       gender: data.gender,
       profession: data.profession,
       address: data.address,
-      gym_id: data.gymId,
       diet_id: data.dietId,
       role: data.role as any,
       published: data.published,
