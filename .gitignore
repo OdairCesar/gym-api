@@ -1,39 +1,25 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# Dependencies and AdonisJS build
+node_modules
+build
+tmp
 
-# dependencies
-node_modules/
-package-lock.json
-yarn.lock
+# Secrets
+.env
+.env.local
+.env.production.local
+.env.development.local
 
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
+# Frontend assets compiled code
+public/assets
 
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+# Build tools specific
+npm-debug.log
+yarn-error.log
 
-# Metro
-.metro-health-check*
+# Editors specific
+.fleet
+.idea
+.vscode
 
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
+# Platform specific
 .DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo

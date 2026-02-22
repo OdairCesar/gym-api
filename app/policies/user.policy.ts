@@ -1,0 +1,70 @@
+import User, { UserRole } from '#models/user.model'
+import { BasePolicy } from '@adonisjs/bouncer'
+import { AuthorizerResponse } from '@adonisjs/bouncer/types'
+
+export default class UserPolicy extends BasePolicy {
+  index(_user: User): AuthorizerResponse {
+    return true
+  }
+
+  show(user: User, targetUser: User): AuthorizerResponse {
+    if (user.role === UserRole.SUPER) return true
+
+    // User pode ver apenas ele mesmo ou qualquer personal da mesma academia
+    if (user.role === UserRole.USER) {
+      if (user.id === targetUser.id) return true
+
+      // Pode ver qualquer personal da mesma academia
+      if (targetUser.role === UserRole.PERSONAL && user.isInSameGym(targetUser)) {
+        return true
+      }
+
+      return false
+    }
+
+    // Personal pode ver apenas ele mesmo e users (alunos) da mesma academia
+    if (user.role === UserRole.PERSONAL) {
+      if (user.id === targetUser.id) return true
+
+      // NÃO pode ver admins nem outros personals
+      if (targetUser.role === UserRole.ADMIN || targetUser.role === UserRole.PERSONAL) {
+        return false
+      }
+
+      // Pode ver users (alunos) da mesma academia
+      return user.isInSameGym(targetUser)
+    }
+
+    // Admin pode ver todos da mesma academia
+    return user.isInSameGym(targetUser)
+  }
+
+  create(user: User): AuthorizerResponse {
+    return (
+      user.role === UserRole.SUPER ||
+      user.role === UserRole.ADMIN ||
+      user.role === UserRole.PERSONAL
+    )
+  }
+
+  update(user: User, targetUser: User): AuthorizerResponse {
+    if (user.role === UserRole.SUPER) return true
+    if (user.id === targetUser.id) return true
+    if (!user.isInSameGym(targetUser)) return false
+    if (user.role === UserRole.ADMIN) return true
+    if (user.role === UserRole.PERSONAL) {
+      return targetUser.role !== UserRole.ADMIN && targetUser.role !== UserRole.PERSONAL
+    }
+    return false
+  }
+
+  delete(user: User, targetUser: User): AuthorizerResponse {
+    if (user.role === UserRole.SUPER) return true
+    if (!user.isInSameGym(targetUser)) return false
+    if (user.role === UserRole.ADMIN) return true
+    if (user.role === UserRole.PERSONAL) {
+      return targetUser.role !== UserRole.ADMIN && targetUser.role !== UserRole.PERSONAL
+    }
+    return false
+  }
+}
